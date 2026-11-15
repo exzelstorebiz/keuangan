@@ -20,47 +20,27 @@
   .back-btn { font-size: 24px; cursor: pointer; color: var(--text-main); }
   h2 { color: var(--pink-dark); font-size: 20px; }
 
-  /* Tipe Transaksi (Toggle) */
   .type-toggle { display: flex; gap: 10px; margin-bottom: 20px; }
   .type-btn { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--pink-light); background: white; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
   .type-btn.active-income { background: #D1FAE5; color: var(--green); border-color: var(--green); }
   .type-btn.active-expense { background: #FCE7F3; color: var(--pink-dark); border-color: var(--pink-main); }
 
-  /* Form */
   .form-group { margin-bottom: 16px; }
   .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
   .form-input { width: 100%; padding: 14px; border: 1px solid var(--pink-light); border-radius: 12px; background: var(--pink-light); font-family: inherit; font-size: 15px; color: var(--text-main); outline: none; }
   .form-input:focus { border-color: var(--pink-main); background: white; }
 
-  /* Tombol Simpan */
   .btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--pink-main), var(--pink-dark)); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
   .btn-save:active { transform: scale(0.98); }
 
-  /* === MODAL KONFIRMASI (CANTIK & MEWAH) === */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-    display: none; justify-content: center; align-items: center; z-index: 100;
-    padding: 20px;
-  }
+  /* Modal */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
   .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
-  
-  .modal-box {
-    background: white; width: 100%; max-width: 320px; border-radius: 24px;
-    padding: 28px 24px; text-align: center; position: relative;
-    box-shadow: 0 20px 40px rgba(236, 72, 153, 0.2);
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
+  .modal-box { background: white; width: 100%; max-width: 320px; border-radius: 24px; padding: 28px 24px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(236, 72, 153, 0.2); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-  /* Ikon di dalam modal */
-  .modal-icon {
-    width: 60px; height: 60px; border-radius: 50%;
-    background: var(--pink-light); display: flex; justify-content: center; align-items: center;
-    font-size: 28px; margin: 0 auto 16px;
-  }
-
+  
+  .modal-icon { width: 60px; height: 60px; border-radius: 50%; background: var(--pink-light); display: flex; justify-content: center; align-items: center; font-size: 28px; margin: 0 auto 16px; }
   .modal-title { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
   .modal-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
   .modal-text strong { color: var(--text-main); font-weight: 700; }
@@ -69,6 +49,7 @@
   .btn-cancel { flex: 1; padding: 14px; border-radius: 14px; border: none; background: #F3F4F6; color: var(--text-muted); font-weight: 600; cursor: pointer; font-family: inherit; font-size: 14px; transition: transform 0.2s; }
   .btn-confirm { flex: 1; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--pink-main), var(--pink-dark)); color: white; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 14px; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
   .btn-confirm:active, .btn-cancel:active { transform: scale(0.95); }
+  .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -79,13 +60,11 @@
     <h2>Tambah Transaksi</h2>
   </div>
 
-  <!-- Pilihan Tipe -->
   <div class="type-toggle">
     <button class="type-btn active-expense" id="btnExpense" onclick="setType('expense')">⬆️ Pengeluaran</button>
     <button class="type-btn" id="btnIncome" onclick="setType('income')">⬇️ Pemasukan</button>
   </div>
 
-  <!-- Form -->
   <div class="form-group">
     <label class="form-label">Nominal (Rp)</label>
     <input type="number" id="inputAmount" class="form-input" placeholder="Contoh: 50000">
@@ -99,7 +78,7 @@
   <button class="btn-save" onclick="tampilkanKonfirmasi()">Simpan Transaksi</button>
 </div>
 
-<!-- MODAL KONFIRMASI -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalKonfirmasi">
   <div class="modal-box">
     <div class="modal-icon" id="modalIcon">💸</div>
@@ -107,20 +86,46 @@
     <div class="modal-text" id="modalText"></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="tutupModal()">Batal</button>
-      <button class="btn-confirm" onclick="prosesSimpan()">Simpan</button>
+      <button class="btn-confirm" id="btnConfirmSave" onclick="prosesSimpan()">Simpan</button>
     </div>
   </div>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // === CONFIG FIREBASE ANDA ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
+    authDomain: "keuangan-488ad.firebaseapp.com",
+    projectId: "keuangan-488ad",
+    storageBucket: "keuangan-488ad.firebasestorage.app",
+    messagingSenderId: "229611696652",
+    appId: "1:229611696652:web:05b25a6850869de7c93429"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
   let currentType = 'expense';
   let pendingData = {};
 
-  function setType(type) {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  window.setType = (type) => {
     currentType = type;
     const btnExpense = document.getElementById('btnExpense');
     const btnIncome = document.getElementById('btnIncome');
-
     if (type === 'expense') {
       btnExpense.className = 'type-btn active-expense';
       btnIncome.className = 'type-btn';
@@ -128,9 +133,9 @@
       btnExpense.className = 'type-btn';
       btnIncome.className = 'type-btn active-income';
     }
-  }
+  };
 
-  function tampilkanKonfirmasi() {
+  window.tampilkanKonfirmasi = () => {
     const amount = document.getElementById('inputAmount').value;
     const note = document.getElementById('inputNote').value;
 
@@ -144,7 +149,6 @@
     const formattedAmount = new Intl.NumberFormat('id-ID').format(amount);
     const typeLabel = currentType === 'income' ? 'Pemasukan' : 'Pengeluaran';
     
-    // Ubah ikon dan warna sesuai tipe
     const modalIcon = document.getElementById('modalIcon');
     if (currentType === 'income') {
       modalIcon.innerText = '💰';
@@ -158,21 +162,39 @@
     document.getElementById('modalText').innerHTML = `Transaksi <strong>${typeLabel}</strong> sebesar <strong>Rp ${formattedAmount}</strong> akan disimpan.`;
     
     document.getElementById('modalKonfirmasi').classList.add('active');
-  }
+  };
 
-  function tutupModal() {
+  window.tutupModal = () => {
     document.getElementById('modalKonfirmasi').classList.remove('active');
     pendingData = {};
-  }
+  };
 
-  function prosesSimpan() {
-    // Nanti kita ganti dengan Firebase
-    alert(`Berhasil disimpan!\nTipe: ${pendingData.type}\nNominal: Rp ${pendingData.amount}\nKeterangan: ${pendingData.note}`);
+  window.prosesSimpan = async () => {
+    if (!currentUser || !pendingData.amount) return;
     
-    document.getElementById('inputAmount').value = '';
-    document.getElementById('inputNote').value = '';
-    tutupModal();
-  }
+    const btn = document.getElementById('btnConfirmSave');
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    try {
+      await addDoc(collection(db, "transactions"), {
+        userId: currentUser.uid,
+        amount: pendingData.amount,
+        note: pendingData.note,
+        type: pendingData.type, // 'income' atau 'expense'
+        createdAt: serverTimestamp()
+      });
+      
+      // Berhasil, kembali ke index.html
+      window.location.href = 'index.html';
+      
+    } catch (error) {
+      console.error("Gagal menyimpan:", error);
+      alert("Gagal menyimpan transaksi: " + error.message);
+      btn.disabled = false;
+      btn.innerText = "Simpan";
+    }
+  };
 </script>
 
 </body>
