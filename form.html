@@ -186,7 +186,7 @@
     btn.innerText = "Menyimpan...";
 
     try {
-      await addDoc(collection(db, "transactions"), {
+      await addDoc(collection(db, "pembukuan"), {
         userId: currentUser.uid,
         amount: pendingData.amount,
         note: pendingData.note,
