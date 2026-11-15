@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <!-- =====================================================
-     CONSOLE ERUDA FOR MOBILE DEBUGGING
-===================================================== -->
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-  console.log("Eruda Console Siap!");
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script> eruda.init(); console.log("Eruda Siap!"); </script>
   
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,23 +20,19 @@
   
   .phone { width: 100%; max-width: 420px; height: 90vh; max-height: 800px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; }
 
-  /* Header Gradasi Pink */
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .app-title { font-size: 16px; font-weight: 600; opacity: 0.9; }
   .profile-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1.5px solid var(--gold); }
 
-  /* Kartu Saldo */
   .balance-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 12px 16px; text-align: center; }
   .balance-label { font-size: 11px; opacity: 0.9; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .balance-label span { color: var(--gold-light); font-size: 12px; }
   .balance-amount { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
   .balance-amount .currency { font-size: 12px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  /* Area Konten */
   .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  /* Riwayat (Jarak margin-top disesuaikan karena tombol aksi dihapus) */
   .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   
   .transaction-list { display: flex; flex-direction: column; gap: 10px; }
@@ -58,13 +48,18 @@
   .trx-title { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 10px; color: var(--text-muted); }
 
-  .trx-amount { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  /* Area Kanan (Nominal + Tombol Edit) */
+  .trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .trx-amount { font-size: 13px; font-weight: 700; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
+  
+  /* Tombol Edit */
+  .btn-edit { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 10px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+  .btn-edit:active { background: #E5E7EB; transform: scale(0.95); }
 
   .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
 
-  /* FAB */
   .fab { position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
 </style>
@@ -85,16 +80,12 @@
   </div>
 
   <div class="content">
-    <!-- Tombol Pemasukan & Pengeluaran sudah dihapus dari sini -->
-
     <div class="section-title">Transaksi Terakhir</div>
-
     <div class="transaction-list" id="transactionList">
       <div class="empty-state">Memuat data...</div>
     </div>
   </div>
 
-  <!-- Tombol FAB + tetap dipertahankan -->
   <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
 
@@ -103,7 +94,6 @@
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // === CONFIG FIREBASE ANDA ===
   const firebaseConfig = {
     apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
     authDomain: "keuangan-488ad.firebaseapp.com",
@@ -123,7 +113,6 @@
   onAuthStateChanged(auth, (user) => {
     if (user) {
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
-      // Pastikan Anda sudah mengganti "pembukuan" di sini jika nama koleksi baru dipakai
       loadTransactions(user.uid);
     } else {
       window.location.href = 'login.html';
@@ -140,19 +129,15 @@
       const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
       const today = new Date();
       const isToday = date.toDateString() === today.toDateString();
-      
       const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
       if (isToday) return `Hari ini, ${time}`;
-      
       const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
       return `${date.getDate()} ${months[date.getMonth()]}, ${time}`;
-    } catch (e) {
-      return "Waktu tidak valid";
-    }
+    } catch (e) { return "Waktu tidak valid"; }
   }
 
   function loadTransactions(userId) {
-    // ✅ PASTIKAN NAMA KOLEKSI SUDAH DIGANTI KE "pembukuan" JIKA ANDA SUDAH MENGGANTINYA DI FIREBASE
+    // Pastikan koleksi "pembukuan"
     const q = query(
       collection(db, "pembukuan"), 
       where("userId", "==", userId),
@@ -172,13 +157,11 @@
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
+        const docId = docSnap.id; // Ambil ID dokumen untuk edit
         const amount = Number(data.amount) || 0;
 
-        if (data.type === 'income') {
-          totalIncome += amount;
-        } else {
-          totalExpense += amount;
-        }
+        if (data.type === 'income') totalIncome += amount;
+        else totalExpense += amount;
 
         const isIncome = data.type === 'income';
         const icon = isIncome ? '💰' : '💸';
@@ -186,6 +169,7 @@
         const typeClass = isIncome ? 'income' : 'expense';
         const noteText = data.note ? data.note : "Tanpa Keterangan";
 
+        // Tambahkan tombol edit dengan membawa docId
         html += `
           <div class="transaction-item ${typeClass}">
             <div class="trx-icon ${typeClass}">${icon}</div>
@@ -193,22 +177,23 @@
               <div class="trx-title">${noteText}</div>
               <div class="trx-date">${formatTanggal(data.createdAt)}</div>
             </div>
-            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
+            <div class="trx-right">
+              <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
+              <button class="btn-edit" onclick="window.location.href='edit.html?id=${docId}'">✏️ Edit</button>
+            </div>
           </div>
         `;
       });
 
       transactionListEl.innerHTML = html;
-
       const balance = totalIncome - totalExpense;
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
       
     }, (error) => {
       console.error("Firestore Error: ", error);
-      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Cek Eruda.</div>`;
+      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data.</div>`;
     });
   }
 </script>
-
 </body>
 </html>
