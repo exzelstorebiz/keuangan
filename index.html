@@ -162,11 +162,8 @@
 
   function loadTransactions(userId) {
     // ✅ Koleksi disesuaikan menjadi "keuangan" sesuai gambar Firebase Anda
-    const q = query(
-      collection(db, "keuangan"), 
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc")
-    );
+    const q = query(collection(db, "keuangan"));
+    
 
     onSnapshot(q, (snapshot) => {
       let totalIncome = 0;
