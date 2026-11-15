@@ -35,47 +35,47 @@
   
   .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   
-  .transaction-list { display: flex; flex-direction: column; gap: 12px; /* Jarak antar kotak sedikit dilebarkan */ }
+  .transaction-list { display: flex; flex-direction: column; gap: 12px; }
   
-  /* --- PERUBAHAN UTAMA DI SINI --- */
   .transaction-item { 
     background: white; 
-    border-radius: 14px; /* Sudut dibuat sedikit lebih bulat */
-    padding: 16px 16px; /* Padding diperbesar (sebelumnya 12px 14px) agar ruang lebih lega */
+    border-radius: 14px; 
+    padding: 16px 16px; 
     display: flex; 
     align-items: center; 
     gap: 14px; 
     box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
-    border-left: 4px solid transparent; /* Garis kiri dipertebal sedikit */
+    border-left: 4px solid transparent; 
   }
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
 
   .trx-icon { 
-    width: 42px; /* Ikon diperbesar dari 36px */
+    width: 42px; 
     height: 42px; 
     border-radius: 12px; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    font-size: 20px; /* Ikon emoji diperbesar */
+    font-size: 20px; 
   }
   .trx-icon.income { background: #D1FAE5; color: var(--green); }
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
   .trx-details { flex: 1; min-width: 0; }
   
-  /* Teks dinaikkan 1px */
-  .trx-title { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .trx-date { font-size: 11px; color: var(--text-muted); } /* Naik dari 10px ke 11px */
+  /* --- UKURAN FONT DINAIKKAN 1PX LAGI --- */
+  .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trx-date { font-size: 12px; color: var(--text-muted); }
 
   .trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
   
-  .trx-amount { font-size: 14px; font-weight: 700; } /* Naik dari 13px ke 14px */
+  .trx-amount { font-size: 15px; font-weight: 700; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
   
-  .btn-edit { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 11px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
+  /* Tombol edit juga dinaikkan 1px agar seimbang */
+  .btn-edit { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 12px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
   .btn-edit:active { background: #E5E7EB; transform: scale(0.95); }
 
   .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
@@ -83,7 +83,6 @@
   .fab { position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
   
-  /* Beri sedikit jarak di bawah list agar tidak tertutup tombol FAB */
   #transactionList { padding-bottom: 80px; } 
 </style>
 </head>
