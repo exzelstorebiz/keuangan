@@ -23,7 +23,17 @@
   button:active { transform: scale(0.98); }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
   
-  .toggle { text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+  /* PERBAIKAN: Tombol toggle sekarang punya padding & cursor */
+  .toggle { 
+    text-align: center; 
+    margin-top: 20px; 
+    font-size: 13px; 
+    color: var(--text-muted); 
+    cursor: pointer; 
+    padding: 10px;
+    display: block;
+    width: 100%;
+  }
   .toggle span { color: var(--pink-main); font-weight: 600; }
   
   .hidden { display: none; }
