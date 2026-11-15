@@ -17,13 +17,13 @@
   
   .phone { width: 100%; max-width: 420px; height: 90vh; max-height: 800px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; }
 
-  /* Header Gradasi Pink (Lebih Ramping) */
+  /* Header Gradasi Pink */
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .app-title { font-size: 16px; font-weight: 600; opacity: 0.9; }
   .profile-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1.5px solid var(--gold); }
 
-  /* Kartu Saldo (Lebih Kecil & Ringkas) */
+  /* Kartu Saldo */
   .balance-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 12px 16px; text-align: center; }
   .balance-label { font-size: 11px; opacity: 0.9; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .balance-label span { color: var(--gold-light); font-size: 12px; }
@@ -33,7 +33,7 @@
   /* Area Konten */
   .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  /* Tombol Aksi (Lebih Kecil) */
+  /* Tombol Aksi */
   .action-row { display: flex; gap: 12px; margin-top: -25px; margin-bottom: 20px; position: relative; z-index: 20; padding: 0 10px; }
   .action-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: transform 0.2s; }
   .action-btn:active { transform: scale(0.95); }
@@ -41,10 +41,9 @@
   .action-btn.expense { background: white; color: var(--pink-dark); border: 1px solid var(--pink-dark); }
   .action-icon { font-size: 20px; }
 
-  /* Riwayat Transaksi */
+  /* Riwayat */
   .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-  .section-title a { font-size: 11px; color: var(--pink-main); text-decoration: none; font-weight: 600; }
-
+  
   .transaction-list { display: flex; flex-direction: column; gap: 10px; }
   .transaction-item { background: white; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 3px solid transparent; }
   .transaction-item.income { border-left-color: var(--green); }
@@ -54,15 +53,17 @@
   .trx-icon.income { background: #D1FAE5; color: var(--green); }
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
-  .trx-details { flex: 1; }
-  .trx-title { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
+  .trx-details { flex: 1; min-width: 0; }
+  .trx-title { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 10px; color: var(--text-muted); }
 
-  .trx-amount { font-size: 13px; font-weight: 700; }
+  .trx-amount { font-size: 13px; font-weight: 700; flex-shrink: 0; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
 
-  /* Floating Action Button (Emas) */
+  .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
+
+  /* FAB */
   .fab { position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
 </style>
@@ -70,85 +71,140 @@
 <body>
 
 <div class="phone">
-  <!-- Header -->
   <div class="app-header">
     <div class="header-top">
       <div class="app-title">Keuangan Keluarga</div>
       <div class="profile-icon">👩</div>
     </div>
     
-    <!-- Kartu Saldo -->
     <div class="balance-card">
       <div class="balance-label"><span>✨</span> Total Saldo</div>
-      <div class="balance-amount"><span class="currency">Rp</span> 2.450.000</div>
+      <div class="balance-amount" id="totalBalance"><span class="currency">Rp</span> Memuat...</div>
     </div>
   </div>
 
-  <!-- Konten Utama -->
   <div class="content">
-    
-    <!-- Tombol Aksi -->
     <div class="action-row">
-      <button class="action-btn income">
+      <button class="action-btn income" onclick="window.location.href='form.html'">
         <span class="action-icon">⬇️</span> Pemasukan
       </button>
-      <button class="action-btn expense">
+      <button class="action-btn expense" onclick="window.location.href='form.html'">
         <span class="action-icon">⬆️</span> Pengeluaran
       </button>
     </div>
 
-    <!-- Riwayat -->
-    <div class="section-title">
-      Transaksi Terakhir
-      <a href="#">Lihat Semua</a>
-    </div>
+    <div class="section-title">Transaksi Terakhir</div>
 
-    <div class="transaction-list">
-      <!-- Item Pemasukan -->
-      <div class="transaction-item income">
-        <div class="trx-icon income">💰</div>
-        <div class="trx-details">
-          <div class="trx-title">Gaji Bulanan</div>
-          <div class="trx-date">Hari ini, 08:00</div>
-        </div>
-        <div class="trx-amount income">+ Rp 3.500.000</div>
-      </div>
-
-      <!-- Item Pengeluaran -->
-      <div class="transaction-item expense">
-        <div class="trx-icon expense">🛒</div>
-        <div class="trx-details">
-          <div class="trx-title">Belanja Sayur</div>
-          <div class="trx-date">Hari ini, 06:30</div>
-        </div>
-        <div class="trx-amount expense">- Rp 75.000</div>
-      </div>
-
-      <!-- Item Pengeluaran -->
-      <div class="transaction-item expense">
-        <div class="trx-icon expense">🍔</div>
-        <div class="trx-details">
-          <div class="trx-title">Makan Siang</div>
-          <div class="trx-date">Kemarin, 12:15</div>
-        </div>
-        <div class="trx-amount expense">- Rp 45.000</div>
-      </div>
-      
-      <!-- Item Pemasukan -->
-      <div class="transaction-item income">
-        <div class="trx-icon income">🎁</div>
-        <div class="trx-details">
-          <div class="trx-title">Angpao / Hadiah</div>
-          <div class="trx-date">10 Nov, 19:00</div>
-        </div>
-        <div class="trx-amount income">+ Rp 200.000</div>
-      </div>
+    <div class="transaction-list" id="transactionList">
+      <div class="empty-state">Memuat data...</div>
     </div>
   </div>
 
-  <!-- Tombol Tambah (Emas) -->
-  <button class="fab">+</button>
+  <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // === CONFIG FIREBASE ANDA ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
+    authDomain: "keuangan-488ad.firebaseapp.com",
+    projectId: "keuangan-488ad",
+    storageBucket: "keuangan-488ad.firebasestorage.app",
+    messagingSenderId: "229611696652",
+    appId: "1:229611696652:web:05b25a6850869de7c93429"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const totalBalanceEl = document.getElementById('totalBalance');
+  const transactionListEl = document.getElementById('transactionList');
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loadTransactions(user.uid);
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  function formatRupiah(angka) {
+    return new Intl.NumberFormat('id-ID').format(angka);
+  }
+
+  function formatTanggal(timestamp) {
+    if (!timestamp) return "Baru saja";
+    const date = timestamp.toDate();
+    const today = new Date();
+    const isToday = date.toDateString() === today.toDateString();
+    
+    const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+    if (isToday) return `Hari ini, ${time}`;
+    
+    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+    return `${date.getDate()} ${months[date.getMonth()]}, ${time}`;
+  }
+
+  function loadTransactions(userId) {
+    // Query hanya transaksi milik user ini, urutkan dari yang terbaru
+    const q = query(
+      collection(db, "transactions"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+      let totalIncome = 0;
+      let totalExpense = 0;
+      let html = '';
+
+      if (snapshot.empty) {
+        transactionListEl.innerHTML = '<div class="empty-state">Belum ada transaksi. Yuk mulai catat!</div>';
+        totalBalanceEl.innerHTML = `<span class="currency">Rp</span> 0`;
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        
+        // Hitung saldo
+        if (data.type === 'income') {
+          totalIncome += data.amount;
+        } else {
+          totalExpense += data.amount;
+        }
+
+        // Render item
+        const isIncome = data.type === 'income';
+        const icon = isIncome ? '💰' : '💸';
+        const sign = isIncome ? '+' : '-';
+        
+        html += `
+          <div class="transaction-item ${data.type}">
+            <div class="trx-icon ${data.type}">${icon}</div>
+            <div class="trx-details">
+              <div class="trx-title">${data.note}</div>
+              <div class="trx-date">${formatTanggal(data.createdAt)}</div>
+            </div>
+            <div class="trx-amount ${data.type}">${sign} Rp ${formatRupiah(data.amount)}</div>
+          </div>
+        `;
+      });
+
+      // Tampilkan list
+      transactionListEl.innerHTML = html;
+
+      // Hitung dan tampilkan total saldo
+      const balance = totalIncome - totalExpense;
+      totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
+    });
+  }
+</script>
 
 </body>
 </html>
