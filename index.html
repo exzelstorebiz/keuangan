@@ -63,8 +63,6 @@
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
   .trx-details { flex: 1; min-width: 0; }
-  
-  /* --- UKURAN FONT DINAIKKAN 1PX LAGI --- */
   .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 12px; color: var(--text-muted); }
 
@@ -74,9 +72,15 @@
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
   
-  /* Tombol edit juga dinaikkan 1px agar seimbang */
-  .btn-edit { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 12px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;}
-  .btn-edit:active { background: #E5E7EB; transform: scale(0.95); }
+  /* Grup Tombol Aksi (Edit & Hapus) */
+  .trx-actions { display: flex; gap: 6px; }
+  
+  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 12px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+  .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
+  
+  /* Warna khusus tombol hapus */
+  .btn-delete { color: var(--red); background: #FEF2F2; }
+  .btn-delete:active { background: #FEE2E2; }
 
   .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
 
@@ -114,7 +118,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, query, where, orderBy, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
@@ -158,6 +162,25 @@
     } catch (e) { return "Waktu tidak valid"; }
   }
 
+  // =====================================================
+  // FUNGSI HAPUS TRANSAKSI
+  // =====================================================
+  window.hapusTransaksi = async function(docId, keterangan) {
+    // Konfirmasi sebelum menghapus
+    const yakin = confirm(`Yakin ingin menghapus transaksi "${keterangan}"?\n\nTindakan ini tidak bisa dibatalkan.`);
+    
+    if (yakin) {
+      try {
+        // Hapus dokumen dari Firestore
+        await deleteDoc(doc(db, "pembukuan", docId));
+        // Karena onSnapshot berjalan, UI akan otomatis terupdate tanpa refresh
+      } catch (error) {
+        console.error("Gagal menghapus: ", error);
+        alert("Gagal menghapus transaksi. Cek Eruda.");
+      }
+    }
+  }
+
   function loadTransactions(userId) {
     const q = query(
       collection(db, "pembukuan"), 
@@ -190,6 +213,7 @@
         const typeClass = isIncome ? 'income' : 'expense';
         const noteText = data.note ? data.note : "Tanpa Keterangan";
 
+        // Render tombol Edit dan Hapus
         html += `
           <div class="transaction-item ${typeClass}">
             <div class="trx-icon ${typeClass}">${icon}</div>
@@ -199,7 +223,10 @@
             </div>
             <div class="trx-right">
               <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
-              <button class="btn-edit" onclick="window.location.href='edit.html?id=${docId}'">✏️ Edit</button>
+              <div class="trx-actions">
+                <button class="btn-action" onclick="window.location.href='edit.html?id=${docId}'">✏️ Edit</button>
+                <button class="btn-action btn-delete" onclick="hapusTransaksi('${docId}', '${noteText}')">🗑️ Hapus</button>
+              </div>
             </div>
           </div>
         `;
