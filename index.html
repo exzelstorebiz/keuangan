@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <!-- =====================================================
-      CONSOLE ERUDA FOR MOBILE DEBUGGING
+     CONSOLE ERUDA FOR MOBILE DEBUGGING
 ===================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
@@ -42,16 +42,8 @@
   /* Area Konten */
   .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  /* Tombol Aksi */
-  .action-row { display: flex; gap: 12px; margin-top: -25px; margin-bottom: 20px; position: relative; z-index: 20; padding: 0 10px; }
-  .action-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: transform 0.2s; }
-  .action-btn:active { transform: scale(0.95); }
-  .action-btn.income { background: white; color: var(--green); border: 1px solid var(--green); }
-  .action-btn.expense { background: white; color: var(--pink-dark); border: 1px solid var(--pink-dark); }
-  .action-icon { font-size: 20px; }
-
-  /* Riwayat */
-  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  /* Riwayat (Jarak margin-top disesuaikan karena tombol aksi dihapus) */
+  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   
   .transaction-list { display: flex; flex-direction: column; gap: 10px; }
   .transaction-item { background: white; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 3px solid transparent; }
@@ -93,14 +85,7 @@
   </div>
 
   <div class="content">
-    <div class="action-row">
-      <button class="action-btn income" onclick="window.location.href='form.html'">
-        <span class="action-icon">⬇️</span> Pemasukan
-      </button>
-      <button class="action-btn expense" onclick="window.location.href='form.html'">
-        <span class="action-icon">⬆️</span> Pengeluaran
-      </button>
-    </div>
+    <!-- Tombol Pemasukan & Pengeluaran sudah dihapus dari sini -->
 
     <div class="section-title">Transaksi Terakhir</div>
 
@@ -109,6 +94,7 @@
     </div>
   </div>
 
+  <!-- Tombol FAB + tetap dipertahankan -->
   <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
 
@@ -137,6 +123,7 @@
   onAuthStateChanged(auth, (user) => {
     if (user) {
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
+      // Pastikan Anda sudah mengganti "pembukuan" di sini jika nama koleksi baru dipakai
       loadTransactions(user.uid);
     } else {
       window.location.href = 'login.html';
@@ -165,6 +152,7 @@
   }
 
   function loadTransactions(userId) {
+    // ✅ PASTIKAN NAMA KOLEKSI SUDAH DIGANTI KE "pembukuan" JIKA ANDA SUDAH MENGGANTINYA DI FIREBASE
     const q = query(
       collection(db, "pembukuan"), 
       where("userId", "==", userId),
@@ -211,13 +199,13 @@
       });
 
       transactionListEl.innerHTML = html;
+
       const balance = totalIncome - totalExpense;
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
       
     }, (error) => {
-      console.error("Firestore Error Detail: ", error);
-      // Menampilkan pesan error secara langsung ke layar jika query gagal (misal: butuh Index)
-      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat: ${error.message}</div>`;
+      console.error("Firestore Error: ", error);
+      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Cek Eruda.</div>`;
     });
   }
 </script>
