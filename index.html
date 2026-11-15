@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <!-- =====================================================
-     CONSOLE ERUDA FOR MOBILE DEBUGGING
+      CONSOLE ERUDA FOR MOBILE DEBUGGING
 ===================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
@@ -136,7 +136,6 @@
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // Tampilkan pesan loading saat mengambil data
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
       loadTransactions(user.uid);
     } else {
@@ -151,7 +150,6 @@
   function formatTanggal(timestamp) {
     try {
       if (!timestamp) return "Baru saja";
-      // Cek apakah timestamp memiliki fungsi toDate (dari Firestore)
       const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
       const today = new Date();
       const isToday = date.toDateString() === today.toDateString();
@@ -167,7 +165,6 @@
   }
 
   function loadTransactions(userId) {
-    // ✅ JURUS PAMUNGKAS: Kembalikan filter userId dan orderBy
     const q = query(
       collection(db, "keuangan"), 
       where("userId", "==", userId),
@@ -187,24 +184,18 @@
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        
-        // Pastikan amount berupa angka
         const amount = Number(data.amount) || 0;
 
-        // Hitung saldo
         if (data.type === 'income') {
           totalIncome += amount;
         } else {
           totalExpense += amount;
         }
 
-        // Render item
         const isIncome = data.type === 'income';
         const icon = isIncome ? '💰' : '💸';
         const sign = isIncome ? '+' : '-';
         const typeClass = isIncome ? 'income' : 'expense';
-        
-        // Antisipasi jika note kosong
         const noteText = data.note ? data.note : "Tanpa Keterangan";
 
         html += `
@@ -219,16 +210,14 @@
         `;
       });
 
-      // Tampilkan list ke layar
       transactionListEl.innerHTML = html;
-
-      // Hitung dan tampilkan total saldo
       const balance = totalIncome - totalExpense;
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
       
     }, (error) => {
-      console.error("Firestore Error: ", error);
-      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Buka Console Eruda untuk melihat error.</div>`;
+      console.error("Firestore Error Detail: ", error);
+      // Menampilkan pesan error secara langsung ke layar jika query gagal (misal: butuh Index)
+      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat: ${error.message}</div>`;
     });
   }
 </script>
