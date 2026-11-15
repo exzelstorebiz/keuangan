@@ -166,7 +166,7 @@
 
   function loadTransactions(userId) {
     const q = query(
-      collection(db, "keuangan"), 
+      collection(db, "pembukuan"), 
       where("userId", "==", userId),
       orderBy("createdAt", "desc")
     );
