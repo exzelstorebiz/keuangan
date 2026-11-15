@@ -23,17 +23,7 @@
   button:active { transform: scale(0.98); }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
   
-  /* PERBAIKAN: Tombol toggle sekarang punya padding & cursor */
-  .toggle { 
-    text-align: center; 
-    margin-top: 20px; 
-    font-size: 13px; 
-    color: var(--text-muted); 
-    cursor: pointer; 
-    padding: 10px;
-    display: block;
-    width: 100%;
-  }
+  .toggle { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 10px; display: block; width: 100%; }
   .toggle span { color: var(--pink-main); font-weight: 600; }
   
   .hidden { display: none; }
@@ -45,14 +35,12 @@
 <div class="card">
   <h2 id="formTitle">Masuk</h2>
   
-  <!-- FORM LOGIN -->
   <div id="loginForm">
     <input type="email" id="loginEmail" placeholder="Email">
     <input type="password" id="loginPassword" placeholder="Password">
     <button onclick="login()" id="btnLogin">Masuk</button>
   </div>
 
-  <!-- FORM REGISTER -->
   <div id="registerForm" class="hidden">
     <input type="text" id="regName" placeholder="Nama (Misal: Istri)">
     <input type="email" id="regEmail" placeholder="Email">
@@ -60,7 +48,6 @@
     <button onclick="register()" id="btnRegister">Daftar</button>
   </div>
 
-  <!-- TOGGLE -->
   <div class="toggle" onclick="toggleMode()">
     <span id="toggleText">Belum punya akun? Daftar</span>
   </div>
@@ -73,18 +60,14 @@
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // === GANTI DENGAN CONFIG FIREBASE KEUANGAN ANDA ===
+  // === CONFIG FIREBASE ANDA (SUDAH BENAR) ===
   const firebaseConfig = {
-  apiKey: "AIzaSyAOtNOWNH90PCswGhahpIgsB0dvMNtMzsM",
-  authDomain: "keuangan-fcb0f.firebaseapp.com",
-  projectId: "keuangan-fcb0f",
-  storageBucket: "keuangan-fcb0f.firebasestorage.app",
-  messagingSenderId: "587539890608",
-  appId: "1:587539890608:web:726f78450ddab3389d1675"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+    apiKey: "AIzaSyAOtNOWNH90PCswGhahpIgsB0dvMNtMzsM",
+    authDomain: "keuangan-fcb0f.firebaseapp.com",
+    projectId: "keuangan-fcb0f",
+    storageBucket: "keuangan-fcb0f.firebasestorage.app",
+    messagingSenderId: "587539890608",
+    appId: "1:587539890608:web:726f78450ddab3389d1675"
   };
 
   const app = initializeApp(firebaseConfig);
