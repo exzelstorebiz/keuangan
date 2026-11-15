@@ -4,6 +4,9 @@
   <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
   <script> eruda.init(); console.log("Eruda Siap!"); </script>
   
+  <!-- LIBRARY CHART.JS UNTUK GRAFIK -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keuangan Keluarga</title>
@@ -33,39 +36,40 @@
 
   .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  /* --- CSS BARU UNTUK FILTER --- */
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 12px; }
   .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
   
   .filter-select {
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid #E5E7EB;
-    background-color: white;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--pink-dark);
-    outline: none;
-    cursor: pointer;
+    padding: 6px 10px; border-radius: 8px; border: 1px solid #E5E7EB;
+    background-color: white; font-family: inherit; font-size: 12px;
+    font-weight: 600; color: var(--pink-dark); outline: none; cursor: pointer;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   .filter-select:focus { border-color: var(--pink-main); }
-  /* ---------------------------- */
+
+  /* =====================================================
+     CSS UNTUK KOTAK GRAFIK
+  ===================================================== */
+  .chart-container {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    position: relative;
+    height: 200px; /* Tinggi grafik dikunci agar rapi */
+    width: 100%;
+  }
+  /* ===================================================== */
 
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
   
   .transaction-item { 
-    background: white; 
-    border-radius: 14px; 
-    padding: 12px 14px; 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
+    background: white; border-radius: 14px; padding: 12px 14px; 
+    display: flex; align-items: center; gap: 12px; 
     box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
-    border-left: 4px solid transparent; 
-    position: relative; 
-    width: 100%; 
+    border-left: 4px solid transparent; position: relative; width: 100%; 
   }
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
@@ -117,9 +121,7 @@
   <div class="app-header">
     <div class="header-top">
       <div class="app-title">Keuangan Keluarga</div>
-      <a href="profil.html" style="text-decoration: none;">
-  <div class="profile-icon">👩</div>
-</a>
+      <a href="profil.html" style="text-decoration: none;"><div class="profile-icon">👩</div></a>
     </div>
     
     <div class="balance-card">
@@ -129,16 +131,24 @@
   </div>
 
   <div class="content">
-    <!-- HEADER DENGAN FILTER -->
+    
+    <!-- FILTER WAKTU -->
     <div class="section-header">
-      <div class="section-title">Transaksi Terakhir</div>
+      <div class="section-title">Ringkasan Grafik</div>
       <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
-        <option value="all">Semua Waktu</option>
         <option value="thisMonth">Bulan Ini</option>
         <option value="lastMonth">Bulan Lalu</option>
+        <option value="thisWeek">Minggu Ini</option>
+        <option value="all">Semua Waktu</option>
       </select>
     </div>
 
+    <!-- KOTAK GRAFIK -->
+    <div class="chart-container">
+      <canvas id="keuanganChart"></canvas>
+    </div>
+
+    <div class="section-title">Transaksi Terakhir</div>
     <div class="transaction-list" id="transactionList">
       <div class="empty-state">Memuat data...</div>
     </div>
@@ -186,12 +196,14 @@
   let idToDelete = null;
   
   let currentUserId = null;
-  let allTransactions = []; // Menyimpan semua data untuk difilter
+  let allTransactions = []; 
+  let myChart = null; // Variabel untuk menyimpan instance Chart.js
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUserId = user.uid;
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
+      initChart(); // Inisialisasi grafik kosong
       loadTransactions(user.uid);
     } else {
       window.location.href = 'login.html';
@@ -216,8 +228,67 @@
   }
 
   // =====================================================
-  // LOGIKA FILTER WAKTU
+  // LOGIKA INISIALISASI GRAFIK CHART.JS
   // =====================================================
+  function initChart() {
+    const ctx = document.getElementById('keuanganChart').getContext('2d');
+    myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Pemasukan', 'Pengeluaran'],
+        datasets: [{
+          label: 'Total (Rp)',
+          data: [0, 0], // Data awal kosong
+          backgroundColor: ['#10B981', '#EC4899'], // Hijau dan Pink
+          borderRadius: 8,
+          borderSkipped: false,
+          barThickness: 40
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }, // Sembunyikan legend karena sudah ada label
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { display: false }, // Hilangkan garis grid biar bersih
+            ticks: {
+              callback: function(value) {
+                if (value >= 1000000) return (value / 1000000) + 'jt';
+                if (value >= 1000) return (value / 1000) + 'rb';
+                return value;
+              },
+              font: { size: 10 }
+            }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { weight: 'bold', size: 12 } }
+          }
+        }
+      }
+    });
+  }
+
+  // Fungsi update data grafik
+  function updateChart(income, expense) {
+    if (myChart) {
+      myChart.data.datasets[0].data = [income, expense];
+      myChart.update();
+    }
+  }
+  // =====================================================
+
   window.gantiFilter = function(filterValue) {
     renderTransaksi(filterValue);
   }
@@ -225,23 +296,29 @@
   function renderTransaksi(filterType) {
     let filteredData = allTransactions;
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
+    
+    // Logika Filter
     if (filterType === 'thisMonth') {
       filteredData = allTransactions.filter(item => {
         if (!item.createdAt) return false;
         const date = item.createdAt.toDate();
-        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
       });
     } else if (filterType === 'lastMonth') {
       filteredData = allTransactions.filter(item => {
         if (!item.createdAt) return false;
         const date = item.createdAt.toDate();
-        // Cek bulan lalu
-        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+        const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
         return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+      });
+    } else if (filterType === 'thisWeek') {
+      // Logika minggu ini (7 hari terakhir)
+      const lastWeek = new Date(now.setDate(now.getDate() - 7));
+      filteredData = allTransactions.filter(item => {
+        if (!item.createdAt) return false;
+        const date = item.createdAt.toDate();
+        return date >= lastWeek;
       });
     }
 
@@ -252,6 +329,7 @@
     if (filteredData.length === 0) {
       transactionListEl.innerHTML = '<div class="empty-state">Tidak ada transaksi di periode ini.</div>';
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> 0`;
+      updateChart(0, 0); // Reset grafik ke 0
       return;
     }
 
@@ -269,14 +347,11 @@
       html += `
         <div class="transaction-item ${typeClass}">
           <div class="trx-icon ${typeClass}">${icon}</div>
-          
           <div class="trx-details">
             <div class="trx-title">${noteText}</div>
             <div class="trx-date">${formatTanggal(data.createdAt)}</div>
           </div>
-          
           <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
-          
           <div class="trx-actions">
             <button class="btn-action" onclick="window.location.href='edit.html?id=${data.id}'">✏️ Edit</button>
             <button class="btn-action btn-delete" onclick="bukaModal('${data.id}', '${noteText}')">🗑️ Hapus</button>
@@ -286,10 +361,14 @@
     });
 
     transactionListEl.innerHTML = html;
+    
+    // Update Saldo
     const balance = totalIncome - totalExpense;
     totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
+    
+    // Update Grafik
+    updateChart(totalIncome, totalExpense);
   }
-  // =====================================================
 
   window.bukaModal = function(docId, keterangan) {
     idToDelete = docId;
@@ -307,7 +386,6 @@
     try {
       await deleteDoc(doc(db, "pembukuan", idToDelete));
       tutupModal();
-      // onSnapshot akan otomatis mengupdate allTransactions dan me-render ulang
     } catch (error) {
       console.error("Gagal menghapus: ", error);
       alert("Gagal menghapus transaksi. Cek Eruda.");
@@ -322,15 +400,13 @@
     );
 
     onSnapshot(q, (snapshot) => {
-      allTransactions = []; // Reset data
-      
+      allTransactions = []; 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        data.id = docSnap.id; // Simpan ID dokumen untuk edit/hapus
+        data.id = docSnap.id; 
         allTransactions.push(data);
       });
 
-      // Render awal (ambil nilai filter yang sedang aktif)
       const currentFilter = document.getElementById('filterWaktu').value;
       renderTransaksi(currentFilter);
       
