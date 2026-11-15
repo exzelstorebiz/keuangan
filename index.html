@@ -20,7 +20,6 @@
   
   .phone { width: 100%; max-width: 420px; height: 90vh; max-height: 800px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; }
 
-  /* Header Gradasi Pink */
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .app-title { font-size: 16px; font-weight: 600; opacity: 0.9; }
@@ -32,14 +31,30 @@
   .balance-amount { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
   .balance-amount .currency { font-size: 12px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  /* Area Konten - Disamakan padding-nya */
   .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  /* --- CSS BARU UNTUK FILTER --- */
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 12px; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
   
+  .filter-select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+    background-color: white;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pink-dark);
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .filter-select:focus { border-color: var(--pink-main); }
+  /* ---------------------------- */
+
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
   
-  /* Kotak Transaksi */
   .transaction-item { 
     background: white; 
     border-radius: 14px; 
@@ -55,59 +70,21 @@
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
 
-  .trx-icon { 
-    width: 42px; 
-    height: 42px; 
-    border-radius: 12px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 20px; 
-    flex-shrink: 0;
-  }
+  .trx-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
   .trx-icon.income { background: #D1FAE5; color: var(--green); }
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
   .trx-details { flex: 1; min-width: 0; padding-bottom: 24px; }
-  
   .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 12px; color: var(--text-muted); }
 
-  /* Area Nominal (Kanan Atas) */
-  .trx-amount { 
-    font-size: 15px; 
-    font-weight: 700; 
-    position: absolute; 
-    top: 14px; 
-    right: 14px; 
-  }
+  .trx-amount { font-size: 15px; font-weight: 700; position: absolute; top: 14px; right: 14px; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
   
-  /* Area Tombol Aksi (Kanan Bawah) */
-  .trx-actions { 
-    position: absolute; 
-    bottom: 12px; 
-    right: 14px; 
-    display: flex; 
-    flex-direction: row; 
-    gap: 6px; 
-  }
+  .trx-actions { position: absolute; bottom: 12px; right: 14px; display: flex; flex-direction: row; gap: 6px; }
   
-  .btn-action { 
-    background: #F3F4F6; 
-    border: none; 
-    color: var(--text-muted); 
-    font-size: 11px; 
-    padding: 4px 10px; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    transition: 0.2s; 
-    font-weight: 600; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-  }
+  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; justify-content: center; }
   .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
   
   .btn-delete { color: var(--red); background: #FEF2F2; }
@@ -120,51 +97,18 @@
   
   #transactionList { padding-bottom: 80px; } 
 
-  /* =====================================================
-     CSS UNTUK CUSTOM MODAL (POP-UP HAPUS)
-  ===================================================== */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999;
-    opacity: 0; visibility: hidden; transition: all 0.3s ease;
-  }
+  /* CSS MODAL HAPUS */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
   .modal-overlay.show { opacity: 1; visibility: visible; }
-
-  .modal-box {
-    background: var(--bg-main);
-    width: 85%; max-width: 320px;
-    border-radius: 20px;
-    padding: 24px 20px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
+  .modal-box { background: var(--bg-main); width: 85%; max-width: 320px; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
-
-  .modal-icon {
-    width: 60px; height: 60px;
-    background: #FEF2F2; color: var(--red);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; margin: 0 auto 16px;
-  }
-
+  .modal-icon { width: 60px; height: 60px; background: #FEF2F2; color: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 16px; }
   .modal-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
   .modal-text { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
-
   .modal-actions { display: flex; gap: 10px; }
-  .btn-modal {
-    flex: 1; padding: 12px; border-radius: 10px; border: none;
-    font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
-  }
+  .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
   .btn-cancel { background: #F3F4F6; color: var(--text-main); }
-  .btn-cancel:active { background: #E5E7EB; }
-  
   .btn-confirm { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; }
-  .btn-confirm:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3); }
 </style>
 </head>
 <body>
@@ -183,7 +127,16 @@
   </div>
 
   <div class="content">
-    <div class="section-title">Transaksi Terakhir</div>
+    <!-- HEADER DENGAN FILTER -->
+    <div class="section-header">
+      <div class="section-title">Transaksi Terakhir</div>
+      <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
+        <option value="all">Semua Waktu</option>
+        <option value="thisMonth">Bulan Ini</option>
+        <option value="lastMonth">Bulan Lalu</option>
+      </select>
+    </div>
+
     <div class="transaction-list" id="transactionList">
       <div class="empty-state">Memuat data...</div>
     </div>
@@ -229,9 +182,13 @@
   const deleteModal = document.getElementById('deleteModal');
   const deleteModalText = document.getElementById('deleteModalText');
   let idToDelete = null;
+  
+  let currentUserId = null;
+  let allTransactions = []; // Menyimpan semua data untuk difilter
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      currentUserId = user.uid;
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
       loadTransactions(user.uid);
     } else {
@@ -256,6 +213,82 @@
     } catch (e) { return "Waktu tidak valid"; }
   }
 
+  // =====================================================
+  // LOGIKA FILTER WAKTU
+  // =====================================================
+  window.gantiFilter = function(filterValue) {
+    renderTransaksi(filterValue);
+  }
+
+  function renderTransaksi(filterType) {
+    let filteredData = allTransactions;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    if (filterType === 'thisMonth') {
+      filteredData = allTransactions.filter(item => {
+        if (!item.createdAt) return false;
+        const date = item.createdAt.toDate();
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      });
+    } else if (filterType === 'lastMonth') {
+      filteredData = allTransactions.filter(item => {
+        if (!item.createdAt) return false;
+        const date = item.createdAt.toDate();
+        // Cek bulan lalu
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+      });
+    }
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let html = '';
+
+    if (filteredData.length === 0) {
+      transactionListEl.innerHTML = '<div class="empty-state">Tidak ada transaksi di periode ini.</div>';
+      totalBalanceEl.innerHTML = `<span class="currency">Rp</span> 0`;
+      return;
+    }
+
+    filteredData.forEach((data) => {
+      const amount = Number(data.amount) || 0;
+      if (data.type === 'income') totalIncome += amount;
+      else totalExpense += amount;
+
+      const isIncome = data.type === 'income';
+      const icon = isIncome ? '💰' : '💸';
+      const sign = isIncome ? '+' : '-';
+      const typeClass = isIncome ? 'income' : 'expense';
+      const noteText = data.note ? data.note : "Tanpa Keterangan";
+
+      html += `
+        <div class="transaction-item ${typeClass}">
+          <div class="trx-icon ${typeClass}">${icon}</div>
+          
+          <div class="trx-details">
+            <div class="trx-title">${noteText}</div>
+            <div class="trx-date">${formatTanggal(data.createdAt)}</div>
+          </div>
+          
+          <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
+          
+          <div class="trx-actions">
+            <button class="btn-action" onclick="window.location.href='edit.html?id=${data.id}'">✏️ Edit</button>
+            <button class="btn-action btn-delete" onclick="bukaModal('${data.id}', '${noteText}')">🗑️ Hapus</button>
+          </div>
+        </div>
+      `;
+    });
+
+    transactionListEl.innerHTML = html;
+    const balance = totalIncome - totalExpense;
+    totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
+  }
+  // =====================================================
+
   window.bukaModal = function(docId, keterangan) {
     idToDelete = docId;
     deleteModalText.innerHTML = `Yakin ingin menghapus transaksi <b>"${keterangan}"</b>?<br><br>Tindakan ini tidak bisa dibatalkan.`;
@@ -272,6 +305,7 @@
     try {
       await deleteDoc(doc(db, "pembukuan", idToDelete));
       tutupModal();
+      // onSnapshot akan otomatis mengupdate allTransactions dan me-render ulang
     } catch (error) {
       console.error("Gagal menghapus: ", error);
       alert("Gagal menghapus transaksi. Cek Eruda.");
@@ -286,52 +320,17 @@
     );
 
     onSnapshot(q, (snapshot) => {
-      let totalIncome = 0;
-      let totalExpense = 0;
-      let html = '';
-
-      if (snapshot.empty) {
-        transactionListEl.innerHTML = '<div class="empty-state">Belum ada transaksi. Yuk mulai catat!</div>';
-        totalBalanceEl.innerHTML = `<span class="currency">Rp</span> 0`;
-        return;
-      }
-
+      allTransactions = []; // Reset data
+      
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const docId = docSnap.id;
-        const amount = Number(data.amount) || 0;
-
-        if (data.type === 'income') totalIncome += amount;
-        else totalExpense += amount;
-
-        const isIncome = data.type === 'income';
-        const icon = isIncome ? '💰' : '💸';
-        const sign = isIncome ? '+' : '-';
-        const typeClass = isIncome ? 'income' : 'expense';
-        const noteText = data.note ? data.note : "Tanpa Keterangan";
-
-        html += `
-          <div class="transaction-item ${typeClass}">
-            <div class="trx-icon ${typeClass}">${icon}</div>
-            
-            <div class="trx-details">
-              <div class="trx-title">${noteText}</div>
-              <div class="trx-date">${formatTanggal(data.createdAt)}</div>
-            </div>
-            
-            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
-            
-            <div class="trx-actions">
-              <button class="btn-action" onclick="window.location.href='edit.html?id=${docId}'">✏️ Edit</button>
-              <button class="btn-action btn-delete" onclick="bukaModal('${docId}', '${noteText}')">🗑️ Hapus</button>
-            </div>
-          </div>
-        `;
+        data.id = docSnap.id; // Simpan ID dokumen untuk edit/hapus
+        allTransactions.push(data);
       });
 
-      transactionListEl.innerHTML = html;
-      const balance = totalIncome - totalExpense;
-      totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
+      // Render awal (ambil nilai filter yang sedang aktif)
+      const currentFilter = document.getElementById('filterWaktu').value;
+      renderTransaksi(currentFilter);
       
     }, (error) => {
       console.error("Firestore Error: ", error);
