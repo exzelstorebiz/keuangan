@@ -32,33 +32,25 @@
   .balance-amount { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
   .balance-amount .currency { font-size: 12px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  /* Area Konten (Padding kanan-kiri disesuaikan) */
-  .content { flex: 1; padding: 20px 20px 20px 20px; overflow-y: auto; background: var(--pink-light); }
+  /* Area Konten - Disamakan padding-nya */
+  .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); }
   
-  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   
-  /* Wadah List Transaksi */
-  .transaction-list { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-    margin-top: 15px; 
-    /* Menghapus padding kiri-kanan bawaan agar kotak transaksi bisa melebar penuh */
-    padding: 0; 
-  }
+  .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
   
   /* Kotak Transaksi */
   .transaction-item { 
     background: white; 
     border-radius: 14px; 
-    padding: 14px 16px; /* Padding dalam kotak */
+    padding: 12px 14px; 
     display: flex; 
     align-items: center; 
     gap: 12px; 
     box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
     border-left: 4px solid transparent; 
     position: relative; 
-    width: 100%; /* Memastikan kotak mengambil lebar penuh */
+    width: 100%; 
   }
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
@@ -76,8 +68,7 @@
   .trx-icon.income { background: #D1FAE5; color: var(--green); }
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
-  /* Area Teks (Keterangan & Tanggal) */
-  .trx-details { flex: 1; min-width: 0; padding-bottom: 24px; padding-right: 70px; } /* padding-right agar tidak menabrak nominal */
+  .trx-details { flex: 1; min-width: 0; padding-bottom: 24px; }
   
   .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 12px; color: var(--text-muted); }
@@ -88,7 +79,7 @@
     font-weight: 700; 
     position: absolute; 
     top: 14px; 
-    right: 16px; 
+    right: 14px; 
   }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
@@ -97,7 +88,7 @@
   .trx-actions { 
     position: absolute; 
     bottom: 12px; 
-    right: 16px; 
+    right: 14px; 
     display: flex; 
     flex-direction: row; 
     gap: 6px; 
@@ -193,7 +184,6 @@
 
   <div class="content">
     <div class="section-title">Transaksi Terakhir</div>
-    <!-- Hapus inline style margin pada div ini -->
     <div class="transaction-list" id="transactionList">
       <div class="empty-state">Memuat data...</div>
     </div>
