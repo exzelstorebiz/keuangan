@@ -136,6 +136,8 @@
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      // Tampilkan pesan loading saat mengambil data
+      transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
       loadTransactions(user.uid);
     } else {
       window.location.href = 'login.html';
@@ -147,23 +149,30 @@
   }
 
   function formatTanggal(timestamp) {
-    if (!timestamp) return "Baru saja";
-    // Memastikan timestamp valid (jika menggunakan serverTimestamp)
-    const date = timestamp.toDate ? timestamp.toDate() : new Date();
-    const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-    
-    const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-    if (isToday) return `Hari ini, ${time}`;
-    
-    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-    return `${date.getDate()} ${months[date.getMonth()]}, ${time}`;
+    try {
+      if (!timestamp) return "Baru saja";
+      // Cek apakah timestamp memiliki fungsi toDate (dari Firestore)
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const today = new Date();
+      const isToday = date.toDateString() === today.toDateString();
+      
+      const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+      if (isToday) return `Hari ini, ${time}`;
+      
+      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+      return `${date.getDate()} ${months[date.getMonth()]}, ${time}`;
+    } catch (e) {
+      return "Waktu tidak valid";
+    }
   }
 
   function loadTransactions(userId) {
-    // ✅ Koleksi disesuaikan menjadi "keuangan" sesuai gambar Firebase Anda
-    const q = query(collection(db, "keuangan"));
-    
+    // ✅ JURUS PAMUNGKAS: Kembalikan filter userId dan orderBy
+    const q = query(
+      collection(db, "keuangan"), 
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
 
     onSnapshot(q, (snapshot) => {
       let totalIncome = 0;
@@ -179,7 +188,7 @@
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         
-        // Pastikan amount berupa angka (mencegah error jika data lama berupa string)
+        // Pastikan amount berupa angka
         const amount = Number(data.amount) || 0;
 
         // Hitung saldo
@@ -193,23 +202,24 @@
         const isIncome = data.type === 'income';
         const icon = isIncome ? '💰' : '💸';
         const sign = isIncome ? '+' : '-';
+        const typeClass = isIncome ? 'income' : 'expense';
         
         // Antisipasi jika note kosong
         const noteText = data.note ? data.note : "Tanpa Keterangan";
 
         html += `
-          <div class="transaction-item ${data.type}">
-            <div class="trx-icon ${data.type}">${icon}</div>
+          <div class="transaction-item ${typeClass}">
+            <div class="trx-icon ${typeClass}">${icon}</div>
             <div class="trx-details">
               <div class="trx-title">${noteText}</div>
               <div class="trx-date">${formatTanggal(data.createdAt)}</div>
             </div>
-            <div class="trx-amount ${data.type}">${sign} Rp ${formatRupiah(amount)}</div>
+            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
           </div>
         `;
       });
 
-      // Tampilkan list
+      // Tampilkan list ke layar
       transactionListEl.innerHTML = html;
 
       // Hitung dan tampilkan total saldo
@@ -217,9 +227,8 @@
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
       
     }, (error) => {
-      // Menampilkan error di Console Eruda jika ada masalah (misal: butuh index baru)
       console.error("Firestore Error: ", error);
-      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Buka Console Eruda (pojok kiri bawah) untuk melihat error.</div>`;
+      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Buka Console Eruda untuk melihat error.</div>`;
     });
   }
 </script>
