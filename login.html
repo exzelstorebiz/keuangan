@@ -60,21 +60,14 @@
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // === CONFIG FIREBASE ANDA (SUDAH BENAR) ===
-  
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
-  authDomain: "keuangan-488ad.firebaseapp.com",
-  projectId: "keuangan-488ad",
-  storageBucket: "keuangan-488ad.firebasestorage.app",
-  messagingSenderId: "229611696652",
-  appId: "1:229611696652:web:05b25a6850869de7c93429"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  // === CONFIG FIREBASE ANDA ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyCk4qgZ5Gu2ZHZ6et0T2MG0-5puy6g10mE",
+    authDomain: "keuangan-488ad.firebaseapp.com",
+    projectId: "keuangan-488ad",
+    storageBucket: "keuangan-488ad.firebasestorage.app",
+    messagingSenderId: "229611696652",
+    appId: "1:229611696652:web:05b25a6850869de7c93429"
   };
 
   const app = initializeApp(firebaseConfig);
