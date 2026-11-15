@@ -40,10 +40,10 @@
   .transaction-item { 
     background: white; 
     border-radius: 14px; 
-    padding: 16px 16px; 
+    padding: 16px 14px; /* Padding kanan sedikit dikurangi */
     display: flex; 
     align-items: center; 
-    gap: 14px; 
+    gap: 12px; 
     box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
     border-left: 4px solid transparent; 
   }
@@ -63,22 +63,23 @@
   .trx-icon.expense { background: #FCE7F3; color: var(--pink-dark); }
 
   .trx-details { flex: 1; min-width: 0; }
+  
   .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .trx-date { font-size: 12px; color: var(--text-muted); }
 
-  .trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  /* Area Kanan: Nominal & Tombol Aksi */
+  .trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
   
   .trx-amount { font-size: 15px; font-weight: 700; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
   
-  /* Grup Tombol Aksi (Edit & Hapus) */
-  .trx-actions { display: flex; gap: 6px; }
+  /* Tombol Aksi ditumpuk vertikal (flex-direction: column) */
+  .trx-actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
   
-  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 12px; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; justify-content: center; width: 100%; }
   .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
   
-  /* Warna khusus tombol hapus */
   .btn-delete { color: var(--red); background: #FEF2F2; }
   .btn-delete:active { background: #FEE2E2; }
 
@@ -162,18 +163,13 @@
     } catch (e) { return "Waktu tidak valid"; }
   }
 
-  // =====================================================
   // FUNGSI HAPUS TRANSAKSI
-  // =====================================================
   window.hapusTransaksi = async function(docId, keterangan) {
-    // Konfirmasi sebelum menghapus
     const yakin = confirm(`Yakin ingin menghapus transaksi "${keterangan}"?\n\nTindakan ini tidak bisa dibatalkan.`);
     
     if (yakin) {
       try {
-        // Hapus dokumen dari Firestore
         await deleteDoc(doc(db, "pembukuan", docId));
-        // Karena onSnapshot berjalan, UI akan otomatis terupdate tanpa refresh
       } catch (error) {
         console.error("Gagal menghapus: ", error);
         alert("Gagal menghapus transaksi. Cek Eruda.");
@@ -213,7 +209,7 @@
         const typeClass = isIncome ? 'income' : 'expense';
         const noteText = data.note ? data.note : "Tanpa Keterangan";
 
-        // Render tombol Edit dan Hapus
+        // Render HTML (Perhatikan struktur .trx-actions sekarang vertikal)
         html += `
           <div class="transaction-item ${typeClass}">
             <div class="trx-icon ${typeClass}">${icon}</div>
