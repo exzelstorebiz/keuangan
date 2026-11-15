@@ -148,7 +148,8 @@
 
   function formatTanggal(timestamp) {
     if (!timestamp) return "Baru saja";
-    const date = timestamp.toDate();
+    // Memastikan timestamp valid (jika menggunakan serverTimestamp)
+    const date = timestamp.toDate ? timestamp.toDate() : new Date();
     const today = new Date();
     const isToday = date.toDateString() === today.toDateString();
     
@@ -160,9 +161,9 @@
   }
 
   function loadTransactions(userId) {
-    // Query hanya transaksi milik user ini, urutkan dari yang terbaru
+    // ✅ Koleksi disesuaikan menjadi "keuangan" sesuai gambar Firebase Anda
     const q = query(
-      collection(db, "transactions"),
+      collection(db, "keuangan"), 
       where("userId", "==", userId),
       orderBy("createdAt", "desc")
     );
@@ -181,11 +182,14 @@
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         
+        // Pastikan amount berupa angka (mencegah error jika data lama berupa string)
+        const amount = Number(data.amount) || 0;
+
         // Hitung saldo
         if (data.type === 'income') {
-          totalIncome += data.amount;
+          totalIncome += amount;
         } else {
-          totalExpense += data.amount;
+          totalExpense += amount;
         }
 
         // Render item
@@ -193,14 +197,17 @@
         const icon = isIncome ? '💰' : '💸';
         const sign = isIncome ? '+' : '-';
         
+        // Antisipasi jika note kosong
+        const noteText = data.note ? data.note : "Tanpa Keterangan";
+
         html += `
           <div class="transaction-item ${data.type}">
             <div class="trx-icon ${data.type}">${icon}</div>
             <div class="trx-details">
-              <div class="trx-title">${data.note}</div>
+              <div class="trx-title">${noteText}</div>
               <div class="trx-date">${formatTanggal(data.createdAt)}</div>
             </div>
-            <div class="trx-amount ${data.type}">${sign} Rp ${formatRupiah(data.amount)}</div>
+            <div class="trx-amount ${data.type}">${sign} Rp ${formatRupiah(amount)}</div>
           </div>
         `;
       });
@@ -211,6 +218,11 @@
       // Hitung dan tampilkan total saldo
       const balance = totalIncome - totalExpense;
       totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(balance)}`;
+      
+    }, (error) => {
+      // Menampilkan error di Console Eruda jika ada masalah (misal: butuh index baru)
+      console.error("Firestore Error: ", error);
+      transactionListEl.innerHTML = `<div class="empty-state" style="color:var(--red);">Gagal memuat data. Buka Console Eruda (pojok kiri bawah) untuk melihat error.</div>`;
     });
   }
 </script>
