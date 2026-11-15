@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keuangan Keluarga - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-main: #EC4899; --pink-dark: #BE185D; --pink-light: #FDF2F8;
+    --bg-main: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: var(--pink-light); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+  
+  .card { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15); width: 100%; max-width: 360px; }
+  h2 { color: var(--pink-dark); text-align: center; margin-bottom: 20px; font-size: 24px; }
+  
+  input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid var(--pink-light); border-radius: 12px; box-sizing: border-box; outline: none; font-family: inherit; font-size: 14px; background: var(--pink-light); color: var(--text-main); }
+  input:focus { border-color: var(--pink-main); background: white; }
+  
+  button { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--pink-main), var(--pink-dark)); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
+  button:active { transform: scale(0.98); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  
+  .toggle { text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+  .toggle span { color: var(--pink-main); font-weight: 600; }
+  
+  .hidden { display: none; }
+  #message { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2 id="formTitle">Masuk</h2>
+  
+  <!-- FORM LOGIN -->
+  <div id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="login()" id="btnLogin">Masuk</button>
+  </div>
+
+  <!-- FORM REGISTER -->
+  <div id="registerForm" class="hidden">
+    <input type="text" id="regName" placeholder="Nama (Misal: Istri)">
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Password (min 6 karakter)">
+    <button onclick="register()" id="btnRegister">Daftar</button>
+  </div>
+
+  <!-- TOGGLE -->
+  <div class="toggle" onclick="toggleMode()">
+    <span id="toggleText">Belum punya akun? Daftar</span>
+  </div>
+  
+  <div id="message"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // === GANTI DENGAN CONFIG FIREBASE KEUANGAN ANDA ===
+  const firebaseConfig = {
+  apiKey: "AIzaSyAOtNOWNH90PCswGhahpIgsB0dvMNtMzsM",
+  authDomain: "keuangan-fcb0f.firebaseapp.com",
+  projectId: "keuangan-fcb0f",
+  storageBucket: "keuangan-fcb0f.firebasestorage.app",
+  messagingSenderId: "587539890608",
+  appId: "1:587539890608:web:726f78450ddab3389d1675"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const formTitle = document.getElementById('formTitle');
+  const toggleText = document.getElementById('toggleText');
+  const messageEl = document.getElementById('message');
+  
+  let isLoginMode = true;
+
+  window.toggleMode = () => {
+    isLoginMode = !isLoginMode;
+    loginForm.classList.toggle('hidden', !isLoginMode);
+    registerForm.classList.toggle('hidden', isLoginMode);
+    formTitle.innerText = isLoginMode ? 'Masuk' : 'Daftar';
+    toggleText.innerText = isLoginMode ? 'Belum punya akun? Daftar' : 'Sudah punya akun? Masuk';
+    messageEl.innerText = '';
+  };
+
+  window.register = async () => {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const btn = document.getElementById('btnRegister');
+
+    if (!name || !email || !password) {
+      messageEl.innerText = 'Semua kolom wajib diisi.';
+      messageEl.style.color = 'red';
+      return;
+    }
+
+    btn.disabled = true; btn.innerText = "Memproses..."; messageEl.innerText = '';
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: name,
+        email: email,
+        createdAt: new Date()
+      });
+
+      messageEl.innerText = 'Registrasi berhasil! Silakan masuk.';
+      messageEl.style.color = 'green';
+      toggleMode(); 
+      
+    } catch (error) {
+      messageEl.innerText = 'Error: ' + error.message;
+      messageEl.style.color = 'red';
+    } finally {
+      btn.disabled = false; btn.innerText = "Daftar";
+    }
+  };
+
+  window.login = async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('btnLogin');
+    
+    if (!email || !password) {
+      messageEl.innerText = 'Email dan password wajib diisi.';
+      messageEl.style.color = 'red';
+      return;
+    }
+
+    btn.disabled = true; btn.innerText = "Memproses..."; messageEl.innerText = '';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      messageEl.innerText = 'Login berhasil! Mengalihkan...';
+      messageEl.style.color = 'green';
+      window.location.href = 'index.html'; 
+    } catch (error) {
+      messageEl.innerText = 'Login gagal: Email atau Password salah.';
+      messageEl.style.color = 'red';
+    } finally {
+      btn.disabled = false; btn.innerText = "Masuk";
+    }
+  };
+</script>
+
+</body>
+</html>
