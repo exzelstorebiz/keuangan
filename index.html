@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script> eruda.init(); console.log("Eruda Siap!"); </script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,11 +31,11 @@
   body.dark-mode .btn-action { background: #4B5563; color: #D1D5DB; }
   body.dark-mode .btn-delete { background: rgba(239, 68, 68, 0.2); color: #F87171; }
   body.dark-mode .chart-container canvas { filter: invert(1) hue-rotate(180deg); }
+  body.dark-mode .trx-bottom-row { border-top-color: #4B5563; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; transition: background 0.3s ease; }
   
-  /* Lebar HP dibuat sedikit lebih lebar (max-width: 430px) */
   .phone { width: 100%; max-width: 430px; height: 95vh; max-height: 850px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; transition: background 0.3s ease; }
 
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
@@ -54,100 +52,66 @@
   .balance-amount { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   .balance-amount .currency { font-size: 13px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  /* Area Konten dibuat lebih lega */
-  .content { flex: 1; padding: 15px 15px; overflow-y: auto; background: var(--pink-light); transition: background 0.3s ease; }
+  /* =====================================================
+     PERUBAHAN UTAMA: Padding konten dibuat 0
+     agar kotak transaksi bisa mentok ke pinggir
+  ===================================================== */
+  .content { flex: 1; padding: 0; overflow-y: auto; background: var(--pink-light); transition: background 0.3s ease; }
   
-  .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 12px; }
-  .section-title { font-size: 15px; font-weight: 700; color: var(--text-main); transition: color 0.3s; }
+  /* Padding dikembalikan ke elemen di dalamnya */
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 12px; padding: 0 15px; }
+  .section-title { font-size: 15px; font-weight: 700; color: var(--text-main); transition: color 0.3s; padding: 0 15px; margin-top: 15px; margin-bottom: 10px; }
   
   .filter-select { padding: 8px 12px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: white; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--pink-dark); outline: none; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.3s; }
 
-  .chart-container { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-top: 5px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; height: 220px; width: 100%; transition: 0.3s; }
+  .chart-container { background: var(--bg-card); border-radius: 16px; padding: 16px; margin: 5px 15px 20px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; height: 220px; transition: 0.3s; }
 
-  .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+  /* Wadah List Transaksi tanpa padding agar mentok ke pinggir */
+  .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; padding: 0; }
   
-  /* =====================================================
-     ROOMBAK TOTAL KOTAK TRANSAKSI (LEBIH BESAR & JELAS)
-  ===================================================== */
+  /* KOTAK TRANSAKSI BARU */
   .transaction-item { 
     background: var(--bg-card); 
-    border-radius: 16px; 
+    border-radius: 16px; /* Sudut tetap melengkung */
     padding: 16px; 
     display: flex; 
-    flex-direction: column; /* Ubah jadi kolom agar tombol bisa di bawah */
+    flex-direction: column; 
     gap: 10px; 
     box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
     border-left: 5px solid transparent; 
     position: relative; 
     width: 100%; 
     transition: 0.3s; 
+    /* Hapus border-radius di sisi kiri/kanan agar menempel sempurna */
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
 
-  /* Baris Atas: Ikon, Teks, Nominal */
-  .trx-top-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-  }
-
-  .trx-icon { 
-    width: 48px; 
-    height: 48px; 
-    border-radius: 14px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 24px; /* Emoji lebih besar */
-    flex-shrink: 0;
-  }
+  /* Baris Atas */
+  .trx-top-row { display: flex; align-items: center; gap: 14px; width: 100%; }
+  .trx-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
   .trx-icon.income { background: rgba(16, 185, 129, 0.15); color: var(--green); }
   .trx-icon.expense { background: rgba(236, 72, 153, 0.15); color: var(--pink-main); }
 
   .trx-details { flex: 1; min-width: 0; }
-  
-  /* Teks Keterangan & Tanggal diperbesar */
   .trx-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
   .trx-date { font-size: 13px; color: var(--text-muted); font-weight: 500; transition: color 0.3s; }
 
-  /* Nominal Uang diperbesar & ditaruh di kanan atas */
   .trx-amount { font-size: 16px; font-weight: 800; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
 
-  /* Baris Bawah: Tombol Aksi (Edit & Hapus) */
-  .trx-bottom-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    border-top: 1px dashed #E5E7EB; /* Garis pembatas tipis */
-    padding-top: 10px;
-    width: 100%;
-  }
-  body.dark-mode .trx-bottom-row { border-top-color: #4B5563; }
+  /* Baris Bawah (Tombol) */
+  .trx-bottom-row { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px dashed #E5E7EB; padding-top: 10px; width: 100%; }
 
-  .btn-action { 
-    background: #F3F4F6; 
-    border: none; 
-    color: var(--text-muted); 
-    font-size: 13px; /* Font tombol diperbesar */
-    padding: 8px 14px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    transition: 0.2s; 
-    font-weight: 700; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 4px;
-  }
+  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 13px; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
-  
   .btn-delete { color: var(--red); background: #FEF2F2; }
   .btn-delete:active { background: #FEE2E2; }
-  /* ===================================================== */
 
   .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 14px; font-weight: 500; }
 
@@ -189,8 +153,9 @@
   </div>
 
   <div class="content">
+    <!-- GRAFIK & FILTER -->
     <div class="section-header">
-      <div class="section-title">Ringkasan Grafik</div>
+      <div class="section-title" style="padding:0; margin:0;">Ringkasan Grafik</div>
       <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
         <option value="thisMonth">Bulan Ini</option>
         <option value="lastMonth">Bulan Lalu</option>
@@ -204,6 +169,7 @@
     </div>
 
     <div class="section-title">Transaksi Terakhir</div>
+    <!-- List Transaksi -->
     <div class="transaction-list" id="transactionList">
       <div class="empty-state">Memuat data...</div>
     </div>
@@ -362,9 +328,7 @@
       const typeClass = isIncome ? 'income' : 'expense';
       const noteText = data.note ? data.note : "Tanpa Keterangan";
 
-      // =====================================================
-      // STRUKTUR HTML BARU: 2 BARIS (Atas: Teks. Bawah: Tombol)
-      // =====================================================
+      // STRUKTUR 2 BARIS (Sudut kiri sudah tumpul karena menempel pinggir)
       html += `
         <div class="transaction-item ${typeClass}">
           
