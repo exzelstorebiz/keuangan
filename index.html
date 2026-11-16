@@ -146,28 +146,35 @@
   .btn-confirm { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; }
 
   /* =====================================================
-     CSS KHUSUS UNTUK CETAK PDF
+     CSS KHUSUS UNTUK CETAK PDF (FIXED)
   ===================================================== */
   @media print {
-    /* Sembunyikan semua elemen yang tidak perlu dicetak */
+    /* Sembunyikan elemen yang tidak perlu */
     body { background: white !important; padding: 0; display: block; }
     .phone { box-shadow: none; max-width: 100%; height: auto; border-radius: 0; }
-    .app-header, .chart-container, .section-header, .fab, .trx-actions, .daily-expense, .theme-toggle, .profile-icon { display: none !important; }
     
-    /* Rapikan tampilan konten */
-    .content { padding: 0; overflow: visible; background: white; }
-    .section-title { margin-top: 20px; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #000; padding-bottom: 5px; }
+    /* SEMBUNYIKAN HEADER, GRAFIK, TOMBOL EDIT/HAPUS, DAN FAB */
+    .app-header, .chart-container, .section-header, .fab, .trx-bottom-row, .daily-expense, .theme-toggle, .profile-icon, .trx-icon { 
+      display: none !important; 
+    }
     
-    /* Tampilkan kotak transaksi tanpa animasi */
+    /* Rapikan konten */
+    .content { padding: 0; overflow: visible; background: white; height: auto; }
+    .section-title { margin-top: 20px; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #000; padding-bottom: 5px; color: #000 !important; }
+    
+    /* Kotak Transaksi Sederhana */
     .transaction-item { 
       opacity: 1 !important; transform: none !important; 
-      border: 1px solid #ddd !important; margin-bottom: 10px; 
-      box-shadow: none !important; page-break-inside: avoid;
+      border-bottom: 1px solid #ddd !important; border-radius: 0 !important;
+      margin-bottom: 0 !important; padding: 10px 0 !important;
+      box-shadow: none !important; 
+      page-break-inside: avoid;
     }
-    .transaction-item::before { display: none; } /* Hilangkan garis warna kiri */
+    .transaction-item::before { display: none; } 
     
-    /* Pastikan teks berwarna hitam */
+    /* Teks Warna Hitam */
     .trx-title, .trx-amount, .trx-date { color: #000 !important; }
+    .trx-top-row { gap: 0; justify-content: space-between; }
   }
 </style>
 </head>
@@ -350,7 +357,7 @@
   }
 
   function updateChart(income, expense) {
-    if (myChart) { myChart.data.datasets[0].data = [income, expense]; myChart.update(); }
+    if (myChart) { myChart.datasets = myChart.data.datasets[0].data = [income, expense]; myChart.update(); }
   }
 
   function hitungPengeluaranHariIni() {
@@ -380,7 +387,6 @@
 
   // FUNGSI EKSPOR PDF
   window.eksporPDF = function() {
-    // Memberi jeda sedikit agar animasi flip selesai sebelum dicetak
     setTimeout(() => {
       window.print();
     }, 500);
