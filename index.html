@@ -71,6 +71,7 @@
 
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
   
+  /* PENGATURAN AWAL ANIMASI FLIP */
   .transaction-item { 
     background: var(--bg-card); 
     border-radius: 16px; 
@@ -81,10 +82,8 @@
     box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
     position: relative; 
     width: 100%; 
-    transition: background 0.3s ease; 
     overflow: hidden; 
     
-    /* PENGATURAN AWAL ANIMASI FLIP */
     transform-origin: top center;
     opacity: 0;
     transform: perspective(1000px) rotateX(-20deg) translateY(20px);
@@ -248,6 +247,7 @@
   let idToDelete = null;
   let allTransactions = []; 
   let myChart = null;
+  let observer = null; // Variabel global untuk observer
 
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
@@ -409,16 +409,22 @@
     updateChart(totalIncome, totalExpense);
 
     // =====================================================
-    // LOGIKA ANIMASI FLIP SAAT SCROLL (INTERSECTION OBSERVER)
+    // LOGIKA ANIMASI FLIP (DUA ARAH SCROLL)
     // =====================================================
-    const observer = new IntersectionObserver((entries) => {
+    // Hapus observer lama jika ada (mencegah tumpang tindih)
+    if (observer) observer.disconnect();
+
+    observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
+          // Jika masuk layar, mainkan animasi flip
           entry.target.classList.add('flip-in');
-          observer.unobserve(entry.target); 
+        } else {
+          // Jika keluar layar (scroll jauh), hapus class agar bisa animasi lagi saat masuk
+          entry.target.classList.remove('flip-in');
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05 }); // Threshold 0.05 berarti animasi mulai saat 5% kotak terlihat
 
     document.querySelectorAll('.transaction-item').forEach(item => {
       observer.observe(item);
