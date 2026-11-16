@@ -54,7 +54,25 @@
   .balance-amount { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   .balance-amount .currency { font-size: 13px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  /* Konten dengan padding kiri-kanan 15px agar kotak tidak mentok layar */
+  /* =====================================================
+     CSS BARU UNTUK TOTAL PENGELUARAN HARI INI
+  ===================================================== */
+  .daily-expense {
+    margin-top: 6px;
+    font-size: 11px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    color: #FDE68A; /* Warna emas muda */
+    font-weight: 500;
+  }
+  .daily-expense span {
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+  /* ===================================================== */
+
   .content { flex: 1; padding: 15px; overflow-y: auto; background: var(--pink-light); transition: background 0.3s ease; }
   
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; margin-bottom: 12px; }
@@ -66,12 +84,9 @@
 
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
   
-  /* =====================================================
-     PERBAIKAN KOTAK TRANSAKSI: SUDUT TUMPUL & BORDER MELENGKUNG
-  ===================================================== */
   .transaction-item { 
     background: var(--bg-card); 
-    border-radius: 16px; /* Sudut tumpul di semua sisi */
+    border-radius: 16px; 
     padding: 16px; 
     display: flex; 
     flex-direction: column; 
@@ -80,30 +95,20 @@
     position: relative; 
     width: 100%; 
     transition: 0.3s; 
-    overflow: hidden; /* Penting agar border kiri tidak keluar jalur */
+    overflow: hidden; 
   }
 
   /* Trik Border Kiri Melengkung */
-  .transaction-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 5px; /* Ketebalan garis */
-  }
+  .transaction-item::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 5px; }
   .transaction-item.income::before { background-color: var(--green); }
   .transaction-item.expense::before { background-color: var(--pink-main); }
 
-  /* Baris Atas */
   .trx-top-row { display: flex; align-items: center; gap: 14px; width: 100%; padding-left: 4px; }
   .trx-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
   .trx-icon.income { background: rgba(16, 185, 129, 0.15); color: var(--green); }
   .trx-icon.expense { background: rgba(236, 72, 153, 0.15); color: var(--pink-main); }
 
   .trx-details { flex: 1; min-width: 0; }
-  
-  /* FONT DINAIKKAN 1PX */
   .trx-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
   .trx-date { font-size: 13px; color: var(--text-muted); font-weight: 500; transition: color 0.3s; }
 
@@ -111,7 +116,6 @@
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
 
-  /* Baris Bawah (Tombol) */
   .trx-bottom-row { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px dashed #E5E7EB; padding-top: 10px; width: 100%; margin-left: 4px; }
 
   .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 13px; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -155,6 +159,10 @@
     <div class="balance-card">
       <div class="balance-label"><span>✨</span> Total Saldo</div>
       <div class="balance-amount" id="totalBalance"><span class="currency">Rp</span> Memuat...</div>
+      
+      <!-- TAMBAHAN: TOTAL PENGELUARAN HARI INI -->
+      <div class="daily-expense">🔻 Keluar Hari Ini: <span id="dailyExpense">Rp 0</span></div>
+      
     </div>
   </div>
 
@@ -215,6 +223,7 @@
 
   const totalBalanceEl = document.getElementById('totalBalance');
   const transactionListEl = document.getElementById('transactionList');
+  const dailyExpenseEl = document.getElementById('dailyExpense'); // Elemen baru
   
   const deleteModal = document.getElementById('deleteModal');
   const deleteModalText = document.getElementById('deleteModalText');
@@ -299,6 +308,29 @@
     if (myChart) { myChart.data.datasets[0].data = [income, expense]; myChart.update(); }
   }
 
+  // =====================================================
+  // LOGIKA MENGHITUNG PENGELUARAN HARI INI
+  // =====================================================
+  function hitungPengeluaranHariIni() {
+    const today = new Date();
+    let totalHariIni = 0;
+
+    allTransactions.forEach(item => {
+      if (item.type === 'expense' && item.createdAt) {
+        const date = item.createdAt.toDate();
+        // Cek apakah tanggal, bulan, dan tahunnya sama dengan hari ini
+        if (date.getDate() === today.getDate() && 
+            date.getMonth() === today.getMonth() && 
+            date.getFullYear() === today.getFullYear()) {
+          totalHariIni += Number(item.amount) || 0;
+        }
+      }
+    });
+
+    dailyExpenseEl.innerText = `Rp ${formatRupiah(totalHariIni)}`;
+  }
+  // =====================================================
+
   window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); }
 
   function renderTransaksi(filterType) {
@@ -377,7 +409,12 @@
     onSnapshot(q, (snapshot) => {
       allTransactions = []; 
       snapshot.forEach((docSnap) => { const data = docSnap.data(); data.id = docSnap.id; allTransactions.push(data); });
+      
       renderTransaksi(document.getElementById('filterWaktu').value);
+      
+      // Panggil fungsi hitung pengeluaran harian setiap kali data berubah
+      hitungPengeluaranHariIni(); 
+      
     }, (error) => { console.error("Firestore Error: ", error); });
   }
 </script>
