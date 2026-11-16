@@ -16,19 +16,13 @@
     --bg-main: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280;
     --green: #10B981; --red: #EF4444;
     --bg-card: #FFFFFF;
-    --bg-app: #FDF2F8; /* Default light background */
+    --bg-app: #FDF2F8;
   }
 
-  /* =====================================================
-     TEMA GELAP (DARK MODE)
-  ===================================================== */
+  /* TEMA GELAP (DARK MODE) */
   body.dark-mode {
-    --bg-main: #1F2937; 
-    --bg-app: #111827; 
-    --bg-card: #374151; 
-    --text-main: #F9FAFB; 
-    --text-muted: #9CA3AF;
-    --pink-light: #1F2937;
+    --bg-main: #1F2937; --bg-app: #111827; --bg-card: #374151; 
+    --text-main: #F9FAFB; --text-muted: #9CA3AF; --pink-light: #1F2937;
   }
   body.dark-mode .phone { background: var(--bg-main); }
   body.dark-mode .content { background: var(--bg-app); }
@@ -38,76 +32,129 @@
   body.dark-mode .filter-select { background: var(--bg-card); color: var(--text-main); border-color: #4B5563; }
   body.dark-mode .btn-action { background: #4B5563; color: #D1D5DB; }
   body.dark-mode .btn-delete { background: rgba(239, 68, 68, 0.2); color: #F87171; }
-  body.dark-mode .empty-state { color: var(--text-muted); }
-  
-  /* Warna Teks Grafik di Dark Mode */
-  body.dark-mode .chart-container canvas { filter: invert(1) hue-rotate(180deg); } /* Trik agar garis sumbu jadi putih */
-  /* ===================================================== */
+  body.dark-mode .chart-container canvas { filter: invert(1) hue-rotate(180deg); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; transition: background 0.3s ease; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; transition: background 0.3s ease; }
   
-  .phone { width: 100%; max-width: 420px; height: 90vh; max-height: 800px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; transition: background 0.3s ease; }
+  /* Lebar HP dibuat sedikit lebih lebar (max-width: 430px) */
+  .phone { width: 100%; max-width: 430px; height: 95vh; max-height: 850px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; transition: background 0.3s ease; }
 
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .app-title { font-size: 16px; font-weight: 600; opacity: 0.9; }
   
   .header-icons { display: flex; align-items: center; gap: 10px; }
-  .profile-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1.5px solid var(--gold); }
-
-  /* Tombol Toggle Dark Mode */
-  .theme-toggle { background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
-  .theme-toggle:active { transform: scale(0.9); }
+  .profile-icon { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; border: 1.5px solid var(--gold); }
+  .theme-toggle { background: rgba(255,255,255,0.2); border: none; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
 
   .balance-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 12px 16px; text-align: center; transition: 0.3s; }
-  .balance-label { font-size: 11px; opacity: 0.9; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-  .balance-label span { color: var(--gold-light); font-size: 12px; }
-  .balance-amount { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
-  .balance-amount .currency { font-size: 12px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
+  .balance-label { font-size: 12px; opacity: 0.9; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .balance-label span { color: var(--gold-light); font-size: 13px; }
+  .balance-amount { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .balance-amount .currency { font-size: 13px; font-weight: 500; opacity: 0.8; margin-right: 2px; }
 
-  .content { flex: 1; padding: 20px; overflow-y: auto; background: var(--pink-light); transition: background 0.3s ease; }
+  /* Area Konten dibuat lebih lega */
+  .content { flex: 1; padding: 15px 15px; overflow-y: auto; background: var(--pink-light); transition: background 0.3s ease; }
   
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 12px; }
-  .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); transition: color 0.3s; }
+  .section-title { font-size: 15px; font-weight: 700; color: var(--text-main); transition: color 0.3s; }
   
-  .filter-select { padding: 6px 10px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: white; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--pink-dark); outline: none; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.3s; }
-  .filter-select:focus { border-color: var(--pink-main); }
+  .filter-select { padding: 8px 12px; border-radius: 8px; border: 1px solid #E5E7EB; background-color: white; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--pink-dark); outline: none; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.3s; }
 
-  .chart-container { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-top: 5px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; height: 200px; width: 100%; transition: 0.3s; }
+  .chart-container { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-top: 5px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; height: 220px; width: 100%; transition: 0.3s; }
 
-  .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+  .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
   
-  .transaction-item { background: var(--bg-card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid transparent; position: relative; width: 100%; transition: 0.3s; }
+  /* =====================================================
+     ROOMBAK TOTAL KOTAK TRANSAKSI (LEBIH BESAR & JELAS)
+  ===================================================== */
+  .transaction-item { 
+    background: var(--bg-card); 
+    border-radius: 16px; 
+    padding: 16px; 
+    display: flex; 
+    flex-direction: column; /* Ubah jadi kolom agar tombol bisa di bawah */
+    gap: 10px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
+    border-left: 5px solid transparent; 
+    position: relative; 
+    width: 100%; 
+    transition: 0.3s; 
+  }
   .transaction-item.income { border-left-color: var(--green); }
   .transaction-item.expense { border-left-color: var(--pink-main); }
 
-  .trx-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  /* Baris Atas: Ikon, Teks, Nominal */
+  .trx-top-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .trx-icon { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 14px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 24px; /* Emoji lebih besar */
+    flex-shrink: 0;
+  }
   .trx-icon.income { background: rgba(16, 185, 129, 0.15); color: var(--green); }
   .trx-icon.expense { background: rgba(236, 72, 153, 0.15); color: var(--pink-main); }
 
-  .trx-details { flex: 1; min-width: 0; padding-bottom: 24px; }
-  .trx-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
-  .trx-date { font-size: 12px; color: var(--text-muted); transition: color 0.3s; }
+  .trx-details { flex: 1; min-width: 0; }
+  
+  /* Teks Keterangan & Tanggal diperbesar */
+  .trx-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
+  .trx-date { font-size: 13px; color: var(--text-muted); font-weight: 500; transition: color 0.3s; }
 
-  .trx-amount { font-size: 15px; font-weight: 700; position: absolute; top: 14px; right: 14px; transition: color 0.3s; }
+  /* Nominal Uang diperbesar & ditaruh di kanan atas */
+  .trx-amount { font-size: 16px; font-weight: 800; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
-  
-  .trx-actions { position: absolute; bottom: 12px; right: 14px; display: flex; flex-direction: row; gap: 6px; }
-  
-  .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+  /* Baris Bawah: Tombol Aksi (Edit & Hapus) */
+  .trx-bottom-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px dashed #E5E7EB; /* Garis pembatas tipis */
+    padding-top: 10px;
+    width: 100%;
+  }
+  body.dark-mode .trx-bottom-row { border-top-color: #4B5563; }
+
+  .btn-action { 
+    background: #F3F4F6; 
+    border: none; 
+    color: var(--text-muted); 
+    font-size: 13px; /* Font tombol diperbesar */
+    padding: 8px 14px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 4px;
+  }
   .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
   
   .btn-delete { color: var(--red); background: #FEF2F2; }
   .btn-delete:active { background: #FEE2E2; }
+  /* ===================================================== */
 
-  .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
+  .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 14px; font-weight: 500; }
 
-  .fab { position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
+  .fab { position: absolute; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
   
-  #transactionList { padding-bottom: 80px; } 
+  #transactionList { padding-bottom: 90px; } 
 
   /* CSS MODAL HAPUS */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
@@ -118,7 +165,7 @@
   .modal-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
   .modal-text { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
   .modal-actions { display: flex; gap: 10px; }
-  .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
   .btn-cancel { background: #F3F4F6; color: var(--text-main); }
   .btn-confirm { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; }
 </style>
@@ -130,7 +177,6 @@
     <div class="header-top">
       <div class="app-title">Keuangan Keluarga</div>
       <div class="header-icons">
-        <!-- TOMBOL DARK MODE -->
         <button class="theme-toggle" onclick="toggleDarkMode()" id="themeToggleBtn">🌙</button>
         <a href="profil.html" style="text-decoration: none;"><div class="profile-icon">👩</div></a>
       </div>
@@ -204,13 +250,9 @@
   const deleteModalText = document.getElementById('deleteModalText');
   let idToDelete = null;
   
-  let currentUserId = null;
   let allTransactions = []; 
   let myChart = null;
 
-  // =====================================================
-  // LOGIKA DARK MODE
-  // =====================================================
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
     if (isDark) {
@@ -224,10 +266,8 @@
 
   window.toggleDarkMode = function() {
     const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', !isDark); // Simpan ke HP
+    localStorage.setItem('darkMode', !isDark);
     applyTheme();
-    
-    // Update warna grafik agar tidak ikut ter-invert
     if (myChart) {
       const textColor = !isDark ? '#1F2937' : '#F9FAFB';
       myChart.options.scales.x.ticks.color = textColor;
@@ -236,13 +276,10 @@
     }
   }
 
-  // Panggil applyTheme saat halaman dimuat
   applyTheme();
-  // =====================================================
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      currentUserId = user.uid;
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
       initChart(); 
       loadTransactions(user.uid);
@@ -275,42 +312,21 @@
       type: 'bar',
       data: {
         labels: ['Pemasukan', 'Pengeluaran'],
-        datasets: [{
-          label: 'Total (Rp)',
-          data: [0, 0],
-          backgroundColor: ['#10B981', '#EC4899'],
-          borderRadius: 8,
-          borderSkipped: false,
-          barThickness: 40
-        }]
+        datasets: [{ label: 'Total (Rp)', data: [0, 0], backgroundColor: ['#10B981', '#EC4899'], borderRadius: 8, borderSkipped: false, barThickness: 45 }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: function(context) { return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw); } } }
-        },
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw); } } } },
         scales: {
-          y: {
-            beginAtZero: true,
-            grid: { display: false },
-            ticks: { color: textColor, font: { size: 10 }, callback: function(value) { if (value >= 1000000) return (value / 1000000) + 'jt'; if (value >= 1000) return (value / 1000) + 'rb'; return value; } }
-          },
-          x: {
-            grid: { display: false },
-            ticks: { color: textColor, font: { weight: 'bold', size: 12 } }
-          }
+          y: { beginAtZero: true, grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: 'bold' }, callback: function(value) { if (value >= 1000000) return (value / 1000000) + 'jt'; if (value >= 1000) return (value / 1000) + 'rb'; return value; } } },
+          x: { grid: { display: false }, ticks: { color: textColor, font: { weight: 'bold', size: 13 } } }
         }
       }
     });
   }
 
   function updateChart(income, expense) {
-    if (myChart) {
-      myChart.data.datasets[0].data = [income, expense];
-      myChart.update();
-    }
+    if (myChart) { myChart.data.datasets[0].data = [income, expense]; myChart.update(); }
   }
 
   window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); }
@@ -346,18 +362,26 @@
       const typeClass = isIncome ? 'income' : 'expense';
       const noteText = data.note ? data.note : "Tanpa Keterangan";
 
+      // =====================================================
+      // STRUKTUR HTML BARU: 2 BARIS (Atas: Teks. Bawah: Tombol)
+      // =====================================================
       html += `
         <div class="transaction-item ${typeClass}">
-          <div class="trx-icon ${typeClass}">${icon}</div>
-          <div class="trx-details">
-            <div class="trx-title">${noteText}</div>
-            <div class="trx-date">${formatTanggal(data.createdAt)}</div>
+          
+          <div class="trx-top-row">
+            <div class="trx-icon ${typeClass}">${icon}</div>
+            <div class="trx-details">
+              <div class="trx-title">${noteText}</div>
+              <div class="trx-date">${formatTanggal(data.createdAt)}</div>
+            </div>
+            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
           </div>
-          <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
-          <div class="trx-actions">
+
+          <div class="trx-bottom-row">
             <button class="btn-action" onclick="window.location.href='edit.html?id=${data.id}'">✏️ Edit</button>
             <button class="btn-action btn-delete" onclick="bukaModal('${data.id}', '${noteText}')">🗑️ Hapus</button>
           </div>
+
         </div>
       `;
     });
