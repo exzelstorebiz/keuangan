@@ -71,7 +71,6 @@
 
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
   
-  /* PENGATURAN AWAL ANIMASI FLIP */
   .transaction-item { 
     background: var(--bg-card); 
     border-radius: 16px; 
@@ -90,7 +89,6 @@
     transition: transform 0.4s ease, opacity 0.4s ease, background 0.3s ease;
   }
 
-  /* CLASS YANG DITAMBAHKAN JS SAAT KOTAK MUNCUL */
   .transaction-item.flip-in {
     opacity: 1;
     transform: perspective(1000px) rotateX(0deg) translateY(0);
@@ -146,6 +144,31 @@
   .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
   .btn-cancel { background: #F3F4F6; color: var(--text-main); }
   .btn-confirm { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; }
+
+  /* =====================================================
+     CSS KHUSUS UNTUK CETAK PDF
+  ===================================================== */
+  @media print {
+    /* Sembunyikan semua elemen yang tidak perlu dicetak */
+    body { background: white !important; padding: 0; display: block; }
+    .phone { box-shadow: none; max-width: 100%; height: auto; border-radius: 0; }
+    .app-header, .chart-container, .section-header, .fab, .trx-actions, .daily-expense, .theme-toggle, .profile-icon { display: none !important; }
+    
+    /* Rapikan tampilan konten */
+    .content { padding: 0; overflow: visible; background: white; }
+    .section-title { margin-top: 20px; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #000; padding-bottom: 5px; }
+    
+    /* Tampilkan kotak transaksi tanpa animasi */
+    .transaction-item { 
+      opacity: 1 !important; transform: none !important; 
+      border: 1px solid #ddd !important; margin-bottom: 10px; 
+      box-shadow: none !important; page-break-inside: avoid;
+    }
+    .transaction-item::before { display: none; } /* Hilangkan garis warna kiri */
+    
+    /* Pastikan teks berwarna hitam */
+    .trx-title, .trx-amount, .trx-date { color: #000 !important; }
+  }
 </style>
 </head>
 <body>
@@ -170,12 +193,17 @@
   <div class="content">
     <div class="section-header">
       <div class="section-title" style="padding:0; margin:0;">Ringkasan Grafik</div>
-      <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
-        <option value="thisMonth">Bulan Ini</option>
-        <option value="lastMonth">Bulan Lalu</option>
-        <option value="thisWeek">Minggu Ini</option>
-        <option value="all">Semua Waktu</option>
-      </select>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <!-- TOMBOL EKSPOR PDF -->
+        <button onclick="eksporPDF()" style="background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">📄 PDF</button>
+        
+        <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
+          <option value="thisMonth">Bulan Ini</option>
+          <option value="lastMonth">Bulan Lalu</option>
+          <option value="thisWeek">Minggu Ini</option>
+          <option value="all">Semua Waktu</option>
+        </select>
+      </div>
     </div>
 
     <div class="chart-container">
@@ -247,7 +275,7 @@
   let idToDelete = null;
   let allTransactions = []; 
   let myChart = null;
-  let observer = null; // Variabel global untuk observer
+  let observer = null; 
 
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
@@ -350,6 +378,14 @@
 
   window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); }
 
+  // FUNGSI EKSPOR PDF
+  window.eksporPDF = function() {
+    // Memberi jeda sedikit agar animasi flip selesai sebelum dicetak
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+
   function renderTransaksi(filterType) {
     let filteredData = allTransactions;
     const now = new Date();
@@ -408,28 +444,22 @@
     totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(totalIncome - totalExpense)}`;
     updateChart(totalIncome, totalExpense);
 
-    // =====================================================
-    // LOGIKA ANIMASI FLIP (DUA ARAH SCROLL)
-    // =====================================================
-    // Hapus observer lama jika ada (mencegah tumpang tindih)
+    // LOGIKA ANIMASI FLIP
     if (observer) observer.disconnect();
 
     observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Jika masuk layar, mainkan animasi flip
           entry.target.classList.add('flip-in');
         } else {
-          // Jika keluar layar (scroll jauh), hapus class agar bisa animasi lagi saat masuk
           entry.target.classList.remove('flip-in');
         }
       });
-    }, { threshold: 0.05 }); // Threshold 0.05 berarti animasi mulai saat 5% kotak terlihat
+    }, { threshold: 0.05 });
 
     document.querySelectorAll('.transaction-item').forEach(item => {
       observer.observe(item);
     });
-    // =====================================================
   }
 
   window.bukaModal = function(docId, keterangan) {
