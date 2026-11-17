@@ -94,20 +94,27 @@
 
   .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 14px; font-weight: 500; }
 
-  .fab { position: absolute; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
+  /* PERBAIKAN POSISI TOMBOL (+) AGAR TIDAK TERTUTUP */
+  .fab { position: absolute; bottom: 30px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
   
-  .ai-fab { position: absolute; bottom: 95px; right: 25px; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border: none; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
+  /* TOMBOL AI DENGAN GAMBAR KUSTOM */
+  .ai-fab { position: absolute; bottom: 105px; right: 25px; width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border: 2px solid white; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; overflow: hidden; padding: 0; }
   .ai-fab:active { transform: scale(0.9); }
+  .ai-fab img { width: 100%; height: 100%; object-fit: cover; }
 
-  #transactionList { padding-bottom: 90px; } 
+  #transactionList { padding-bottom: 100px; } 
 
   /* AI CHAT CSS */
   .ai-chat-box { position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; background: var(--bg-main); border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; }
   .ai-chat-box.active { transform: translateY(0); }
-  .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #E5E7EB; }
-  .ai-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+  
+  /* HEADER CHAT DENGAN AVATAR BESAR */
+  .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid #E5E7EB; }
+  .ai-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+  .ai-title img { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; background: white; border: 1px solid #E5E7EB; padding: 2px; }
   .ai-close { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+
   .ai-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
   .ai-message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
   .ai-message.bot { background: var(--ai-bg); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -117,33 +124,12 @@
   .ai-send { background: var(--pink-main); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .ai-send:active { transform: scale(0.9); }
 
-  /* =====================================================
-     CSS UNTUK TYPING INDICATOR (TITIK BERKEDIP)
-  ===================================================== */
-  .typing-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 18px;
-    background: var(--ai-bg);
-    border-radius: 16px;
-    border-bottom-left-radius: 4px;
-    align-self: flex-start;
-    width: fit-content;
-  }
-  .typing-indicator span {
-    width: 6px; height: 6px; background-color: var(--text-muted);
-    border-radius: 50%; display: inline-block;
-    animation: typing 1.4s infinite ease-in-out both;
-  }
+  /* CSS UNTUK TYPING INDICATOR (TITIK BERKEDIP) */
+  .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 12px 18px; background: var(--ai-bg); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; }
+  .typing-indicator span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; display: inline-block; animation: typing 1.4s infinite ease-in-out both; }
   .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
   .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-  
-  @keyframes typing {
-    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-  /* ===================================================== */
+  @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
 
   /* CSS MODAL */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
@@ -215,14 +201,20 @@
     </div>
   </div>
 
-  <button class="ai-fab" onclick="bukaAIChat()">🤖</button>
+  <!-- TOMBOL AI DENGAN GAMBAR KUSTOM ai.png -->
+  <button class="ai-fab" onclick="bukaAIChat()">
+    <img src="ai.png" alt="AI">
+  </button>
+  
   <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
 
 <!-- KOTAK CHAT AI -->
 <div class="ai-chat-box" id="aiChatBox">
   <div class="ai-header">
-    <div class="ai-title">🤖 Asisten Keuangan</div>
+    <div class="ai-title">
+      <img src="ai.png" alt="AI"> Asisten Keuangan
+    </div>
     <button class="ai-close" onclick="tutupAIChat()">✖</button>
   </div>
   <div class="ai-messages" id="aiMessages">
@@ -447,7 +439,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (UPGRADE: TYPING INDICATOR)
+  // LOGIKA AI CHATBOT
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -456,23 +448,14 @@
   window.kirimPesanAI = function() {
     const pesan = aiInput.value.trim();
     if (pesan === '') return;
-    
-    // 1. Tampilkan pesan user
     tambahPesanKeChat(pesan, 'user');
     aiInput.value = '';
-
-    // 2. Tampilkan animasi Typing (titik berkedip)
     tampilkanTypingIndicator();
 
-    // 3. Hitung jeda waktu secara acak (antara 1 detik sampai 2.5 detik)
-    // agar terasa seperti AI sedang mengetik sungguhan
     const jedaAcak = 1000 + Math.random() * 1500; 
 
     setTimeout(() => {
-      // 4. Hapus animasi Typing
       hapusTypingIndicator();
-      
-      // 5. Tampilkan jawaban AI
       const balasan = prosesPertanyaanAI(pesan.toLowerCase());
       tambahPesanKeChat(balasan, 'bot');
     }, jedaAcak);
@@ -486,9 +469,6 @@
     aiMessages.scrollTop = aiMessages.scrollHeight;
   }
 
-  // =====================================================
-  // FUNGSI TYPING INDICATOR
-  // =====================================================
   function tampilkanTypingIndicator() {
     const div = document.createElement('div');
     div.className = 'typing-indicator';
@@ -502,7 +482,6 @@
     const indikator = document.getElementById('typingIndicator');
     if (indikator) indikator.remove();
   }
-  // =====================================================
 
   function formatDaftarTransaksi(arr) {
     let teks = "";
@@ -536,7 +515,6 @@
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
     
-    // 1. LOGIKA SOPAN SANTUN
     if (/(terima kasih|makasih|thanks|thank you|tq|thx)/.test(pertanyaan)) {
       lastAIContext = null;
       return "Sama-sama bos! Senang bisa membantu. Kalau butuh analisis keuangan lagi, panggil saya aja ya. 😊🙏";
@@ -546,7 +524,6 @@
       return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
     }
 
-    // 2. LOGIKA SAPAAN
     const isSapaan = /(halo|hai|pagi|siang|sore|malam)/.test(pertanyaan);
     const isBukanPertanyaanData = !pertanyaan.includes("pengeluaran") && !pertanyaan.includes("pemasukan") && !pertanyaan.includes("saldo") && !pertanyaan.includes("transaksi");
 
@@ -560,7 +537,6 @@
       return respon;
     }
 
-    // 3. FILTER TANGGAL SPESIFIK / KEMARIN
     let targetTanggal = null;
     let labelTanggal = "";
     
@@ -600,7 +576,6 @@
       return `${teksPembuka}*${jenisStr.toUpperCase()} ${labelTanggal.toUpperCase()}*\n${teksData}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
     }
 
-    // 4. FILTER WAKTU UMUM
     let isHariIni = pertanyaan.includes("hari ini");
     let isBulanIni = pertanyaan.includes("bulan ini");
     let isMingguIni = pertanyaan.includes("minggu ini");
