@@ -449,3 +449,139 @@
             <div class="trx-icon ${typeClass}">${icon}</div>
             <div class="trx-details">
               <div class="trx-title" onclick="bukaDetailModal('${safeNoteText}')">${noteText}</div>
+              <div class="trx-date">${formatTanggal(data.createdAt)}</div>
+            </div>
+            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
+          </div>
+          <div class="trx-bottom-row">
+            <button class="btn-action" onclick="window.location.href='edit.html?id=${data.id}'">✏️ Edit</button>
+            <button class="btn-action btn-delete" onclick="bukaModal('${data.id}', '${safeNoteText}')">🗑️ Hapus</button>
+          </div>
+        </div>
+      `;
+    });
+
+    transactionListEl.innerHTML = html;
+    totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(totalIncome - totalExpense)}`;
+    updateChart(totalIncome, totalExpense);
+
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('flip-in');
+        else entry.target.classList.remove('flip-in');
+      });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.transaction-item').forEach(item => observer.observe(item));
+  }
+
+  window.bukaModal = function(docId, keterangan) {
+    idToDelete = docId;
+    deleteModalText.innerHTML = `Yakin ingin menghapus transaksi <b>"${keterangan}"</b>?<br><br>Tindakan ini tidak bisa dibatalkan.`;
+    deleteModal.classList.add('show');
+  }
+
+  window.tutupModal = function() { deleteModal.classList.remove('show'); idToDelete = null; }
+
+  window.konfirmasiHapus = async function() {
+    if (!idToDelete) return;
+    try { await deleteDoc(doc(db, "pembukuan", idToDelete)); tutupModal(); } 
+    catch (error) { console.error("Gagal menghapus: ", error); alert("Gagal menghapus transaksi."); }
+  }
+
+  function loadTransactions(userId) {
+    const q = query(collection(db, "pembukuan"), where("userId", "==", userId), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      allTransactions = []; 
+      snapshot.forEach((docSnap) => { const data = docSnap.data(); data.id = docSnap.id; allTransactions.push(data); });
+      renderTransaksi(document.getElementById('filterWaktu').value);
+      hitungPengeluaranHariIni(); 
+    }, (error) => { console.error("Firestore Error: ", error); });
+  }
+
+  // =====================================================
+  // LOGIKA AI CHATBOT (RULE-BASED)
+  // =====================================================
+  window.bukaAIChat = function() {
+    aiChatBox.classList.add('active');
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }
+
+  window.tutupAIChat = function() {
+    aiChatBox.classList.remove('active');
+  }
+
+  window.handleAIEnter = function(e) {
+    if (e.key === 'Enter') kirimPesanAI();
+  }
+
+  window.kirimPesanAI = function() {
+    const pesan = aiInput.value.trim();
+    if (pesan === '') return;
+
+    // Tampilkan pesan user
+    tambahPesanKeChat(pesan, 'user');
+    aiInput.value = '';
+
+    // Beri jeda sedikit seolah AI sedang berpikir
+    setTimeout(() => {
+      const balasan = prosesPertanyaanAI(pesan.toLowerCase());
+      tambahPesanKeChat(balasan, 'bot');
+    }, 500);
+  }
+
+  function tambahPesanKeChat(teks, pengirim) {
+    const div = document.createElement('div');
+    div.className = `ai-message ${pengirim}`;
+    div.innerText = teks;
+    aiMessages.appendChild(div);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }
+
+  function prosesPertanyaanAI(pertanyaan) {
+    // Hitung total
+    let totalMasuk = 0; let totalKeluar = 0;
+    allTransactions.forEach(t => {
+      if(t.type === 'income') totalMasuk += Number(t.amount);
+      else totalKeluar += Number(t.amount);
+    });
+    const saldo = totalMasuk - totalKeluar;
+    
+    // Hitung pengeluaran bulan ini
+    const now = new Date();
+    let keluarBulanIni = 0;
+    allTransactions.forEach(t => {
+      if(t.type === 'expense' && t.createdAt) {
+        const d = t.createdAt.toDate();
+        if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+          keluarBulanIni += Number(t.amount);
+        }
+      }
+    });
+
+    // Logika Pencocokan Kata Kunci (Keyword)
+    if (pertanyaan.includes("saldo") || pertanyaan.includes("sisa uang")) {
+      return `Total saldo bos saat ini adalah *Rp ${formatRupiah(saldo)}*.`;
+    } 
+    else if (pertanyaan.includes("boros") || pertanyaan.includes("pengeluaran bulan ini")) {
+      if (keluarBulanIni > 1000000) return `Waduh, pengeluaran bulan ini sudah *Rp ${formatRupiah(keluarBulanIni)}*. Coba dikurangi jajan dan belanja online-nya ya bos! 😅`;
+      return `Pengeluaran bulan ini sebesar *Rp ${formatRupiah(keluarBulanIni)}*. Masih aman terkendali, pertahankan! 💪`;
+    }
+    else if (pertanyaan.includes("terbesar") || pertanyaan.includes("paling mahal")) {
+      if(allTransactions.length === 0) return "Belum ada transaksi bos.";
+      const maxTrx = allTransactions.reduce((prev, current) => (Number(prev.amount) > Number(current.amount)) ? prev : current);
+      return `Pengeluaran terbesar bos adalah *"${maxTrx.note}"* sebesar *Rp ${formatRupiah(maxTrx.amount)}*.`;
+    }
+    else if (pertanyaan.includes("halo") || pertanyaan.includes("hai") || pertanyaan.includes("pagi")) {
+      return "Halo bos! Ada yang bisa saya bantu dengan keuangan bos hari ini? 😊";
+    }
+    else if (pertanyaan.includes("terima kasih") || pertanyaan.includes("makasih")) {
+      return "Sama-sama bos! Senang bisa membantu. Tetap bijak mengatur keuangan ya! 🙏";
+    }
+    else {
+      return "Maaf bos, saya AI sederhana yang belum mengerti pertanyaan itu. Coba tanya: 'Berapa saldoku?', 'Bulan ini boros gak?', atau 'Pengeluaran terbesar apa?'";
+    }
+  }
+</script>
+</body>
+</html>
