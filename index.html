@@ -198,7 +198,7 @@
     <button class="ai-close" onclick="tutupAIChat()">✖</button>
   </div>
   <div class="ai-messages" id="aiMessages">
-    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Tanya apa saja soal data keuangan bos. (Contoh: "Pengeluaran hari ini apa saja?", "Berapa total jajan bulan ini?", "Rata-rata pengeluaran harian?")</div>
+    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Tanya apa saja soal data keuangan bos. (Contoh: "Pengeluaran kemarin apa saja?", "Total jajan bulan ini?", "Selamat pagi")</div>
   </div>
   <div class="ai-input-area">
     <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pertanyaan..." onkeypress="handleAIEnter(event)">
@@ -265,8 +265,6 @@
   let allTransactions = []; 
   let myChart = null;
   let observer = null; 
-  
-  // Variabel konteks untuk AI (Ingat percakapan sebelumnya)
   let lastAIContext = null; 
 
   function applyTheme() {
@@ -421,7 +419,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (UPGRADE: DAFTAR TRANSAKSI & KONTEKS)
+  // LOGIKA AI CHATBOT (UPGRADE: SAPAAN, KEMARIN, KALIMAT MANUSIAWI)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -446,7 +444,6 @@
     aiMessages.scrollTop = aiMessages.scrollHeight;
   }
 
-  // Fungsi untuk memformat daftar transaksi agar rapi
   function formatDaftarTransaksi(arr) {
     let teks = "";
     arr.forEach(t => {
@@ -456,110 +453,206 @@
     return teks;
   }
 
+  // --- KUMPULAN KALIMAT MANUSIAWI ---
+  const sapaanPagi = ["Selamat pagi bos! Semangat menjalani hari ini ya. 🌅", "Pagi bos! Jangan lupa sarapan sebelum beraktivitas. ☕", "Selamat pagi, bos! Ada yang bisa saya bantu dengan keuangan hari ini?"];
+  const sapaanSiang = ["Selamat siang bos! Jangan lupa istirahat sejenak. ☀️", "Siang bos! Sudah makan siang? Semoga harimu lancar. 🍽️", "Halo bos, selamat siang! Ada yang bisa saya bantu?"];
+  const sapaanMalam = ["Selamat malam bos! Waktunya rileks dan istirahat. 🌙", "Malam bos! Terima kasih sudah bekerja keras hari ini. 🌌", "Halo bos, selamat malam. Ada yang ingin dicek soal keuangan?"];
+  const sapaanUmum = ["Halo bos! Senang bisa ngobrol lagi. 😊", "Hai bos! Ada yang bisa saya bantu?", "Halo! Saya siap membantu menganalisis keuangan bos."];
+
+  const pembukaData = [
+    "Siap bos! Saya sudah cek catatan keuangannya. Ini rinciannya:\n\n",
+    "Oke bos, mari kita lihat datanya ya. Berikut rinciannya:\n\n",
+    "Tentu bos, ini dia data yang berhasil saya temukan:\n\n",
+    "Baik bos, ini ringkasan transaksinya:\n\n"
+  ];
+
+  function generatePenutup(total, jenis, jumlahTransaksi) {
+    if (jumlahTransaksi === 0) {
+      return "Sepertinya belum ada catatan untuk periode ini bos. Yuk, mulai rajin mencatat agar keuangan lebih terkontrol! 😊";
+    }
+    if (jenis === 'pengeluaran') {
+      if (total > 500000) return "Waduh, total pengeluarannya cukup besar ya bos. Coba dievaluasi lagi, mana yang bisa dihemat. 💪";
+      if (total > 100000) return "Pengeluaran bos masih wajar. Tetap bijak dalam berbelanja ya! 👍";
+      return "Alhamdulillah, pengeluaran bos sangat terkendali. Pertahankan ya bos! ✨";
+    } else if (jenis === 'pemasukan') {
+      return "Alhamdulillah, rezekinya lancar bos! Jangan lupa sisihkan untuk tabungan dan sedekah ya. 🙏";
+    } else {
+      return "Itulah rangkuman keuangan bos. Semoga rezekinya selalu berkah dan cukup! 🤲";
+    }
+  }
+
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
-    const todayDate = now.getDate();
-    const todayMonth = now.getMonth();
-    const todayYear = now.getFullYear();
+    const jamSekarang = now.getHours();
 
-    // Kata kunci waktu
-    let isHariIni = pertanyaan.includes("hari ini") || pertanyaan.includes("hr ini");
-    let isBulanIni = pertanyaan.includes("bulan ini") || pertanyaan.includes("bln ini");
+    // ==========================================
+    // 1. LOGIKA SAPAAN (PAGI/SIANG/MALAM/HALO)
+    // ==========================================
+    const isSapaan = /(halo|hai|pagi|siang|sore|malam)/.test(pertanyaan);
+    // Pastikan bukan pertanyaan tentang data (misal: "pengeluaran malam ini")
+    const isBukanPertanyaanData = !pertanyaan.includes("pengeluaran") && !pertanyaan.includes("pemasukan") && !pertanyaan.includes("saldo") && !pertanyaan.includes("transaksi");
+
+    if (isSapaan && isBukanPertanyaanData) {
+      let respon = "";
+      if (pertanyaan.includes("pagi")) respon = sapaanPagi[Math.floor(Math.random() * sapaanPagi.length)];
+      else if (pertanyaan.includes("siang")) respon = sapaanSiang[Math.floor(Math.random() * sapaanSiang.length)];
+      else if (pertanyaan.includes("malam")) respon = sapaanMalam[Math.floor(Math.random() * sapaanMalam.length)];
+      else respon = sapaanUmum[Math.floor(Math.random() * sapaanUmum.length)];
+      
+      lastAIContext = null; // Reset konteks
+      return respon;
+    }
+
+    // ==========================================
+    // 2. FILTER TANGGAL SPESIFIK / KEMARIN
+    // ==========================================
+    let targetTanggal = null;
+    let labelTanggal = "";
+    
+    if (pertanyaan.includes("kemarin")) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      targetTanggal = yesterday.getDate();
+      labelTanggal = `Kemarin (Tgl ${targetTanggal})`;
+    } else {
+      const matchTanggal = pertanyaan.match(/tanggal\s+(\d{1,2})/);
+      if (matchTanggal) {
+        targetTanggal = parseInt(matchTanggal[1]);
+        labelTanggal = `Tanggal ${targetTanggal}`;
+      }
+    }
+
+    if (targetTanggal) {
+      // Filter transaksi berdasarkan tanggal target
+      const transaksiTanggal = allTransactions.filter(t => {
+        if(!t.createdAt) return false;
+        const d = t.createdAt.toDate();
+        return d.getDate() === targetTanggal;
+      });
+
+      if (transaksiTanggal.length === 0) {
+        lastAIContext = null;
+        return `Sepertinya tidak ada catatan transaksi pada ${labelTanggal} bos. Mungkin lupa dicatat? 😊`;
+      }
+
+      // Tentukan jenis (pengeluaran/pemasukan/semua)
+      let filterJenis = transaksiTanggal;
+      let jenisStr = "transaksi";
+      if (pertanyaan.includes("pengeluaran")) { filterJenis = transaksiTanggal.filter(t => t.type === 'expense'); jenisStr = "pengeluaran"; }
+      else if (pertanyaan.includes("pemasukan")) { filterJenis = transaksiTanggal.filter(t => t.type === 'income'); jenisStr = "pemasukan"; }
+
+      if (filterJenis.length === 0) {
+        lastAIContext = null;
+        return `Tidak ada catatan ${jenisStr} pada ${labelTanggal} bos.`;
+      }
+
+      // Simpan konteks
+      lastAIContext = filterJenis;
+      lastAIContext.label = labelTanggal;
+
+      // Susun Balasan
+      let total = 0;
+      filterJenis.forEach(t => total += Number(t.amount));
+      
+      let teksPembuka = pembukaData[Math.floor(Math.random() * pembukaData.length)];
+      let teksData = formatDaftarTransaksi(filterJenis);
+      let teksPenutup = generatePenutup(total, jenisStr, filterJenis.length);
+
+      return `${teksPembuka}*${jenisStr.toUpperCase()} ${labelTanggal.toUpperCase()}*\n${teksData}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
+    }
+
+    // ==========================================
+    // 3. FILTER WAKTU UMUM
+    // ==========================================
+    let isHariIni = pertanyaan.includes("hari ini");
+    let isBulanIni = pertanyaan.includes("bulan ini");
     let isMingguIni = pertanyaan.includes("minggu ini");
     let isTahunIni = pertanyaan.includes("tahun ini");
-
-    // Filter transaksi berdasarkan waktu
     let transaksiRelevan = allTransactions;
     let labelWaktu = "Semua Waktu";
 
     if (isHariIni) {
-      transaksiRelevan = allTransactions.filter(t => {
-        if(!t.createdAt) return false;
-        const d = t.createdAt.toDate();
-        return d.getDate() === todayDate && d.getMonth() === todayMonth && d.getFullYear() === todayYear;
-      });
+      transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
       labelWaktu = "Hari Ini";
     } else if (isBulanIni) {
-      transaksiRelevan = allTransactions.filter(t => {
-        if(!t.createdAt) return false;
-        const d = t.createdAt.toDate();
-        return d.getMonth() === todayMonth && d.getFullYear() === todayYear;
-      });
+      transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
       labelWaktu = "Bulan Ini";
     } else if (isMingguIni) {
       const lastWeek = new Date(now.setDate(now.getDate() - 7));
-      transaksiRelevan = allTransactions.filter(t => {
-        if(!t.createdAt) return false;
-        const d = t.createdAt.toDate();
-        return d >= lastWeek;
-      });
+      transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d >= lastWeek; });
       labelWaktu = "Minggu Ini";
     } else if (isTahunIni) {
-      transaksiRelevan = allTransactions.filter(t => {
-        if(!t.createdAt) return false;
-        const d = t.createdAt.toDate();
-        return d.getFullYear() === todayYear;
-      });
+      transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d.getFullYear() === now.getFullYear(); });
       labelWaktu = "Tahun Ini";
     }
 
-    // CEK KONTEKS LANJUTAN (Misal: "Untuk beli apa?")
+    // CEK KONTEKS LANJUTAN ("Beli apa?")
     if (pertanyaan.includes("beli apa") || pertanyaan.includes("apa saja") || pertanyaan.includes("rincian") || pertanyaan.includes("detail")) {
       if (lastAIContext) {
         if (lastAIContext.length === 0) return "Tidak ada transaksi untuk dirinci bos.";
-        
-        // Filter hanya pengeluaran
         const pengeluaran = lastAIContext.filter(t => t.type === 'expense');
         if (pengeluaran.length === 0) return "Tidak ada pengeluaran untuk dirinci bos.";
+        let total = 0; pengeluaran.forEach(t => total += Number(t.amount));
         
-        let total = 0;
-        pengeluaran.forEach(t => total += Number(t.amount));
-        
-        return `Berikut rincian pengeluaran (${lastAIContext.label || 'periode tersebut'}):\n\n${formatDaftarTransaksi(pengeluaran)}\n**Total: Rp ${formatRupiah(total)}**`;
+        let teksData = formatDaftarTransaksi(pengeluaran);
+        let teksPenutup = generatePenutup(total, 'pengeluaran', pengeluaran.length);
+        return `Baik bos, ini rinciannya:\n\n${teksData}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
       }
     }
 
-    // --- DETEKSI PERTANYAAN UMUM ---
-
-    // 1. Saldo
+    // ==========================================
+    // 4. PERTANYAAN UMUM (SALDO, DLL)
+    // ==========================================
     if (pertanyaan.includes("saldo") || pertanyaan.includes("sisa uang")) {
       let totalMasuk = 0; let totalKeluar = 0;
       transaksiRelevan.forEach(t => { if(t.type === 'income') totalMasuk += Number(t.amount); else totalKeluar += Number(t.amount); });
       const saldo = totalMasuk - totalKeluar;
-      lastAIContext = null; // Reset konteks
-      let status = saldo > 0 ? "Aman bos! 👍" : "Waduh, saldo minus. Hati-hati ya bos! ⚠️";
-      return `Total Saldo (${labelWaktu}): **Rp ${formatRupiah(saldo)}**\n(Pemasukan: Rp ${formatRupiah(totalMasuk)} | Pengeluaran: Rp ${formatRupiah(totalKeluar)})\n${status}`;
+      lastAIContext = null;
+      
+      let respon = `Siap bos, saya sudah hitung. Total Saldo (${labelWaktu}) saat ini adalah **Rp ${formatRupiah(saldo)}**.\n\n`;
+      respon += `(Pemasukan: Rp ${formatRupiah(totalMasuk)} | Pengeluaran: Rp ${formatRupiah(totalKeluar)})\n\n`;
+      
+      if (saldo > 0) respon += "Alhamdulillah, kondisi keuangan masih aman. Tetap bijak mengatur ya bos! 👍";
+      else respon += "Waduh, saldonya minus bos. Yuk, kurangi pengeluaran yang tidak perlu! ⚠️";
+      
+      return respon;
     }
 
-    // 2. Pengeluaran (Tampilkan Daftar)
     if (pertanyaan.includes("pengeluaran") || pertanyaan.includes("keluar") || pertanyaan.includes("belanja")) {
       const pengeluaran = transaksiRelevan.filter(t => t.type === 'expense');
-      if (pengeluaran.length === 0) { lastAIContext = null; return `Tidak ada pengeluaran di ${labelWaktu}.`; }
+      if (pengeluaran.length === 0) { lastAIContext = null; return `Tidak ada pengeluaran di ${labelWaktu} bos.`; }
       
-      lastAIContext = pengeluaran; // Simpan konteks untuk pertanyaan lanjutan
-      lastAIContext.label = labelWaktu; // Simpan label waktu
+      lastAIContext = pengeluaran; 
+      lastAIContext.label = labelWaktu;
 
-      let total = 0;
-      pengeluaran.forEach(t => total += Number(t.amount));
+      let total = 0; pengeluaran.forEach(t => total += Number(t.amount));
       
-      return `Berikut pengeluaran ${labelWaktu}:\n\n${formatDaftarTransaksi(pengeluaran)}\n**Total: Rp ${formatRupiah(total)}**`;
+      let teksPembuka = pembukaData[Math.floor(Math.random() * pembukaData.length)];
+      let teksData = formatDaftarTransaksi(pengeluaran);
+      let teksPenutup = generatePenutup(total, 'pengeluaran', pengeluaran.length);
+
+      return `${teksPembuka}*PENGELUARAN ${labelWaktu.toUpperCase()}*\n${teksData}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
     }
 
-    // 3. Pemasukan (Tampilkan Daftar)
     if (pertanyaan.includes("pemasukan") || pertanyaan.includes("masuk") || pertanyaan.includes("gaji") || pertanyaan.includes("dapat uang")) {
       const pemasukan = transaksiRelevan.filter(t => t.type === 'income');
-      if (pemasukan.length === 0) { lastAIContext = null; return `Tidak ada pemasukan di ${labelWaktu}.`; }
+      if (pemasukan.length === 0) { lastAIContext = null; return `Tidak ada pemasukan di ${labelWaktu} bos.`; }
       
       lastAIContext = pemasukan;
       lastAIContext.label = labelWaktu;
 
-      let total = 0;
-      pemasukan.forEach(t => total += Number(t.amount));
+      let total = 0; pemasukan.forEach(t => total += Number(t.amount));
 
-      return `Berikut pemasukan ${labelWaktu}:\n\n${formatDaftarTransaksi(pemasukan)}\n**Total: Rp ${formatRupiah(total)}**`;
+      let teksPembuka = pembukaData[Math.floor(Math.random() * pembukaData.length)];
+      let teksData = formatDaftarTransaksi(pemasukan);
+      let teksPenutup = generatePenutup(total, 'pemasukan', pemasukan.length);
+
+      return `${teksPembuka}*PEMASUKAN ${labelWaktu.toUpperCase()}*\n${teksData}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
     }
 
-    // 4. Pencarian Spesifik (Misal: "total jajan")
+    // ==========================================
+    // 5. PENCARIAN SPESIFIK & RATA-RATA
+    // ==========================================
     const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ').filter(kata => 
       !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "hari", "ini", "bulan", "minggu", "tahun", "pengeluaran", "pemasukan"].includes(kata)
     );
@@ -573,34 +666,33 @@
       if (transaksiCocok.length > 0) {
         lastAIContext = transaksiCocok;
         lastAIContext.label = labelWaktu;
+        let totalCocok = 0; transaksiCocok.forEach(t => totalCocok += Number(t.amount));
         
-        let totalCocok = 0;
-        transaksiCocok.forEach(t => totalCocok += Number(t.amount));
-        
-        return `Ditemukan ${transaksiCocok.length} transaksi untuk "${kataKunci.join(' ')}" (${labelWaktu}):\n\n${formatDaftarTransaksi(transaksiCocok)}\n**Total: Rp ${formatRupiah(totalCocok)}**`;
+        let teksPembuka = pembukaData[Math.floor(Math.random() * pembukaData.length)];
+        let teksData = formatDaftarTransaksi(transaksiCocok);
+        let teksPenutup = generatePenutup(totalCocok, 'transaksi', transaksiCocok.length);
+
+        return `${teksPembuka}Ditemukan ${transaksiCocok.length} transaksi untuk "${kataKunci.join(' ')}" (${labelWaktu}):\n\n${teksData}\n**Total: Rp ${formatRupiah(totalCocok)}**\n\n${teksPenutup}`;
       }
     }
 
-    // 5. Rata-rata Harian
     if (pertanyaan.includes("rata-rata") || pertanyaan.includes("harian")) {
       if (isBulanIni) {
         const totalKeluar = transaksiRelevan.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0);
-        const hariBerjalan = todayDate;
-        const rataRata = totalKeluar / hariBerjalan;
+        const rataRata = totalKeluar / now.getDate();
         lastAIContext = null;
-        return `Rata-rata pengeluaran harian bos bulan ini adalah **Rp ${formatRupiah(Math.round(rataRata))}/hari**.\n(Total: Rp ${formatRupiah(totalKeluar)} dibagi ${hariBerjalan} hari)`;
+        let respon = `Oke bos, saya sudah hitung. Rata-rata pengeluaran harian bos bulan ini adalah **Rp ${formatRupiah(Math.round(rataRata))}/hari**.\n\n`;
+        respon += `(Total pengeluaran Rp ${formatRupiah(totalKeluar)} dibagi ${now.getDate()} hari berjalan).\n\n`;
+        respon += "Semoga pengeluaran bos tetap stabil dan terkendali ya! 📊";
+        return respon;
       }
       return "Untuk melihat rata-rata, tambahkan kata 'bulan ini' ya bos. Contoh: 'Rata-rata pengeluaran bulan ini?'";
     }
 
-    // 6. Sapaan
-    if (pertanyaan.includes("halo") || pertanyaan.includes("hai") || pertanyaan.includes("pagi")) {
-      lastAIContext = null;
-      return "Halo bos! Saya siap membantu menganalisis keuangan bos. Silakan tanya apa saja! 😊";
-    }
-
-    // 7. Fallback
-    return "Maaf bos, saya belum memahami pertanyaan itu. Coba gunakan kata kunci seperti:\n- Nama barang (contoh: 'Berapa total jajan?')\n- Waktu (contoh: 'Pengeluaran hari ini apa saja?')\n- Kata 'saldo', 'pemasukan', atau 'rata-rata'.";
+    // ==========================================
+    // 6. FALLBACK (TIDAK PAHAM)
+    // ==========================================
+    return "Maaf bos, saya belum memahami pertanyaan itu. Coba gunakan kata kunci seperti:\n- Nama barang (contoh: 'Berapa total jajan?')\n- Waktu (contoh: 'Pengeluaran kemarin apa saja?')\n- Tanggal (contoh: 'Pemasukan tanggal 15?')\n- Kata 'saldo', 'pemasukan', atau 'rata-rata'.";
   }
 </script>
 </body>
