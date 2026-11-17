@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keuangan Keluarga</title>
 
-<!-- LOGO APLIKASI -->
 <link rel="icon" type="image/png" href="logoles.png">
 <link rel="apple-touch-icon" href="logoles.png">
 
@@ -20,12 +19,14 @@
     --green: #10B981; --red: #EF4444;
     --bg-card: #FFFFFF;
     --bg-app: #FDF2F8;
+    --ai-bg: #F3F4F6;
   }
 
   /* TEMA GELAP (DARK MODE) */
   body.dark-mode {
     --bg-main: #1F2937; --bg-app: #111827; --bg-card: #374151; 
     --text-main: #F9FAFB; --text-muted: #9CA3AF; --pink-light: #1F2937;
+    --ai-bg: #4B5563;
   }
   body.dark-mode .phone { background: var(--bg-main); }
   body.dark-mode .content { background: var(--bg-app); }
@@ -37,6 +38,12 @@
   body.dark-mode .btn-delete { background: rgba(239, 68, 68, 0.2); color: #F87171; }
   body.dark-mode .chart-container canvas { filter: invert(1) hue-rotate(180deg); }
   body.dark-mode .trx-bottom-row { border-top-color: #4B5563; }
+  
+  /* DARK MODE UNTUK AI CHAT */
+  body.dark-mode .ai-chat-box { background: var(--bg-card); }
+  body.dark-mode .ai-message.bot { background: var(--ai-bg); color: var(--text-main); }
+  body.dark-mode .ai-input-area { border-top-color: #4B5563; }
+  body.dark-mode .ai-input { background: var(--ai-bg); color: var(--text-main); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; transition: background 0.3s ease; }
@@ -72,27 +79,15 @@
   .transaction-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
   
   .transaction-item { 
-    background: var(--bg-card); 
-    border-radius: 16px; 
-    padding: 16px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05); 
-    position: relative; 
-    width: 100%; 
-    overflow: hidden; 
-    
-    transform-origin: top center;
-    opacity: 0;
+    background: var(--bg-card); border-radius: 16px; padding: 16px; 
+    display: flex; flex-direction: column; gap: 10px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05); position: relative; width: 100%; overflow: hidden; 
+    transform-origin: top center; opacity: 0;
     transform: perspective(1000px) rotateX(-20deg) translateY(20px);
     transition: transform 0.4s ease, opacity 0.4s ease, background 0.3s ease;
   }
 
-  .transaction-item.flip-in {
-    opacity: 1;
-    transform: perspective(1000px) rotateX(0deg) translateY(0);
-  }
+  .transaction-item.flip-in { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); }
 
   .transaction-item::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 5px; }
   .transaction-item.income::before { background-color: var(--green); }
@@ -104,22 +99,13 @@
   .trx-icon.expense { background: rgba(236, 72, 153, 0.15); color: var(--pink-main); }
 
   .trx-details { flex: 1; min-width: 0; }
-  
-  .trx-title { 
-    font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; 
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-    transition: color 0.3s; cursor: pointer; display: block;
-  }
-  .trx-title:active { opacity: 0.7; } 
-  
+  .trx-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; cursor: pointer; display: block; }
   .trx-date { font-size: 13px; color: var(--text-muted); font-weight: 500; transition: color 0.3s; }
-
   .trx-amount { font-size: 17px; font-weight: 800; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .trx-amount.income { color: var(--green); }
   .trx-amount.expense { color: var(--text-main); }
 
   .trx-bottom-row { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px dashed #E5E7EB; padding-top: 10px; width: 100%; margin-left: 4px; }
-
   .btn-action { background: #F3F4F6; border: none; color: var(--text-muted); font-size: 13px; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .btn-action:active { background: #E5E7EB; transform: scale(0.95); }
   .btn-delete { color: var(--red); background: #FEF2F2; }
@@ -130,7 +116,42 @@
   .fab { position: absolute; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 30; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
   
+  /* FAB UNTUK AI */
+  .ai-fab { 
+    position: absolute; bottom: 95px; right: 25px; width: 50px; height: 50px; border-radius: 50%; 
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6); border: none; color: white; font-size: 24px; 
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); 
+    cursor: pointer; z-index: 30; transition: transform 0.2s; 
+  }
+  .ai-fab:active { transform: scale(0.9); }
+
   #transactionList { padding-bottom: 90px; } 
+
+  /* =====================================================
+     CSS UNTUK AI CHAT
+  ===================================================== */
+  .ai-chat-box {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+    background: var(--bg-main); border-top-left-radius: 24px; border-top-right-radius: 24px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000;
+    display: flex; flex-direction: column;
+    transform: translateY(100%); transition: transform 0.3s ease;
+  }
+  .ai-chat-box.active { transform: translateY(0); }
+
+  .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #E5E7EB; }
+  .ai-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+  .ai-close { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+
+  .ai-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .ai-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; }
+  .ai-message.bot { background: var(--ai-bg); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ai-message.user { background: var(--pink-main); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+  .ai-input-area { display: flex; padding: 10px 15px; border-top: 1px solid #E5E7EB; gap: 8px; }
+  .ai-input { flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); }
+  .ai-send { background: var(--pink-main); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .ai-send:active { transform: scale(0.9); }
 
   /* CSS MODAL */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
@@ -149,30 +170,13 @@
      CSS KHUSUS UNTUK CETAK PDF (FIXED)
   ===================================================== */
   @media print {
-    /* Sembunyikan elemen yang tidak perlu */
     body { background: white !important; padding: 0; display: block; }
     .phone { box-shadow: none; max-width: 100%; height: auto; border-radius: 0; }
-    
-    /* SEMBUNYIKAN HEADER, GRAFIK, TOMBOL EDIT/HAPUS, DAN FAB */
-    .app-header, .chart-container, .section-header, .fab, .trx-bottom-row, .daily-expense, .theme-toggle, .profile-icon, .trx-icon { 
-      display: none !important; 
-    }
-    
-    /* Rapikan konten */
+    .app-header, .chart-container, .section-header, .fab, .ai-fab, .ai-chat-box, .trx-bottom-row, .daily-expense, .theme-toggle, .profile-icon, .trx-icon { display: none !important; }
     .content { padding: 0; overflow: visible; background: white; height: auto; }
     .section-title { margin-top: 20px; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #000; padding-bottom: 5px; color: #000 !important; }
-    
-    /* Kotak Transaksi Sederhana */
-    .transaction-item { 
-      opacity: 1 !important; transform: none !important; 
-      border-bottom: 1px solid #ddd !important; border-radius: 0 !important;
-      margin-bottom: 0 !important; padding: 10px 0 !important;
-      box-shadow: none !important; 
-      page-break-inside: avoid;
-    }
+    .transaction-item { opacity: 1 !important; transform: none !important; border-bottom: 1px solid #ddd !important; border-radius: 0 !important; margin-bottom: 0 !important; padding: 10px 0 !important; box-shadow: none !important; page-break-inside: avoid; }
     .transaction-item::before { display: none; } 
-    
-    /* Teks Warna Hitam */
     .trx-title, .trx-amount, .trx-date { color: #000 !important; }
     .trx-top-row { gap: 0; justify-content: space-between; }
   }
@@ -201,9 +205,7 @@
     <div class="section-header">
       <div class="section-title" style="padding:0; margin:0;">Ringkasan Grafik</div>
       <div style="display: flex; gap: 8px; align-items: center;">
-        <!-- TOMBOL EKSPOR PDF -->
         <button onclick="eksporPDF()" style="background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">📄 PDF</button>
-        
         <select id="filterWaktu" class="filter-select" onchange="gantiFilter(this.value)">
           <option value="thisMonth">Bulan Ini</option>
           <option value="lastMonth">Bulan Lalu</option>
@@ -223,7 +225,26 @@
     </div>
   </div>
 
+  <!-- TOMBOL AI -->
+  <button class="ai-fab" onclick="bukaAIChat()">🤖</button>
   <button class="fab" onclick="window.location.href='form.html'">+</button>
+</div>
+
+<!-- =====================================================
+     KOTAK CHAT AI
+===================================================== -->
+<div class="ai-chat-box" id="aiChatBox">
+  <div class="ai-header">
+    <div class="ai-title">🤖 Asisten Keuangan</div>
+    <button class="ai-close" onclick="tutupAIChat()">✖</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Tanya apa saja soal keuangan bos. (Contoh: "Berapa saldoku?", "Bulan ini boros gak?", "Pengeluaran terbesar apa?")</div>
+  </div>
+  <div class="ai-input-area">
+    <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pertanyaan..." onkeypress="handleAIEnter(event)">
+    <button class="ai-send" onclick="kirimPesanAI()">➤</button>
+  </div>
 </div>
 
 <!-- MODAL HAPUS -->
@@ -275,9 +296,13 @@
   
   const deleteModal = document.getElementById('deleteModal');
   const deleteModalText = document.getElementById('deleteModalText');
-  
   const detailModal = document.getElementById('detailModal');
   const detailModalText = document.getElementById('detailModalText');
+
+  // Elemen AI
+  const aiChatBox = document.getElementById('aiChatBox');
+  const aiMessages = document.getElementById('aiMessages');
+  const aiInput = document.getElementById('aiInput');
 
   let idToDelete = null;
   let allTransactions = []; 
@@ -379,18 +404,11 @@
     detailModal.classList.add('show');
   }
 
-  window.tutupDetailModal = function() {
-    detailModal.classList.remove('show');
-  }
+  window.tutupDetailModal = function() { detailModal.classList.remove('show'); }
 
   window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); }
 
-  // FUNGSI EKSPOR PDF
-  window.eksporPDF = function() {
-    setTimeout(() => {
-      window.print();
-    }, 500);
-  }
+  window.eksporPDF = function() { setTimeout(() => { window.print(); }, 500); }
 
   function renderTransaksi(filterType) {
     let filteredData = allTransactions;
@@ -427,70 +445,7 @@
 
       html += `
         <div class="transaction-item ${typeClass}">
-          
           <div class="trx-top-row">
             <div class="trx-icon ${typeClass}">${icon}</div>
             <div class="trx-details">
               <div class="trx-title" onclick="bukaDetailModal('${safeNoteText}')">${noteText}</div>
-              <div class="trx-date">${formatTanggal(data.createdAt)}</div>
-            </div>
-            <div class="trx-amount ${typeClass}">${sign} Rp ${formatRupiah(amount)}</div>
-          </div>
-
-          <div class="trx-bottom-row">
-            <button class="btn-action" onclick="window.location.href='edit.html?id=${data.id}'">✏️ Edit</button>
-            <button class="btn-action btn-delete" onclick="bukaModal('${data.id}', '${safeNoteText}')">🗑️ Hapus</button>
-          </div>
-
-        </div>
-      `;
-    });
-
-    transactionListEl.innerHTML = html;
-    totalBalanceEl.innerHTML = `<span class="currency">Rp</span> ${formatRupiah(totalIncome - totalExpense)}`;
-    updateChart(totalIncome, totalExpense);
-
-    // LOGIKA ANIMASI FLIP
-    if (observer) observer.disconnect();
-
-    observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('flip-in');
-        } else {
-          entry.target.classList.remove('flip-in');
-        }
-      });
-    }, { threshold: 0.05 });
-
-    document.querySelectorAll('.transaction-item').forEach(item => {
-      observer.observe(item);
-    });
-  }
-
-  window.bukaModal = function(docId, keterangan) {
-    idToDelete = docId;
-    deleteModalText.innerHTML = `Yakin ingin menghapus transaksi <b>"${keterangan}"</b>?<br><br>Tindakan ini tidak bisa dibatalkan.`;
-    deleteModal.classList.add('show');
-  }
-
-  window.tutupModal = function() { deleteModal.classList.remove('show'); idToDelete = null; }
-
-  window.konfirmasiHapus = async function() {
-    if (!idToDelete) return;
-    try { await deleteDoc(doc(db, "pembukuan", idToDelete)); tutupModal(); } 
-    catch (error) { console.error("Gagal menghapus: ", error); alert("Gagal menghapus transaksi."); }
-  }
-
-  function loadTransactions(userId) {
-    const q = query(collection(db, "pembukuan"), where("userId", "==", userId), orderBy("createdAt", "desc"));
-    onSnapshot(q, (snapshot) => {
-      allTransactions = []; 
-      snapshot.forEach((docSnap) => { const data = docSnap.data(); data.id = docSnap.id; allTransactions.push(data); });
-      renderTransaksi(document.getElementById('filterWaktu').value);
-      hitungPengeluaranHariIni(); 
-    }, (error) => { console.error("Firestore Error: ", error); });
-  }
-</script>
-</body>
-</html>
