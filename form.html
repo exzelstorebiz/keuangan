@@ -32,8 +32,6 @@
   body.dark-mode .type-box { background: var(--bg-main); border-color: #4B5563; color: var(--text-muted); }
   body.dark-mode .type-option input[value="income"]:checked ~ .type-box { background: rgba(16, 185, 129, 0.2); border-color: var(--green); color: var(--green); }
   body.dark-mode .type-option input[value="expense"]:checked ~ .type-box { background: rgba(236, 72, 153, 0.2); border-color: var(--pink-dark); color: var(--pink-dark); }
-  body.dark-mode .profile-card { background: var(--bg-card); }
-  body.dark-mode .btn-logout { background: rgba(239, 68, 68, 0.2); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
@@ -43,11 +41,9 @@
   /* Header Gradasi Pink */
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; display: flex; align-items: center; gap: 12px; }
   
-  /* Tombol Back (Font naik 3px: 18 -> 21px) */
   .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 21px; cursor: pointer; text-decoration: none; transition: 0.2s; }
   .back-btn:active { transform: scale(0.9); }
   
-  /* Judul (Font naik 3px: 16 -> 19px) */
   .app-title { font-size: 19px; font-weight: 600; }
 
   /* Area Konten */
@@ -55,54 +51,49 @@
   
   .form-group { margin-bottom: 24px; }
   
-  /* Label (Font naik 3px: 13 -> 16px) */
   .form-label { display: block; font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; }
   
-  /* Input (Font naik 3px: 14 -> 17px) */
+  /* Input Umum (Untuk Keterangan) */
   .form-control { width: 100%; padding: 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 17px; color: var(--text-main); background: white; transition: border-color 0.2s, box-shadow 0.2s; }
   .form-control:focus { outline: none; border-color: var(--pink-main); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1); }
   
+  /* =====================================================
+     CSS KHUSUS UNTUK INPUT NOMINAL (ID: amount)
+  ===================================================== */
+  #amount {
+    font-size: 22px; /* Ukuran font nominal dinaikkan */
+    font-weight: 700; /* Dibuat tebal */
+    color: var(--pink-dark);
+    letter-spacing: 0.5px;
+  }
+  #amount::placeholder {
+    font-size: 18px; 
+    font-weight: 400;
+    color: #9CA3AF;
+  }
+  /* ===================================================== */
+
   /* Radio Button Type (Pemasukan / Pengeluaran) */
   .type-selector { display: flex; gap: 12px; }
   .type-option { flex: 1; position: relative; cursor: pointer; }
   .type-option input { position: absolute; opacity: 0; cursor: pointer; }
   
-  /* Kotak Pilihan (Font naik 3px: 13 -> 16px) */
   .type-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; background: white; font-size: 16px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; }
   
-  /* State saat dipilih */
   .type-option input[value="income"]:checked ~ .type-box { border-color: var(--green); background: #D1FAE5; color: var(--green); }
   .type-option input[value="expense"]:checked ~ .type-box { border-color: var(--pink-dark); background: #FCE7F3; color: var(--pink-dark); }
 
-  /* Tombol Simpan (Font naik 3px: 15 -> 18px) */
   .btn-save { width: 100%; padding: 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.2s; margin-top: 10px; }
   .btn-save:active { transform: scale(0.98); }
   .btn-save:disabled { opacity: 0.7; cursor: not-allowed; }
 
-  /* CSS ANIMASI SUKSES & CONFETTI (Tetap Sama) */
-  .success-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
-  }
+  /* CSS ANIMASI SUKSES & CONFETTI */
+  .success-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
   .success-overlay.show { opacity: 1; visibility: visible; }
-  
-  .success-icon {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: var(--green); color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px; margin-bottom: 16px;
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-    transform: scale(0);
-    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
+  .success-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--green); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 16px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); transform: scale(0); animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
   .success-text { font-size: 18px; font-weight: 700; color: var(--text-main); opacity: 0; animation: fadeInUp 0.5s ease 0.3s forwards; }
-  
   @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
   @keyframes fadeInUp { 0% { transform: translateY(10px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-
   .confetti { position: absolute; width: 10px; height: 10px; background-color: #f00; top: 50%; left: 50%; opacity: 0; z-index: 10000; border-radius: 2px; }
 </style>
 </head>
@@ -116,8 +107,6 @@
 
   <div class="content">
     <form id="transactionForm">
-      
-      <!-- Pilih Jenis Transaksi -->
       <div class="form-group">
         <label class="form-label">Jenis Transaksi</label>
         <div class="type-selector">
@@ -132,13 +121,11 @@
         </div>
       </div>
 
-      <!-- Jumlah Uang -->
       <div class="form-group">
         <label class="form-label">Nominal (Rp)</label>
         <input type="number" id="amount" class="form-control" placeholder="Contoh: 50000" required min="1">
       </div>
 
-      <!-- Keterangan -->
       <div class="form-group">
         <label class="form-label">Keterangan</label>
         <input type="text" id="note" class="form-control" placeholder="Contoh: Beli makan siang" required>
