@@ -103,26 +103,48 @@
 
   #transactionList { padding-bottom: 100px; } 
 
-  /* AI CHAT CSS */
-  .ai-chat-box { position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; background: var(--bg-main); border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 1000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; }
+  /* =====================================================
+     AI CHAT CSS - FULL SCREEN
+  ===================================================== */
+  .ai-chat-box { 
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; /* Ubah height jadi 100% */
+    background: var(--bg-main); 
+    border-radius: 0; /* Hilangkan lengkungan */
+    box-shadow: none; /* Hilangkan bayangan */
+    z-index: 1000; 
+    display: flex; flex-direction: column; 
+    transform: translateY(100%); transition: transform 0.3s ease; 
+  }
   .ai-chat-box.active { transform: translateY(0); }
   
-  .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid #E5E7EB; }
+  .ai-header { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 16px 20px; border-bottom: 1px solid #E5E7EB; 
+    background: var(--bg-main); /* Pastikan header solid */
+  }
   .ai-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
-  .ai-title img { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; background: white; border: 1px solid #E5E7EB; padding: 2px; }
-  .ai-close { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+  .ai-title img { width: 40px; height: 40px; object-fit: contain; border-radius: 50%; background: white; border: 1px solid #E5E7EB; padding: 2px; }
+  
+  /* TOMBOL CLOSE WARNA PINK */
+  .ai-close { 
+    background: none; border: none; font-size: 24px; 
+    color: var(--pink-main); /* Warna Pink */
+    cursor: pointer; font-weight: bold; transition: 0.2s;
+  }
+  .ai-close:active { transform: scale(0.9); }
 
-  .ai-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .ai-message { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
-  .ai-message.bot { background: var(--ai-bg); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ai-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--bg-app); }
+  .ai-message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+  .ai-message.bot { background: var(--bg-card); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .ai-message.user { background: var(--pink-main); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-  .ai-input-area { display: flex; padding: 10px 15px; border-top: 1px solid #E5E7EB; gap: 8px; }
-  .ai-input { flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); }
-  .ai-send { background: var(--pink-main); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  
+  .ai-input-area { display: flex; padding: 12px 20px 20px; border-top: 1px solid #E5E7EB; gap: 10px; background: var(--bg-main); }
+  .ai-input { flex: 1; padding: 12px 18px; border-radius: 24px; border: 1px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); }
+  .ai-send { background: var(--pink-main); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3); }
   .ai-send:active { transform: scale(0.9); }
 
   /* CSS UNTUK TYPING INDICATOR */
-  .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 12px 18px; background: var(--ai-bg); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; }
+  .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 12px 18px; background: var(--bg-card); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .typing-indicator span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; display: inline-block; animation: typing 1.4s infinite ease-in-out both; }
   .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
   .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
@@ -204,7 +226,7 @@
   <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
 
-<!-- KOTAK CHAT AI -->
+<!-- KOTAK CHAT AI (FULL SCREEN) -->
 <div class="ai-chat-box" id="aiChatBox">
   <div class="ai-header">
     <div class="ai-title">
@@ -281,16 +303,12 @@
   let myChart = null;
   let observer = null; 
   
-  // =====================================================
-  // VARIABEL MEMORI AI (SHORT-TERM MEMORY)
-  // =====================================================
   let aiMemory = {
-    topik: null,      // "pengeluaran", "pemasukan", "saldo"
-    waktu: "Semua Waktu", // "Hari Ini", "Tanggal 15", "Bulan Ini"
-    tanggalSpesifik: null, // Angka 1-31 jika spesifik
-    dataTerakhir: []   // Array transaksi yang terakhir ditampilkan
+    topik: null,
+    waktu: "Semua Waktu",
+    tanggalSpesifik: null,
+    dataTerakhir: []
   };
-  // =====================================================
 
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
@@ -444,7 +462,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (UPGRADE: MEMORY / INGATAN)
+  // LOGIKA AI CHATBOT (FULL SCREEN)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -520,20 +538,14 @@
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
 
-    // ==========================================
-    // 1. LOGIKA SOPAN SANTUN
-    // ==========================================
     if (/(terima kasih|makasih|thanks|thank you|tq|thx)/.test(pertanyaan)) {
-      aiMemory = { topik: null, waktu: "Semua Waktu", tanggalSpesifik: null, dataTerakhir: [] }; // Reset memori
+      aiMemory = { topik: null, waktu: "Semua Waktu", tanggalSpesifik: null, dataTerakhir: [] };
       return "Sama-sama bos! Senang bisa membantu. Kalau butuh analisis keuangan lagi, panggil saya aja ya. 😊🙏";
     }
     if (/(maaf|sori|sorry)/.test(pertanyaan)) {
       return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
     }
 
-    // ==========================================
-    // 2. LOGIKA SAPAAN
-    // ==========================================
     const isSapaan = /(halo|hai|pagi|siang|sore|malam)/.test(pertanyaan);
     const isBukanPertanyaanData = !pertanyaan.includes("pengeluaran") && !pertanyaan.includes("pemasukan") && !pertanyaan.includes("saldo") && !pertanyaan.includes("transaksi");
 
@@ -547,19 +559,11 @@
       return respon;
     }
 
-    // ==========================================
-    // 3. LOGIKA MEMORI & KATA GANTI (Kalau, Tadi, Itu)
-    // ==========================================
-    // Jika pertanyaan sangat pendek atau mengandung kata sambung merujuk ke topik sebelumnya
     const isLanjutan = /(kalau|tadi|itu|tersebut|nya|yang tadi)/.test(pertanyaan) || pertanyaan.length < 15;
 
-    // ==========================================
-    // 4. FILTER TANGGAL / WAKTU
-    // ==========================================
-    let targetTanggal = aiMemory.tanggalSpesifik; // Ambil dari memori dulu
-    let labelWaktu = aiMemory.waktu; // Ambil dari memori dulu
+    let targetTanggal = aiMemory.tanggalSpesifik;
+    let labelWaktu = aiMemory.waktu; 
     
-    // Jika user menyebutkan tanggal baru
     if (pertanyaan.includes("kemarin")) {
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       targetTanggal = yesterday.getDate();
@@ -572,18 +576,15 @@
       }
     }
 
-    // Jika user menyebut waktu baru (misal: "Kalau bulan ini?")
     if (pertanyaan.includes("hari ini")) { targetTanggal = null; labelWaktu = "Hari Ini"; }
     else if (pertanyaan.includes("bulan ini")) { targetTanggal = null; labelWaktu = "Bulan Ini"; }
     else if (pertanyaan.includes("minggu ini")) { targetTanggal = null; labelWaktu = "Minggu Ini"; }
     else if (pertanyaan.includes("tahun ini")) { targetTanggal = null; labelWaktu = "Tahun Ini"; }
     else if (pertanyaan.includes("semua")) { targetTanggal = null; labelWaktu = "Semua Waktu"; }
 
-    // Simpan ke memori
     aiMemory.tanggalSpesifik = targetTanggal;
     aiMemory.waktu = labelWaktu;
 
-    // Filter Data Berdasarkan Waktu
     let transaksiRelevan = allTransactions;
     if (targetTanggal !== null) {
       transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d.getDate() === targetTanggal; });
@@ -598,22 +599,14 @@
       transaksiRelevan = allTransactions.filter(t => { if(!t.createdAt) return false; const d = t.createdAt.toDate(); return d.getFullYear() === now.getFullYear(); });
     }
 
-    // ==========================================
-    // 5. TENTUKAN TOPIK (PENGELUARAN / PEMASUKAN / SALDO)
-    // ==========================================
-    let topik = aiMemory.topik; // Ambil dari memori dulu
+    let topik = aiMemory.topik; 
     if (pertanyaan.includes("pengeluaran") || pertanyaan.includes("keluar") || pertanyaan.includes("belanja")) topik = "pengeluaran";
     else if (pertanyaan.includes("pemasukan") || pertanyaan.includes("masuk") || pertanyaan.includes("gaji")) topik = "pemasukan";
     else if (pertanyaan.includes("saldo") || pertanyaan.includes("sisa uang")) topik = "saldo";
     
-    // Simpan topik ke memori
     aiMemory.topik = topik;
 
-    // ==========================================
-    // 6. JIKA TOPIK BELUM JELAS & BUKAN LANJUTAN
-    // ==========================================
     if (!topik && !isLanjutan) {
-      // Pencarian kata kunci spesifik (misal: "jajan")
       const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ').filter(k => !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada"].includes(k));
       if (kataKunci.length > 0) {
         const cocok = transaksiRelevan.filter(t => { const note = (t.note || "").toLowerCase(); return kataKunci.every(k => note.includes(k)); });
@@ -626,9 +619,6 @@
       return "Maaf bos, saya belum paham. Coba sebutkan 'pengeluaran', 'pemasukan', atau 'saldo'.";
     }
 
-    // ==========================================
-    // 7. EKSEKUSI BERDASARKAN TOPIK (YANG SUDAH DIINGAT)
-    // ==========================================
     if (topik === "saldo") {
       let totalMasuk = 0; let totalKeluar = 0;
       transaksiRelevan.forEach(t => { if(t.type === 'income') totalMasuk += Number(t.amount); else totalKeluar += Number(t.amount); });
@@ -659,7 +649,6 @@
       return `${teksPembuka}*PEMASUKAN ${labelWaktu.toUpperCase()}*\n${formatDaftarTransaksi(pemasukan)}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
     }
 
-    // Fallback jika topik ada tapi data kosong
     return `Tidak ada catatan ${topik} pada ${labelWaktu} bos.`;
   }
 </script>
