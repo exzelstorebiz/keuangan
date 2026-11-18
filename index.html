@@ -478,11 +478,12 @@
         linkWA.href = waUrl;
         linkWA.target = '_blank'; 
         linkWA.style.cssText = `
-          display: inline-flex; align-items: center; gap: 8px;
-          margin-top: 12px; padding: 8px 14px; border-radius: 8px; 
-          background: #25D366; color: white; font-weight: 600; font-size: 13px;
-          text-decoration: none; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
-        `;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 12px; padding: 8px 14px; border-radius: 8px; 
+  background: #25D366; color: white; font-weight: 600; font-size: 13px;
+  text-decoration: none; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  width: fit-content; /* INI KUNCI AGAR TOMBOL KECIL */
+`;
         
         linkWA.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
