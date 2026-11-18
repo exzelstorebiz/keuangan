@@ -57,12 +57,10 @@
   .form-control { width: 100%; padding: 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 17px; color: var(--text-main); background: white; transition: border-color 0.2s, box-shadow 0.2s; }
   .form-control:focus { outline: none; border-color: var(--pink-main); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1); }
   
-  /* =====================================================
-     CSS KHUSUS UNTUK INPUT NOMINAL (ID: amount)
-  ===================================================== */
+  /* INPUT NOMINAL */
   #amount {
-    font-size: 22px; /* Ukuran font nominal dinaikkan */
-    font-weight: 700; /* Dibuat tebal */
+    font-size: 22px; 
+    font-weight: 700; 
     color: var(--pink-dark);
     letter-spacing: 0.5px;
   }
@@ -71,7 +69,6 @@
     font-weight: 400;
     color: #9CA3AF;
   }
-  /* ===================================================== */
 
   /* Radio Button Type (Pemasukan / Pengeluaran) */
   .type-selector { display: flex; gap: 12px; }
@@ -123,7 +120,8 @@
 
       <div class="form-group">
         <label class="form-label">Nominal (Rp)</label>
-        <input type="number" id="amount" class="form-control" placeholder="Contoh: 50000" required min="1">
+        <!-- Input diubah menjadi type="text" agar bisa menampung titik, tapi kita set inputmode="numeric" agar keyboard angka muncul -->
+        <input type="text" id="amount" class="form-control" placeholder="Contoh: 50.000" required inputmode="numeric">
       </div>
 
       <div class="form-group">
@@ -164,6 +162,25 @@
   const form = document.getElementById('transactionForm');
   const btnSubmit = document.getElementById('btnSubmit');
   const successOverlay = document.getElementById('successOverlay');
+  const amountInput = document.getElementById('amount');
+
+  // =====================================================
+  // LOGIKA AUTO-FORMAT TITIK RIBUAN
+  // =====================================================
+  amountInput.addEventListener('input', function(e) {
+    // 1. Ambil nilai, hapus semua karakter selain angka
+    let rawValue = this.value.replace(/[^0-9]/g, '');
+    
+    // 2. Jika kosong, biarkan kosong
+    if (rawValue === '') {
+      this.value = '';
+      return;
+    }
+    
+    // 3. Format dengan titik ribuan
+    this.value = new Intl.NumberFormat('id-ID').format(rawValue);
+  });
+  // =====================================================
 
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
@@ -200,8 +217,20 @@
     if (!currentUser) { alert("Sesi login habis."); window.location.href = 'login.html'; return; }
 
     const type = document.querySelector('input[name="type"]:checked').value;
-    const amount = Number(document.getElementById('amount').value);
+    
+    // =====================================================
+    // PENTING: Ambil angka mentahnya saja (hilangkan titik) sebelum dikirim ke Firebase
+    // =====================================================
+    const rawAmount = amountInput.value.replace(/\./g, ''); 
+    const amount = Number(rawAmount);
+    
     const note = document.getElementById('note').value;
+
+    // Validasi tambahan jika nominal kosong atau 0
+    if (amount <= 0 || isNaN(amount)) {
+      alert("Nominal harus diisi dengan angka yang valid (lebih dari 0).");
+      return;
+    }
 
     btnSubmit.disabled = true;
     btnSubmit.innerText = "Menyimpan...";
