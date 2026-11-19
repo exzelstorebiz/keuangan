@@ -288,7 +288,7 @@
   let myChart = null;
   let observer = null; 
   
-  // STATE MEMORI AI YANG LEBIH KOMPLEKS
+  // STATE MEMORI AI
   let aiMemory = { 
     topik: null, 
     waktu: "bulan ini", 
@@ -450,7 +450,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (REVISI TOTAL - ANTI CRASH & NLP)
+  // LOGIKA AI CHATBOT (FIXED: KATEGORI & MEMORI)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -469,7 +469,6 @@
       hapusTypingIndicator();
       let balasan = "";
       
-      // ANTI CRASH: Bungkus dengan try-catch
       try {
         balasan = prosesPertanyaanAI(pesan.toLowerCase());
       } catch (error) {
@@ -488,16 +487,15 @@
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
-      // Perbaikan: Ubah **teks** menjadi <b>teks</b> agar bold, dan \n menjadi <br>
+      // Format bold dan enter
       let formattedText = teks
-        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Format bold
-        .replace(/\n/g, '<br>');                // Format enter
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') 
+        .replace(/\n/g, '<br>');                
       
       const textNode = document.createElement('div');
       textNode.innerHTML = formattedText;
       div.appendChild(textNode);
 
-      // Tampilkan tombol WA hanya jika ada list transaksi (mengandung "Total:")
       if (teks.includes("Total:") && teks.includes("Rp") && !teks.includes("Saldo (Hari Ini)")) {
         const teksBersih = teks.replace(/\*\*/g, '').replace(/[💰💸📌]/g, '');
         const encodedText = encodeURIComponent(teksBersih);
@@ -587,7 +585,7 @@
     }
 
     const isSapaan = /(halo|hai|pagi|siang|sore|malam)/.test(pertanyaan);
-    const isBukanPertanyaanData = !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang)/.test(pertanyaan);
+    const isBukanPertanyaanData = !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja)/.test(pertanyaan);
 
     if (isSapaan && isBukanPertanyaanData) {
       let respon = "";
@@ -599,7 +597,7 @@
       return respon;
     }
 
-    // 2. DETEKSI KONTEKS (Apakah ini lanjutan percakapan?)
+    // 2. DETEKSI KONTEKS
     const isLanjutan = /(kalau|tadi|itu|tersebut|nya|yang tadi|kalo)/.test(pertanyaan) || pertanyaan.length <= 15;
 
     // 3. DETEKSI WAKTU
@@ -639,7 +637,7 @@
     aiMemory.namaBulanSpesifik = namaBulan;
     aiMemory.waktu = labelWaktu;
 
-    // 4. DETEKSI TOPIK
+    // 4. DETEKSI TOPIK (PERBAIKAN: "belanja" & "beli" masuk ke pengeluaran)
     let topik = aiMemory.topik; 
     if (/(pengeluaran|keluar|belanja|beli|bayar)/.test(pertanyaan)) topik = "pengeluaran";
     else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
@@ -648,13 +646,19 @@
     if (!topik && isLanjutan) topik = aiMemory.topik; 
     aiMemory.topik = topik;
 
-    // 5. DETEKSI KATEGORI
+    // 5. DETEKSI KATEGORI (PERBAIKAN: "belanja" dihapus dari sini)
     let kategori = aiMemory.kategoriSpesifik;
-    const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|belanja|gaji|listrik|air|internet|kos|sekolah|kesehatan|obat)/);
-    if (matchKategori) kategori = matchKategori[0];
+    const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|listrik|air|internet|kos|sekolah|kesehatan|obat|sayur|buah|daging|ayam|kopi)/);
+    
+    // Reset kategori jika user menyebut topik umum (pengeluaran/pemasukan) tanpa kata kategori spesifik
+    if (!matchKategori && /(pengeluaran|pemasukan|saldo)/.test(pertanyaan)) {
+       kategori = null;
+    } else if (matchKategori) {
+       kategori = matchKategori[0];
+    }
     aiMemory.kategoriSpesifik = kategori;
 
-    // 6. FILTER DATA (ANTI-CRASH)
+    // 6. FILTER DATA
     let transaksiRelevan = allTransactions.filter(t => {
       if (!t.createdAt) return false; 
       const d = t.createdAt.toDate();
@@ -677,13 +681,13 @@
       labelWaktu += ` (Kategori: ${kategori})`;
     }
 
-    // 8. PENCARIAN BEBAS (DIPERBAIKI)
+    // 8. PENCARIAN BEBAS
     if (!topik && !isLanjutan) {
       const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
         .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan"].includes(k));
       
       if (kataKunci.length === 0) {
-        topik = "pengeluaran"; // Default ke pengeluaran jika tanya "apa saja"
+        topik = "pengeluaran"; 
       } else {
         const cocok = transaksiRelevan.filter(t => { 
           const note = (t.note || "").toLowerCase(); 
