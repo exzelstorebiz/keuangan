@@ -102,7 +102,13 @@
   #transactionList { padding-bottom: 100px; } 
 
   /* AI CHAT CSS FULL SCREEN */
-  .ai-chat-box { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; }
+  .ai-chat-box { 
+    position: absolute; bottom: 0; left: 0; width: 100%; 
+    height: 100%; /* Fallback */
+    height: 100dvh; /* Dynamic viewport untuk keyboard */
+    background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; 
+    display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; 
+  }
   .ai-chat-box.active { transform: translateY(0); }
   
   .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: var(--bg-main); }
@@ -282,12 +288,10 @@
   let myChart = null;
   let observer = null; 
   
-  // =====================================================
   // STATE MEMORI AI YANG LEBIH KOMPLEKS
-  // =====================================================
   let aiMemory = { 
     topik: null, 
-    waktu: "bulan ini", // Default ke bulan ini jika kosong
+    waktu: "bulan ini", 
     tanggalSpesifik: null, 
     namaBulanSpesifik: null,
     kategoriSpesifik: null,
@@ -484,12 +488,17 @@
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
+      // Perbaikan: Ubah **teks** menjadi <b>teks</b> agar bold, dan \n menjadi <br>
+      let formattedText = teks
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Format bold
+        .replace(/\n/g, '<br>');                // Format enter
+      
       const textNode = document.createElement('div');
-      textNode.innerText = teks;
+      textNode.innerHTML = formattedText;
       div.appendChild(textNode);
 
       // Tampilkan tombol WA hanya jika ada list transaksi (mengandung "Total:")
-      if (teks.includes("Total:") && teks.includes("Rp")) {
+      if (teks.includes("Total:") && teks.includes("Rp") && !teks.includes("Saldo (Hari Ini)")) {
         const teksBersih = teks.replace(/\*\*/g, '').replace(/[💰💸📌]/g, '');
         const encodedText = encodeURIComponent(teksBersih);
         const waUrl = `https://wa.me/?text=${encodedText}`;
@@ -535,7 +544,6 @@
 
   function formatDaftarTransaksi(arr) {
     let teks = "";
-    // Batasi maksimal 10 transaksi agar tidak kepanjangan di chat
     const limitArr = arr.slice(0, 10);
     limitArr.forEach(t => {
       const icon = t.type === 'income' ? '💰' : '💸';
@@ -592,21 +600,18 @@
     }
 
     // 2. DETEKSI KONTEKS (Apakah ini lanjutan percakapan?)
-    // Jika pertanyaan sangat pendek (misal: "kalau pemasukan?"), kita pakai memori waktu sebelumnya
     const isLanjutan = /(kalau|tadi|itu|tersebut|nya|yang tadi|kalo)/.test(pertanyaan) || pertanyaan.length <= 15;
 
-    // 3. DETEKSI WAKTU (Hanya update memori jika ada kata kunci waktu baru)
+    // 3. DETEKSI WAKTU
     let targetTanggal = aiMemory.tanggalSpesifik;
     let namaBulan = aiMemory.namaBulanSpesifik;
     let labelWaktu = aiMemory.waktu; 
     
-    // Cek Nama Bulan (Januari - Desember)
     const bulanIndo = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
     bulanIndo.forEach((b, i) => {
       if (pertanyaan.includes(b)) { namaBulan = i; labelWaktu = `Bulan ${b.charAt(0).toUpperCase() + b.slice(1)}`; targetTanggal = null; }
     });
 
-    // Cek Waktu Relatif
     if (pertanyaan.includes("kemarin")) {
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       targetTanggal = yesterday.getDate();
@@ -616,7 +621,7 @@
       const matchTanggal = pertanyaan.match(/tanggal\s+(\d{1,2})/);
       if (matchTanggal) {
         targetTanggal = parseInt(matchTanggal[1]);
-        namaBulan = now.getMonth(); // Default ke bulan ini jika tanya tanggal
+        namaBulan = now.getMonth();
         labelWaktu = `Tanggal ${targetTanggal}`;
       }
     } else if (pertanyaan.includes("hari ini")) { targetTanggal = now.getDate(); namaBulan = now.getMonth(); labelWaktu = "Hari Ini"; }
@@ -630,60 +635,56 @@
     else if (pertanyaan.includes("tahun ini")) { targetTanggal = null; namaBulan = null; labelWaktu = "Tahun Ini"; }
     else if (pertanyaan.includes("semua waktu") || pertanyaan.includes("semua")) { targetTanggal = null; namaBulan = null; labelWaktu = "Semua Waktu"; }
 
-    // Simpan ke memori
     aiMemory.tanggalSpesifik = targetTanggal;
     aiMemory.namaBulanSpesifik = namaBulan;
     aiMemory.waktu = labelWaktu;
 
-    // 4. DETEKSI TOPIK (Jika tidak ada topik baru dan ini lanjutan, pakai topik lama)
+    // 4. DETEKSI TOPIK
     let topik = aiMemory.topik; 
     if (/(pengeluaran|keluar|belanja|beli|bayar)/.test(pertanyaan)) topik = "pengeluaran";
     else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
     else if (/(saldo|sisa uang|total uang)/.test(pertanyaan)) topik = "saldo";
     
-    if (!topik && isLanjutan) topik = aiMemory.topik; // Ambil dari memori jika tidak ada kata kunci baru
+    if (!topik && isLanjutan) topik = aiMemory.topik; 
     aiMemory.topik = topik;
 
-    // 5. DETEKSI KATEGORI (Makanan, Transport, dll)
+    // 5. DETEKSI KATEGORI
     let kategori = aiMemory.kategoriSpesifik;
     const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|belanja|gaji|listrik|air|internet|kos|sekolah|kesehatan|obat)/);
     if (matchKategori) kategori = matchKategori[0];
     aiMemory.kategoriSpesifik = kategori;
 
-    // 6. FILTER DATA BERDASARKAN WAKTU (DENGAN ANTI-CRASH)
+    // 6. FILTER DATA (ANTI-CRASH)
     let transaksiRelevan = allTransactions.filter(t => {
-      if (!t.createdAt) return false; // Guard anti-crash
+      if (!t.createdAt) return false; 
       const d = t.createdAt.toDate();
       
-      // Filter Bulan
       if (namaBulan !== null && d.getMonth() !== namaBulan) return false;
-      
-      // Filter Tanggal Spesifik
       if (targetTanggal !== null && d.getDate() !== targetTanggal) return false;
       
-      // Filter Minggu Ini
       if (labelWaktu === "Minggu Ini") {
         const lastWeek = new Date(now); lastWeek.setDate(now.getDate() - 7);
         if (d < lastWeek || d > now) return false;
       }
-      
-      // Filter Tahun Ini
       if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
 
       return true;
     });
 
-    // 7. FILTER KATEGORI (Cocokkan kata kunci di note)
+    // 7. FILTER KATEGORI
     if (kategori) {
       transaksiRelevan = transaksiRelevan.filter(t => (t.note || "").toLowerCase().includes(kategori));
       labelWaktu += ` (Kategori: ${kategori})`;
     }
 
-    // 8. JIKA TIDAK ADA TOPIK & BUKAN LANJUTAN (Pencarian Bebas)
+    // 8. PENCARIAN BEBAS (DIPERBAIKI)
     if (!topik && !isLanjutan) {
-      const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ').filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi"].includes(k));
+      const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
+        .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan"].includes(k));
       
-      if (kataKunci.length > 0) {
+      if (kataKunci.length === 0) {
+        topik = "pengeluaran"; // Default ke pengeluaran jika tanya "apa saja"
+      } else {
         const cocok = transaksiRelevan.filter(t => { 
           const note = (t.note || "").toLowerCase(); 
           return kataKunci.every(k => note.includes(k)); 
@@ -696,8 +697,9 @@
         }
       }
       
-      // FALLBACK CERDAS JIKA TIDAK PAHAM
-      return `Maaf bos, saya belum paham maksud pertanyaannya. 😅\n\nBos bisa tanya dengan format seperti:\n• "Pengeluaran bulan ini apa saja?"\n• "Berapa saldo saya hari ini?"\n• "Pemasukan tanggal 15"\n• "Belanja makanan bulan lalu"`;
+      if (!topik) {
+        return `Maaf bos, saya belum paham maksud pertanyaannya. 😅\n\nBos bisa tanya dengan format seperti:\n• "Pengeluaran bulan ini apa saja?"\n• "Berapa saldo saya hari ini?"\n• "Pemasukan tanggal 15"\n• "Belanja makanan bulan lalu"`;
+      }
     }
 
     // 9. JIKA TOPIK = SALDO
