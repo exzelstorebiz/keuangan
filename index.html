@@ -473,8 +473,7 @@
         balasan = prosesPertanyaanAI(pesan.toLowerCase());
       } catch (error) {
         console.error("AI Error:", error);
-        // Fallback jika crash
-        balasan = `Maaf bos, sepertinya ada kendala teknis atau ada data transaksi yang format tanggalnya rusak. Coba tanya dengan kalimat lain ya. 🙏`;
+        balasan = `Maaf bos, sepertinya ada kendala teknis saat membaca data. Coba tanya dengan kalimat lain ya. 🙏`;
       }
       
       tambahPesanKeChat(balasan, 'bot');
@@ -568,7 +567,7 @@
     return "Semoga rezekinya selalu berkah dan cukup! 🤲";
   }
 
-  // FUNGSI UTAMA NLP (REVISI FINAL)
+  // FUNGSI UTAMA NLP (ANTI-CRASH SUPER KETAT)
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
 
@@ -581,7 +580,6 @@
       return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
     }
     
-    // Deteksi basa-basi (hanya jika TIDAK ada kata kunci transaksi)
     const isBasaBasi = /(saya mau tanya|mau tanya|nanya dong|halo|hai|pagi|siang|sore|malam)/.test(pertanyaan) && 
                        !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja|tanggal)/.test(pertanyaan);
 
@@ -614,7 +612,7 @@
       const matchTanggal = pertanyaan.match(/tanggal\s+(\d{1,2})/);
       if (matchTanggal) {
         targetTanggal = parseInt(matchTanggal[1]);
-        namaBulan = now.getMonth(); // default bulan ini
+        namaBulan = now.getMonth();
         labelWaktu = `Tanggal ${targetTanggal}`;
       }
     } else if (pertanyaan.includes("hari ini")) { targetTanggal = now.getDate(); namaBulan = now.getMonth(); labelWaktu = "Hari Ini"; }
@@ -638,7 +636,6 @@
     else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
     else if (/(saldo|sisa uang|total uang)/.test(pertanyaan)) topik = "saldo";
     
-    // Jika user menyebut topik secara eksplisit, pastikan menggunakan topik tersebut
     if (!topik && isLanjutan) topik = aiMemory.topik; 
     aiMemory.topik = topik;
 
@@ -647,13 +644,13 @@
     const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|listrik|air|internet|kos|sekolah|kesehatan|obat|sayur|buah|daging|ayam|kopi)/);
     
     if (!matchKategori && /(pengeluaran|pemasukan|saldo)/.test(pertanyaan)) {
-       kategori = null; // Reset kategori jika tanya pengeluaran umum
+       kategori = null;
     } else if (matchKategori) {
        kategori = matchKategori[0];
     }
     aiMemory.kategoriSpesifik = kategori;
 
-    // 6. FILTER DATA (ANTI-CRASH SUPER KETAT)
+    // 6. FILTER DATA (SANGAT AMAN DARI CRASH)
     let transaksiRelevan = allTransactions.filter(t => {
       if (!t.createdAt) return false; 
       try {
@@ -667,7 +664,7 @@
         if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
         return true;
       } catch (e) {
-        return false; // Abaikan jika ada data tanggal yang benar-benar rusak
+        return false; // Abaikan jika ada data yang format tanggalnya rusak
       }
     });
 
@@ -677,13 +674,13 @@
       labelWaktu += ` (Kategori: ${kategori})`;
     }
 
-    // 8. PENCARIAN BEBAS (Hanya jika bukan topik standar)
+    // 8. PENCARIAN BEBAS
     if (!topik && !isLanjutan) {
       const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
         .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan", "mau", "tanya"].includes(k));
       
       if (kataKunci.length === 0) {
-        topik = "pengeluaran"; // Jika tidak ada kata kunci, default ke pengeluaran
+        topik = "pengeluaran"; 
         aiMemory.topik = topik;
       } else {
         const cocok = transaksiRelevan.filter(t => { 
