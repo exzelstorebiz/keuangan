@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keuangan Keluarga</title>
@@ -43,7 +43,7 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; transition: background 0.3s ease; }
-  
+
   .phone { width: 100%; max-width: 430px; height: 95vh; max-height: 850px; background: var(--bg-main); border-radius: 32px; overflow: hidden; box-shadow: 0 25px 60px -12px rgba(236, 72, 153, 0.25); display: flex; flex-direction: column; position: relative; transition: background 0.3s ease; }
 
   .app-header { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); padding: 20px 20px 16px; color: white; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); z-index: 10; }
@@ -94,7 +94,7 @@
 
   .fab { position: absolute; bottom: 30px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, var(--gold)); border: none; color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; }
   .fab:active { transform: scale(0.9); }
-  
+
   .ai-fab { position: absolute; bottom: 105px; right: 25px; width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border: 2px solid white; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 100; transition: transform 0.2s; overflow: hidden; padding: 0; }
   .ai-fab:active { transform: scale(0.9); }
   .ai-fab img { width: 100%; height: 100%; object-fit: cover; }
@@ -102,19 +102,13 @@
   #transactionList { padding-bottom: 100px; } 
 
   /* AI CHAT CSS FULL SCREEN */
-  .ai-chat-box { 
-    position: absolute; bottom: 0; left: 0; width: 100%; 
-    height: 100%; 
-    height: 100dvh; 
-    background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; 
-    display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; 
-  }
+  .ai-chat-box { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; }
   .ai-chat-box.active { transform: translateY(0); }
-  
+
   .ai-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: var(--bg-main); }
   .ai-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
   .ai-title img { width: 40px; height: 40px; object-fit: contain; border-radius: 50%; background: white; border: 1px solid #E5E7EB; padding: 2px; }
-  
+
   .ai-close { background: none; border: none; font-size: 24px; color: var(--pink-main); cursor: pointer; font-weight: bold; transition: 0.2s; }
   .ai-close:active { transform: scale(0.9); }
 
@@ -122,7 +116,7 @@
   .ai-message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
   .ai-message.bot { background: var(--bg-card); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .ai-message.user { background: var(--pink-main); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-  
+
   .ai-input-area { display: flex; padding: 12px 20px 20px; border-top: 1px solid #E5E7EB; gap: 10px; background: var(--bg-main); }
   .ai-input { flex: 1; padding: 12px 18px; border-radius: 24px; border: 1px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); }
   .ai-send { background: var(--pink-main); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3); }
@@ -173,7 +167,7 @@
         <a href="profil.html" style="text-decoration: none;"><div class="profile-icon">👩</div></a>
       </div>
     </div>
-    
+
     <div class="balance-card">
       <div class="balance-label"><span>✨</span> Total Saldo</div>
       <div class="balance-amount" id="totalBalance"><span class="currency">Rp</span> Memuat...</div>
@@ -220,7 +214,7 @@
     <button class="ai-close" onclick="tutupAIChat()">✖</button>
   </div>
   <div class="ai-messages" id="aiMessages">
-    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Saya siap membantu menganalisis pengeluaran dan pemasukan bos. Silakan tanya apa saja, contoh: "Berapa pengeluaran hari ini?" atau "Saldo bulan ini berapa?".</div>
+    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Saya sekarang punya ingatan jangka pendek, jadi bos bisa tanya berantai. Contoh: "Pengeluaran tanggal 15 apa saja?" lalu "Kalau pemasukannya?"</div>
   </div>
   <div class="ai-input-area">
     <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pertanyaan..." onkeypress="handleAIEnter(event)">
@@ -240,7 +234,6 @@
     </div>
   </div>
 </div>
-
 <!-- MODAL DETAIL KETERANGAN -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal-box">
@@ -287,16 +280,8 @@
   let allTransactions = []; 
   let myChart = null;
   let observer = null; 
-  
-  // STATE MEMORI AI
-  let aiMemory = { 
-    topik: null, 
-    waktu: "bulan ini", 
-    tanggalSpesifik: null, 
-    namaBulanSpesifik: null,
-    kategoriSpesifik: null,
-    dataTerakhir: [] 
-  };
+
+  let aiMemory = { topik: null, waktu: "Semua Waktu", tanggalSpesifik: null, dataTerakhir: [] };
 
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
@@ -377,7 +362,7 @@
   function renderTransaksi(filterType) {
     let filteredData = allTransactions;
     const now = new Date();
-    
+
     if (filterType === 'thisMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear(); }); } 
     else if (filterType === 'lastMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1; const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(); return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear; }); } 
     else if (filterType === 'thisWeek') { const lastWeek = new Date(now.setDate(now.getDate() - 7)); filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); return date >= lastWeek; }); }
@@ -450,7 +435,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (REVISI FINAL - ANTI CRASH & NLP)
+  // LOGIKA AI CHATBOT (FIXED LOGIC)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -463,19 +448,11 @@
     aiInput.value = '';
     tampilkanTypingIndicator();
 
-    const jedaAcak = 800 + Math.random() * 800; 
+    const jedaAcak = 1000 + Math.random() * 1500; 
 
     setTimeout(() => {
       hapusTypingIndicator();
-      let balasan = "";
-      
-      try {
-        balasan = prosesPertanyaanAI(pesan.toLowerCase());
-      } catch (error) {
-        console.error("AI Error:", error);
-        balasan = `Maaf bos, sepertinya ada kendala teknis saat membaca data. Coba tanya dengan kalimat lain ya. 🙏`;
-      }
-      
+      const balasan = prosesPertanyaanAI(pesan.toLowerCase());
       tambahPesanKeChat(balasan, 'bot');
     }, jedaAcak);
   }
@@ -483,16 +460,14 @@
   function tambahPesanKeChat(teks, pengirim) {
     const div = document.createElement('div');
     div.className = `ai-message ${pengirim}`;
-    
+
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
-      let formattedText = teks.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');                
       const textNode = document.createElement('div');
-      textNode.innerHTML = formattedText;
+      textNode.innerText = teks;
       div.appendChild(textNode);
-
-      if (teks.includes("Total:") && teks.includes("Rp") && !teks.includes("Saldo (Hari Ini)")) {
+      if (teks.includes("Total:") || teks.includes("Rp")) {
         const teksBersih = teks.replace(/\*\*/g, '').replace(/[💰💸📌]/g, '');
         const encodedText = encodeURIComponent(teksBersih);
         const waUrl = `https://wa.me/?text=${encodedText}`;
@@ -505,15 +480,16 @@
   margin-top: 12px; padding: 8px 14px; border-radius: 8px; 
   background: #25D366; color: white; font-weight: 600; font-size: 13px;
   text-decoration: none; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
-  width: fit-content;
+  width: fit-content; /* INI KUNCI AGAR TOMBOL KECIL */
 `;
-        
+
         linkWA.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
           </svg>
           Kirim ke WhatsApp
         `;
+
         div.appendChild(linkWA);
       }
     }
@@ -536,208 +512,192 @@
     if (indikator) indikator.remove();
   }
 
+  // =====================================================
+  // MESIN PEMAHAMAN AI OFFLINE - TANPA API KEY
+  // =====================================================
+
+  function normalisasiTeks(teks) {
+    return String(teks || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function tanggalTransaksi(item) {
+    if (!item || !item.createdAt) return null;
+    try {
+      const d = item.createdAt.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+      return Number.isNaN(d.getTime()) ? null : d;
+    } catch (e) { return null; }
+  }
+
+  function rupiahAI(n) {
+    return formatRupiah(Math.round(Number(n) || 0));
+  }
+
   function formatDaftarTransaksi(arr) {
-    let teks = "";
-    const limitArr = arr.slice(0, 10);
-    limitArr.forEach(t => {
-      const icon = t.type === 'income' ? '💰' : '💸';
-      const tgl = t.createdAt ? t.createdAt.toDate().getDate() : '-';
-      teks += `${icon} [Tgl ${tgl}] ${t.note}: Rp ${formatRupiah(t.amount)}\n`;
-    });
-    if (arr.length > 10) teks += `... dan ${arr.length - 10} transaksi lainnya.\n`;
-    return teks;
+    if (!arr.length) return "Tidak ada transaksi.";
+    return arr.map(t => {
+      const d = tanggalTransaksi(t);
+      const tanggal = d ? d.toLocaleDateString("id-ID", {day:"2-digit", month:"short", year:"numeric"}) : "Tanggal tidak tersedia";
+      const icon = t.type === "income" ? "💰" : "💸";
+      return `${icon} ${t.note || "Tanpa keterangan"} — Rp ${rupiahAI(t.amount)} (${tanggal})`;
+    }).join("\n");
   }
 
-  // KAMUS SAPAAN & PENUTUP
-  const sapaanPagi = ["Selamat pagi bos! Semangat menjalani hari ini ya. 🌅", "Pagi bos! Jangan lupa sarapan sebelum beraktivitas. ☕"];
-  const sapaanSiang = ["Selamat siang bos! Jangan lupa istirahat sejenak. ☀️", "Siang bos! Sudah makan siang? Semoga harimu lancar. 🍽️"];
-  const sapaanMalam = ["Selamat malam bos! Waktunya rileks dan istirahat. 🌙", "Malam bos! Terima kasih sudah bekerja keras hari ini. 🌌"];
-  const sapaanUmum = ["Halo bos! Senang bisa ngobrol lagi. 😊", "Hai bos! Ada yang bisa saya bantu terkait keuangan?"];
-  
-  const pembukaData = ["Siap bos! Saya sudah cek catatan keuangannya. Ini rinciannya:\n\n", "Oke bos, mari kita lihat datanya ya. Berikut rinciannya:\n\n", "Tentu bos, ini dia data yang berhasil saya temukan:\n\n"];
-  
-  function generatePenutup(total, jenis) {
-    if (jenis === 'pengeluaran') {
-      if (total > 500000) return "Waduh, total pengeluarannya cukup besar ya bos. Coba dievaluasi lagi, mana yang bisa dihemat. 💪";
-      if (total > 100000) return "Pengeluaran bos masih wajar. Tetap bijak dalam berbelanja ya! 👍";
-      return "Alhamdulillah, pengeluaran bos sangat terkendali. Pertahankan ya bos! ✨";
-    } else if (jenis === 'pemasukan') {
-      return "Alhamdulillah, rezekinya lancar bos! Jangan lupa sisihkan untuk tabungan dan sedekah ya. 🙏";
+  function awalHari(d) {
+    const x = new Date(d); x.setHours(0,0,0,0); return x;
+  }
+  function akhirHari(d) {
+    const x = new Date(d); x.setHours(23,59,59,999); return x;
+  }
+
+  function deteksiPeriodeAI(teks) {
+    const sekarang = new Date();
+    const t = normalisasiTeks(teks);
+    let awal = null, akhir = null, label = "Semua Waktu";
+    const setHari = (offset, nama) => {
+      const d = new Date(sekarang); d.setDate(d.getDate() + offset);
+      awal = awalHari(d); akhir = akhirHari(d); label = nama;
+    };
+
+    if (/\bkemarin\b/.test(t)) setHari(-1, "Kemarin");
+    else if (/\blusa\b/.test(t)) setHari(-2, "Lusa");
+    else if (/\bhari ini\b|\bsekarang\b|\bhari ini saja\b/.test(t)) setHari(0, "Hari Ini");
+    else if (/\bbesok\b|\besok\b/.test(t)) setHari(1, "Besok");
+    else {
+      let m = t.match(/\btanggal\s+(\d{1,2})(?:\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember))?(?:\s+(\d{4}))?/);
+      const bulan = {januari:0,februari:1,maret:2,april:3,mei:4,juni:5,juli:6,agustus:7,september:8,oktober:9,november:10,desember:11};
+      if (m) {
+        const bln = m[2] ? bulan[m[2]] : sekarang.getMonth();
+        const thn = m[3] ? Number(m[3]) : sekarang.getFullYear();
+        const d = new Date(thn, bln, Number(m[1]));
+        if (d.getDate() === Number(m[1])) { awal = awalHari(d); akhir = akhirHari(d); label = `Tanggal ${d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}`; }
+      } else if (/\bminggu ini\b/.test(t)) {
+        const d = awalHari(sekarang); const hari = (d.getDay() + 6) % 7; d.setDate(d.getDate() - hari);
+        awal = d; akhir = akhirHari(sekarang); label = "Minggu Ini";
+      } else if (/\bminggu lalu\b/.test(t)) {
+        const d = awalHari(sekarang); const hari = (d.getDay() + 6) % 7; d.setDate(d.getDate() - hari - 7);
+        awal = d; akhir = akhirHari(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 6)); label = "Minggu Lalu";
+      } else if (/\bbulan ini\b/.test(t)) {
+        awal = new Date(sekarang.getFullYear(), sekarang.getMonth(), 1); akhir = akhirHari(sekarang); label = "Bulan Ini";
+      } else if (/\bbulan lalu\b/.test(t)) {
+        awal = new Date(sekarang.getFullYear(), sekarang.getMonth()-1, 1);
+        akhir = akhirHari(new Date(sekarang.getFullYear(), sekarang.getMonth(), 0)); label = "Bulan Lalu";
+      } else if (/\btahun ini\b/.test(t)) {
+        awal = new Date(sekarang.getFullYear(), 0, 1); akhir = akhirHari(sekarang); label = "Tahun Ini";
+      } else if (/\btahun lalu\b/.test(t)) {
+        awal = new Date(sekarang.getFullYear()-1, 0, 1); akhir = new Date(sekarang.getFullYear()-1, 11, 31, 23,59,59,999); label = "Tahun Lalu";
+      }
     }
-    return "Semoga rezekinya selalu berkah dan cukup! 🤲";
+    return {awal, akhir, label};
   }
 
-  // FUNGSI UTAMA NLP (ANTI-CRASH SUPER KETAT)
+  function pilihJenisAI(teks) {
+    const t = normalisasiTeks(teks);
+    if (/\bpemasukan\b|\bpendapatan\b|\buang masuk\b|\bgaji\b|\bterima uang\b|\bhasil\b|\bmasuk\b/.test(t)) return "income";
+    if (/\bpengeluaran\b|\bpengeluaran\b|\bbelanja\b|\bbiaya\b|\bbayar\b|\bkeluar\b|\bhabis\b|\bterpakai\b|\bspent\b/.test(t)) return "expense";
+    if (/\bsaldo\b|\bsisa uang\b|\buang tersisa\b|\bkeuangan bersih\b/.test(t)) return "balance";
+    return null;
+  }
+
+  function ambilKataKunciAI(teks) {
+    const stop = new Set(("berapa total jumlah semua apa saja apa itu transaksi catatan saya aku punya yang untuk pada tanggal hari ini kemarin besok minggu bulan tahun ini lalu dari dengan tentang sebutkan tampilkan lihat cek cari tolong dong ya bos pengeluaran pemasukan saldo").split(" "));
+    return normalisasiTeks(teks).split(" ").filter(k => k.length > 2 && !stop.has(k) && !/^\d+$/.test(k));
+  }
+
   function prosesPertanyaanAI(pertanyaan) {
-    const now = new Date();
+    const teks = normalisasiTeks(pertanyaan);
+    const sekarang = new Date();
 
-    // 1. CEK SAPAAN & BASA-BASI
-    if (/(terima kasih|makasih|thanks|tq|thx)/.test(pertanyaan)) {
-      aiMemory = { topik: null, waktu: "bulan ini", tanggalSpesifik: null, namaBulanSpesifik: null, kategoriSpesifik: null, dataTerakhir: [] };
-      return "Sama-sama bos! Senang bisa membantu. Kalau butuh analisis keuangan lagi, panggil saya aja ya. 😊🙏";
-    }
-    if (/(maaf|sori|sorry)/.test(pertanyaan)) {
-      return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
-    }
-    
-    const isBasaBasi = /(saya mau tanya|mau tanya|nanya dong|halo|hai|pagi|siang|sore|malam)/.test(pertanyaan) && 
-                       !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja|tanggal)/.test(pertanyaan);
+    if (!teks) return "Silakan tulis pertanyaan yang ingin bos ketahui.";
+    if (/\b(terima kasih|makasih|thanks|thank you)\b/.test(teks))
+      return "Sama-sama bos! Senang bisa membantu. 😊";
+    if (/^(halo|hai|hello|assalamualaikum|selamat pagi|selamat siang|selamat sore|selamat malam)$/.test(teks))
+      return "Halo bos! Saya siap membantu memeriksa pemasukan, pengeluaran, saldo, kategori, dan ringkasan transaksi. 😊";
 
-    if (isBasaBasi) {
-      if (pertanyaan.includes("pagi")) return sapaanPagi[Math.floor(Math.random() * sapaanPagi.length)];
-      if (pertanyaan.includes("siang")) return sapaanSiang[Math.floor(Math.random() * sapaanSiang.length)];
-      if (pertanyaan.includes("malam")) return sapaanMalam[Math.floor(Math.random() * sapaanMalam.length)];
-      return "Iya bos, silakan mau tanya apa? Saya siap bantu analisis keuangannya. 😊";
-    }
+    const jenisBaru = pilihJenisAI(teks);
+    const periodeBaru = deteksiPeriodeAI(teks);
+    const adaPeriodeEksplisit = periodeBaru.awal !== null || /\b(semua waktu|seluruh waktu|sejak awal|semua transaksi)\b/.test(teks);
+    const kataLanjutan = /\b(itu|tersebut|tadi|yang tadi|kalau|bagaimana dengan|bagaimana kalau|sementara|dan|lalu|nya)\b/.test(teks);
+    const jenis = jenisBaru || (kataLanjutan ? aiMemory.topik : null) || aiMemory.topik;
+    const periode = adaPeriodeEksplisit ? periodeBaru : (kataLanjutan && aiMemory.periode ? aiMemory.periode : periodeBaru);
+    const semuaWaktu = /\b(semua waktu|seluruh waktu|sejak awal|semua transaksi)\b/.test(teks);
+    const awal = semuaWaktu ? null : periode.awal;
+    const akhir = semuaWaktu ? null : periode.akhir;
+    const labelWaktu = semuaWaktu ? "Semua Waktu" :
+      (adaPeriodeEksplisit ? periode.label : (kataLanjutan && aiMemory.labelWaktu ? aiMemory.labelWaktu : "Semua Waktu"));
 
-    // 2. DETEKSI KONTEKS
-    const isLanjutan = /(kalau|tadi|itu|tersebut|nya|yang tadi|kalo)/.test(pertanyaan) || pertanyaan.length <= 15;
-
-    // 3. DETEKSI WAKTU
-    let targetTanggal = aiMemory.tanggalSpesifik;
-    let namaBulan = aiMemory.namaBulanSpesifik;
-    let labelWaktu = aiMemory.waktu; 
-    
-    const bulanIndo = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
-    bulanIndo.forEach((b, i) => {
-      if (pertanyaan.includes(b)) { namaBulan = i; labelWaktu = `Bulan ${b.charAt(0).toUpperCase() + b.slice(1)}`; targetTanggal = null; }
+    let data = allTransactions.filter(t => {
+      const d = tanggalTransaksi(t);
+      return !awal || (d && d >= awal && d <= akhir);
     });
 
-    if (pertanyaan.includes("kemarin")) {
-      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-      targetTanggal = yesterday.getDate();
-      namaBulan = yesterday.getMonth();
-      labelWaktu = `Kemarin (Tgl ${targetTanggal})`;
-    } else if (pertanyaan.includes("tanggal")) {
-      const matchTanggal = pertanyaan.match(/tanggal\s+(\d{1,2})/);
-      if (matchTanggal) {
-        targetTanggal = parseInt(matchTanggal[1]);
-        namaBulan = now.getMonth();
-        labelWaktu = `Tanggal ${targetTanggal}`;
-      }
-    } else if (pertanyaan.includes("hari ini")) { targetTanggal = now.getDate(); namaBulan = now.getMonth(); labelWaktu = "Hari Ini"; }
-    else if (pertanyaan.includes("bulan ini")) { targetTanggal = null; namaBulan = now.getMonth(); labelWaktu = "Bulan Ini"; }
-    else if (pertanyaan.includes("bulan lalu")) { 
-      targetTanggal = null; 
-      namaBulan = now.getMonth() === 0 ? 11 : now.getMonth() - 1; 
-      labelWaktu = "Bulan Lalu"; 
-    }
-    else if (pertanyaan.includes("minggu ini")) { targetTanggal = null; namaBulan = null; labelWaktu = "Minggu Ini"; }
-    else if (pertanyaan.includes("tahun ini")) { targetTanggal = null; namaBulan = null; labelWaktu = "Tahun Ini"; }
-    else if (pertanyaan.includes("semua waktu") || pertanyaan.includes("semua") || pertanyaan.includes("keseluruhan")) { targetTanggal = null; namaBulan = null; labelWaktu = "Semua Waktu"; }
-
-    aiMemory.tanggalSpesifik = targetTanggal;
-    aiMemory.namaBulanSpesifik = namaBulan;
-    aiMemory.waktu = labelWaktu;
-
-    // 4. DETEKSI TOPIK
-    let topik = aiMemory.topik; 
-    if (/(pengeluaran|keluar|belanja|beli|bayar)/.test(pertanyaan)) topik = "pengeluaran";
-    else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
-    else if (/(saldo|sisa uang|total uang)/.test(pertanyaan)) topik = "saldo";
-    
-    if (!topik && isLanjutan) topik = aiMemory.topik; 
-    aiMemory.topik = topik;
-
-    // 5. DETEKSI KATEGORI
-    let kategori = aiMemory.kategoriSpesifik;
-    const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|listrik|air|internet|kos|sekolah|kesehatan|obat|sayur|buah|daging|ayam|kopi)/);
-    
-    if (!matchKategori && /(pengeluaran|pemasukan|saldo)/.test(pertanyaan)) {
-       kategori = null;
-    } else if (matchKategori) {
-       kategori = matchKategori[0];
-    }
-    aiMemory.kategoriSpesifik = kategori;
-
-    // 6. FILTER DATA (SANGAT AMAN DARI CRASH)
-    let transaksiRelevan = allTransactions.filter(t => {
-      if (!t.createdAt) return false; 
-      try {
-        const d = t.createdAt.toDate();
-        if (namaBulan !== null && d.getMonth() !== namaBulan) return false;
-        if (targetTanggal !== null && d.getDate() !== targetTanggal) return false;
-        if (labelWaktu === "Minggu Ini") {
-          const lastWeek = new Date(now); lastWeek.setDate(now.getDate() - 7);
-          if (d < lastWeek || d > now) return false;
-        }
-        if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
-        return true;
-      } catch (e) {
-        return false; // Abaikan jika ada data yang format tanggalnya rusak
-      }
-    });
-
-    // 7. FILTER KATEGORI
-    if (kategori) {
-      transaksiRelevan = transaksiRelevan.filter(t => (t.note || "").toLowerCase().includes(kategori));
-      labelWaktu += ` (Kategori: ${kategori})`;
-    }
-
-    // 8. PENCARIAN BEBAS
-    if (!topik && !isLanjutan) {
-      const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
-        .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan", "mau", "tanya"].includes(k));
-      
-      if (kataKunci.length === 0) {
-        topik = "pengeluaran"; 
-        aiMemory.topik = topik;
-      } else {
-        const cocok = transaksiRelevan.filter(t => { 
-          const note = (t.note || "").toLowerCase(); 
-          return kataKunci.every(k => note.includes(k)); 
-        });
-        
-        if (cocok.length > 0) {
-          aiMemory.dataTerakhir = cocok;
-          let total = 0; cocok.forEach(t => total += Number(t.amount) || 0);
-          return `Ditemukan ${cocok.length} transaksi untuk "${kataKunci.join(' ')}" (${labelWaktu}):\n\n${formatDaftarTransaksi(cocok)}\n**Total: Rp ${formatRupiah(total)}**`;
-        } else {
-          return `Tidak ada transaksi untuk "${kataKunci.join(' ')}" pada ${labelWaktu} bos.`;
-        }
-      }
-    }
-
-    // 9. JIKA TOPIK = SALDO
-    if (topik === "saldo") {
-      let totalMasuk = 0; let totalKeluar = 0;
-      transaksiRelevan.forEach(t => { 
-        const amt = Number(t.amount) || 0;
-        if(t.type === 'income') totalMasuk += amt; 
-        else totalKeluar += amt; 
+    const kataKunci = ambilKataKunciAI(teks);
+    const kataKategori = kataKunci.filter(k => !["terbesar","terkecil","terbanyak","tersedikit","rata","rata-rata","perbandingan","bandingkan","beda","selisih","detail","rinci","daftar","rincian"].includes(k));
+    if (kataKategori.length) {
+      const cocok = data.filter(t => {
+        const catatan = normalisasiTeks(`${t.note || ""} ${t.category || ""} ${t.kategori || ""}`);
+        return kataKategori.some(k => catatan.includes(k));
       });
-      const saldo = totalMasuk - totalKeluar;
-      aiMemory.dataTerakhir = transaksiRelevan;
-      
-      let respon = `Siap bos! Total Saldo (${labelWaktu}) adalah **Rp ${formatRupiah(saldo)}**.\n\n(Pemasukan: Rp ${formatRupiah(totalMasuk)} | Pengeluaran: Rp ${formatRupiah(totalKeluar)})\n\n`;
-      if (saldo > 0) respon += "Alhamdulillah, aman. Tetap bijak mengatur ya! 👍"; 
-      else if (saldo < 0) respon += "Waduh, minus bos. Kurangi pengeluaran! ⚠️";
-      else respon += "Saldo kosong bos. Yuk mulai catat transaksi! 📝";
-      return respon;
+      if (cocok.length) data = cocok;
     }
 
-    // 10. JIKA TOPIK = PENGELUARAN / PEMASUKAN
-    if (topik === "pengeluaran" || topik === "pemasukan") {
-      const tipeTarget = topik === "pengeluaran" ? 'expense' : 'income';
-      const dataTerfilter = transaksiRelevan.filter(t => t.type === tipeTarget);
-      
-      if (dataTerfilter.length === 0) {
-        return `Tidak ada catatan ${topik} di ${labelWaktu} bos. Kosong melompong! 🤷‍♂️`;
-      }
-      
-      aiMemory.dataTerakhir = dataTerfilter;
-      let total = 0; 
-      dataTerfilter.forEach(t => total += Number(t.amount) || 0);
-      
-      let teksPembuka = pembukaData[Math.floor(Math.random() * pembukaData.length)];
-      let teksPenutup = generatePenutup(total, topik);
-      
-      return `${teksPembuka}*${topik.toUpperCase()} ${labelWaktu.toUpperCase()}*\n${formatDaftarTransaksi(dataTerfilter)}\n**Total: Rp ${formatRupiah(total)}**\n\n${teksPenutup}`;
+    if (jenis === "income") data = data.filter(t => t.type === "income");
+    else if (jenis === "expense") data = data.filter(t => t.type === "expense");
+
+    const mintaPerbandingan = /\b(bandingkan|perbandingan|dibanding|selisih|beda pemasukan|pemasukan dan pengeluaran|pengeluaran dan pemasukan)\b/.test(teks);
+    const mintaTerbesar = /\b(terbesar|tertinggi|paling besar|termahal|terbanyak)\b/.test(teks);
+    const mintaTerkecil = /\b(terkecil|terendah|paling kecil|termurah)\b/.test(teks);
+    const mintaRata = /\b(rata rata|rata-rata|rerata)\b/.test(teks);
+    const mintaJumlah = /\b(berapa kali|berapa transaksi|jumlah transaksi|ada berapa|berapa banyak|frekuensi)\b/.test(teks);
+    const mintaDaftar = /\b(apa saja|sebutkan|daftar|rincian|detail|transaksi apa|catatan apa)\b/.test(teks);
+    const mintaSaldo = jenis === "balance" || /\b(saldo|sisa uang)\b/.test(teks);
+
+    aiMemory.topik = jenis || aiMemory.topik;
+    aiMemory.periode = {awal, akhir};
+    aiMemory.labelWaktu = labelWaktu;
+    aiMemory.dataTerakhir = data;
+
+    if (mintaPerbandingan || (jenis === null && /\bpemasukan\b.*\bpengeluaran\b|\bpengeluaran\b.*\bpemasukan\b/.test(teks))) {
+      const masuk = data.filter(t => t.type === "income").reduce((s,t)=>s+(Number(t.amount)||0),0);
+      const keluar = data.filter(t => t.type === "expense").reduce((s,t)=>s+(Number(t.amount)||0),0);
+      return `Perbandingan ${labelWaktu}:\n\nPemasukan: Rp ${rupiahAI(masuk)}\nPengeluaran: Rp ${rupiahAI(keluar)}\nSelisih: Rp ${rupiahAI(masuk-keluar)}\n\n${masuk >= keluar ? "Pemasukan lebih besar dari pengeluaran." : "Pengeluaran lebih besar dari pemasukan."}`;
     }
 
-    // 11. FALLBACK AKHIR
-    return `Tidak ada data yang cocok dengan pencarian bos pada ${labelWaktu}. Coba gunakan kata kunci lain ya.`;
+    if (mintaSaldo) {
+      const masuk = data.filter(t=>t.type==="income").reduce((s,t)=>s+(Number(t.amount)||0),0);
+      const keluar = data.filter(t=>t.type==="expense").reduce((s,t)=>s+(Number(t.amount)||0),0);
+      return `Ringkasan saldo ${labelWaktu}:\n\nTotal pemasukan: Rp ${rupiahAI(masuk)}\nTotal pengeluaran: Rp ${rupiahAI(keluar)}\nSaldo bersih: Rp ${rupiahAI(masuk-keluar)}\n\nSaldo bersih dihitung dari transaksi pada periode yang dipilih.`;
+    }
+
+    if (!jenis && !kataKategori.length && !/\b(transaksi|catatan|ringkasan|laporan)\b/.test(teks)) {
+      return "Saya belum menangkap maksud pertanyaannya, bos. Saya bisa membantu seperti: “Berapa pengeluaran bulan ini?”, “Apa saja pemasukan kemarin?”, “Pengeluaran terbesar apa?”, “Bandingkan pemasukan dan pengeluaran”, atau “Berapa transaksi untuk belanja?”";
+    }
+
+    if (!data.length) return `Belum ada transaksi yang cocok untuk ${labelWaktu}${kataKategori.length ? ` dengan kata kunci "${kataKategori.join(" ")}"` : ""}, bos.`;
+
+    const total = data.reduce((s,t)=>s+(Number(t.amount)||0),0);
+    if (mintaTerbesar || mintaTerkecil) {
+      const urut = [...data].sort((a,b)=>(Number(a.amount)||0)-(Number(b.amount)||0));
+      const item = mintaTerbesar ? urut[urut.length-1] : urut[0];
+      const d = tanggalTransaksi(item);
+      return `${mintaTerbesar ? "Transaksi terbesar" : "Transaksi terkecil"} ${labelWaktu}:\n\n${formatDaftarTransaksi([item])}\n\nNilai: Rp ${rupiahAI(item.amount)}`;
+    }
+    if (mintaRata) return `Rata-rata nilai ${data.length} transaksi ${labelWaktu} adalah Rp ${rupiahAI(total/data.length)}.`;
+    if (mintaJumlah) return `Ada ${data.length} transaksi ${jenis === "income" ? "pemasukan" : jenis === "expense" ? "pengeluaran" : ""} ${labelWaktu}, bos. Total nilainya Rp ${rupiahAI(total)}.`;
+
+    if (mintaDaftar || kataKategori.length || jenis) {
+      const judul = jenis === "income" ? "PEMASUKAN" : jenis === "expense" ? "PENGELUARAN" : "TRANSAKSI";
+      return `${judul} — ${labelWaktu}\n\n${formatDaftarTransaksi(data)}\n\nJumlah transaksi: ${data.length}\nTotal: Rp ${rupiahAI(total)}`;
+    }
+
+    return `Saya menemukan ${data.length} transaksi ${labelWaktu} dengan total Rp ${rupiahAI(total)}.\n\n${formatDaftarTransaksi(data.slice(0,10))}`;
   }
+
 </script>
 </body>
 </html>
+    
