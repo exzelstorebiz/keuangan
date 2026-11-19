@@ -450,7 +450,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (REVISI FINAL - SUPER CERDAS)
+  // LOGIKA AI CHATBOT (REVISI FINAL - ANTI CRASH & NLP)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -473,7 +473,8 @@
         balasan = prosesPertanyaanAI(pesan.toLowerCase());
       } catch (error) {
         console.error("AI Error:", error);
-        balasan = "Aduh, sepertinya ada data yang rusak atau kendala teknis bos. Coba tanya dengan kalimat lain ya. 🙏";
+        // Fallback jika crash
+        balasan = `Maaf bos, sepertinya ada kendala teknis atau ada data transaksi yang format tanggalnya rusak. Coba tanya dengan kalimat lain ya. 🙏`;
       }
       
       tambahPesanKeChat(balasan, 'bot');
@@ -571,7 +572,7 @@
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
 
-    // 1. CEK SAPAAN, TERIMA KASIH, & BASA-BASI
+    // 1. CEK SAPAAN & BASA-BASI
     if (/(terima kasih|makasih|thanks|tq|thx)/.test(pertanyaan)) {
       aiMemory = { topik: null, waktu: "bulan ini", tanggalSpesifik: null, namaBulanSpesifik: null, kategoriSpesifik: null, dataTerakhir: [] };
       return "Sama-sama bos! Senang bisa membantu. Kalau butuh analisis keuangan lagi, panggil saya aja ya. 😊🙏";
@@ -580,9 +581,9 @@
       return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
     }
     
-    // Deteksi basa-basi murni (tidak ada niatan nanya data)
+    // Deteksi basa-basi (hanya jika TIDAK ada kata kunci transaksi)
     const isBasaBasi = /(saya mau tanya|mau tanya|nanya dong|halo|hai|pagi|siang|sore|malam)/.test(pertanyaan) && 
-                       !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja)/.test(pertanyaan);
+                       !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja|tanggal)/.test(pertanyaan);
 
     if (isBasaBasi) {
       if (pertanyaan.includes("pagi")) return sapaanPagi[Math.floor(Math.random() * sapaanPagi.length)];
@@ -613,7 +614,7 @@
       const matchTanggal = pertanyaan.match(/tanggal\s+(\d{1,2})/);
       if (matchTanggal) {
         targetTanggal = parseInt(matchTanggal[1]);
-        namaBulan = now.getMonth();
+        namaBulan = now.getMonth(); // default bulan ini
         labelWaktu = `Tanggal ${targetTanggal}`;
       }
     } else if (pertanyaan.includes("hari ini")) { targetTanggal = now.getDate(); namaBulan = now.getMonth(); labelWaktu = "Hari Ini"; }
@@ -625,7 +626,7 @@
     }
     else if (pertanyaan.includes("minggu ini")) { targetTanggal = null; namaBulan = null; labelWaktu = "Minggu Ini"; }
     else if (pertanyaan.includes("tahun ini")) { targetTanggal = null; namaBulan = null; labelWaktu = "Tahun Ini"; }
-    else if (pertanyaan.includes("semua waktu") || pertanyaan.includes("semua")) { targetTanggal = null; namaBulan = null; labelWaktu = "Semua Waktu"; }
+    else if (pertanyaan.includes("semua waktu") || pertanyaan.includes("semua") || pertanyaan.includes("keseluruhan")) { targetTanggal = null; namaBulan = null; labelWaktu = "Semua Waktu"; }
 
     aiMemory.tanggalSpesifik = targetTanggal;
     aiMemory.namaBulanSpesifik = namaBulan;
@@ -637,6 +638,7 @@
     else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
     else if (/(saldo|sisa uang|total uang)/.test(pertanyaan)) topik = "saldo";
     
+    // Jika user menyebut topik secara eksplisit, pastikan menggunakan topik tersebut
     if (!topik && isLanjutan) topik = aiMemory.topik; 
     aiMemory.topik = topik;
 
@@ -645,7 +647,7 @@
     const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|listrik|air|internet|kos|sekolah|kesehatan|obat|sayur|buah|daging|ayam|kopi)/);
     
     if (!matchKategori && /(pengeluaran|pemasukan|saldo)/.test(pertanyaan)) {
-       kategori = null;
+       kategori = null; // Reset kategori jika tanya pengeluaran umum
     } else if (matchKategori) {
        kategori = matchKategori[0];
     }
@@ -665,7 +667,7 @@
         if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
         return true;
       } catch (e) {
-        return false; // Jika format tanggal rusak, lewati transaksi ini
+        return false; // Abaikan jika ada data tanggal yang benar-benar rusak
       }
     });
 
@@ -680,9 +682,8 @@
       const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
         .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan", "mau", "tanya"].includes(k));
       
-      // Jika setelah difilter tidak ada kata kunci, paksa topik ke pengeluaran
       if (kataKunci.length === 0) {
-        topik = "pengeluaran"; 
+        topik = "pengeluaran"; // Jika tidak ada kata kunci, default ke pengeluaran
         aiMemory.topik = topik;
       } else {
         const cocok = transaksiRelevan.filter(t => { 
