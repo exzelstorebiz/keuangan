@@ -104,8 +104,8 @@
   /* AI CHAT CSS FULL SCREEN */
   .ai-chat-box { 
     position: absolute; bottom: 0; left: 0; width: 100%; 
-    height: 100%; /* Fallback */
-    height: 100dvh; /* Dynamic viewport untuk keyboard */
+    height: 100%; 
+    height: 100dvh; 
     background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; 
     display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; 
   }
@@ -220,7 +220,7 @@
     <button class="ai-close" onclick="tutupAIChat()">✖</button>
   </div>
   <div class="ai-messages" id="aiMessages">
-    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Saya sekarang punya ingatan jangka pendek, jadi bos bisa tanya berantai. Contoh: "Pengeluaran tanggal 15 apa saja?" lalu "Kalau pemasukannya?"</div>
+    <div class="ai-message bot">Halo bos! Saya Asisten Keuangan AI. Saya siap membantu menganalisis pengeluaran dan pemasukan bos. Silakan tanya apa saja, contoh: "Berapa pengeluaran hari ini?" atau "Saldo bulan ini berapa?".</div>
   </div>
   <div class="ai-input-area">
     <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pertanyaan..." onkeypress="handleAIEnter(event)">
@@ -450,7 +450,7 @@
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (FIXED: KATEGORI & MEMORI)
+  // LOGIKA AI CHATBOT (REVISI FINAL - SUPER CERDAS)
   // =====================================================
   window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
   window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
@@ -463,7 +463,7 @@
     aiInput.value = '';
     tampilkanTypingIndicator();
 
-    const jedaAcak = 800 + Math.random() * 1000; 
+    const jedaAcak = 800 + Math.random() * 800; 
 
     setTimeout(() => {
       hapusTypingIndicator();
@@ -473,7 +473,7 @@
         balasan = prosesPertanyaanAI(pesan.toLowerCase());
       } catch (error) {
         console.error("AI Error:", error);
-        balasan = "Maaf bos, sepertinya ada kendala teknis saat membaca data. Coba tanya dengan kalimat lain ya. 🙏";
+        balasan = "Aduh, sepertinya ada data yang rusak atau kendala teknis bos. Coba tanya dengan kalimat lain ya. 🙏";
       }
       
       tambahPesanKeChat(balasan, 'bot');
@@ -487,11 +487,7 @@
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
-      // Format bold dan enter
-      let formattedText = teks
-        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') 
-        .replace(/\n/g, '<br>');                
-      
+      let formattedText = teks.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');                
       const textNode = document.createElement('div');
       textNode.innerHTML = formattedText;
       div.appendChild(textNode);
@@ -552,7 +548,7 @@
     return teks;
   }
 
-  // --- KAMUS SAPAAN & PENUTUP ---
+  // KAMUS SAPAAN & PENUTUP
   const sapaanPagi = ["Selamat pagi bos! Semangat menjalani hari ini ya. 🌅", "Pagi bos! Jangan lupa sarapan sebelum beraktivitas. ☕"];
   const sapaanSiang = ["Selamat siang bos! Jangan lupa istirahat sejenak. ☀️", "Siang bos! Sudah makan siang? Semoga harimu lancar. 🍽️"];
   const sapaanMalam = ["Selamat malam bos! Waktunya rileks dan istirahat. 🌙", "Malam bos! Terima kasih sudah bekerja keras hari ini. 🌌"];
@@ -571,11 +567,11 @@
     return "Semoga rezekinya selalu berkah dan cukup! 🤲";
   }
 
-  // --- FUNGSI UTAMA NLP (NATURAL LANGUAGE PROCESSING) ---
+  // FUNGSI UTAMA NLP (REVISI FINAL)
   function prosesPertanyaanAI(pertanyaan) {
     const now = new Date();
 
-    // 1. CEK SAPAAN & TERIMA KASIH
+    // 1. CEK SAPAAN, TERIMA KASIH, & BASA-BASI
     if (/(terima kasih|makasih|thanks|tq|thx)/.test(pertanyaan)) {
       aiMemory = { topik: null, waktu: "bulan ini", tanggalSpesifik: null, namaBulanSpesifik: null, kategoriSpesifik: null, dataTerakhir: [] };
       return "Sama-sama bos! Senang bisa membantu. Kalau butuh analisis keuangan lagi, panggil saya aja ya. 😊🙏";
@@ -583,18 +579,16 @@
     if (/(maaf|sori|sorry)/.test(pertanyaan)) {
       return "Tidak masalah bos! Santai saja. Ada lagi yang bisa saya bantu? 😊";
     }
+    
+    // Deteksi basa-basi murni (tidak ada niatan nanya data)
+    const isBasaBasi = /(saya mau tanya|mau tanya|nanya dong|halo|hai|pagi|siang|sore|malam)/.test(pertanyaan) && 
+                       !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja)/.test(pertanyaan);
 
-    const isSapaan = /(halo|hai|pagi|siang|sore|malam)/.test(pertanyaan);
-    const isBukanPertanyaanData = !/(pengeluaran|pemasukan|saldo|transaksi|beli|bayar|gaji|uang|belanja)/.test(pertanyaan);
-
-    if (isSapaan && isBukanPertanyaanData) {
-      let respon = "";
-      if (pertanyaan.includes("pagi")) respon = sapaanPagi[Math.floor(Math.random() * sapaanPagi.length)];
-      else if (pertanyaan.includes("siang")) respon = sapaanSiang[Math.floor(Math.random() * sapaanSiang.length)];
-      else if (pertanyaan.includes("malam")) respon = sapaanMalam[Math.floor(Math.random() * sapaanMalam.length)];
-      else respon = sapaanUmum[Math.floor(Math.random() * sapaanUmum.length)];
-      aiMemory = { topik: null, waktu: "bulan ini", tanggalSpesifik: null, namaBulanSpesifik: null, kategoriSpesifik: null, dataTerakhir: [] };
-      return respon;
+    if (isBasaBasi) {
+      if (pertanyaan.includes("pagi")) return sapaanPagi[Math.floor(Math.random() * sapaanPagi.length)];
+      if (pertanyaan.includes("siang")) return sapaanSiang[Math.floor(Math.random() * sapaanSiang.length)];
+      if (pertanyaan.includes("malam")) return sapaanMalam[Math.floor(Math.random() * sapaanMalam.length)];
+      return "Iya bos, silakan mau tanya apa? Saya siap bantu analisis keuangannya. 😊";
     }
 
     // 2. DETEKSI KONTEKS
@@ -637,7 +631,7 @@
     aiMemory.namaBulanSpesifik = namaBulan;
     aiMemory.waktu = labelWaktu;
 
-    // 4. DETEKSI TOPIK (PERBAIKAN: "belanja" & "beli" masuk ke pengeluaran)
+    // 4. DETEKSI TOPIK
     let topik = aiMemory.topik; 
     if (/(pengeluaran|keluar|belanja|beli|bayar)/.test(pertanyaan)) topik = "pengeluaran";
     else if (/(pemasukan|masuk|gaji|bonus|dapat)/.test(pertanyaan)) topik = "pemasukan";
@@ -646,11 +640,10 @@
     if (!topik && isLanjutan) topik = aiMemory.topik; 
     aiMemory.topik = topik;
 
-    // 5. DETEKSI KATEGORI (PERBAIKAN: "belanja" dihapus dari sini)
+    // 5. DETEKSI KATEGORI
     let kategori = aiMemory.kategoriSpesifik;
     const matchKategori = pertanyaan.match(/(makanan|makan|transport|bensin|listrik|air|internet|kos|sekolah|kesehatan|obat|sayur|buah|daging|ayam|kopi)/);
     
-    // Reset kategori jika user menyebut topik umum (pengeluaran/pemasukan) tanpa kata kategori spesifik
     if (!matchKategori && /(pengeluaran|pemasukan|saldo)/.test(pertanyaan)) {
        kategori = null;
     } else if (matchKategori) {
@@ -658,21 +651,22 @@
     }
     aiMemory.kategoriSpesifik = kategori;
 
-    // 6. FILTER DATA
+    // 6. FILTER DATA (ANTI-CRASH SUPER KETAT)
     let transaksiRelevan = allTransactions.filter(t => {
       if (!t.createdAt) return false; 
-      const d = t.createdAt.toDate();
-      
-      if (namaBulan !== null && d.getMonth() !== namaBulan) return false;
-      if (targetTanggal !== null && d.getDate() !== targetTanggal) return false;
-      
-      if (labelWaktu === "Minggu Ini") {
-        const lastWeek = new Date(now); lastWeek.setDate(now.getDate() - 7);
-        if (d < lastWeek || d > now) return false;
+      try {
+        const d = t.createdAt.toDate();
+        if (namaBulan !== null && d.getMonth() !== namaBulan) return false;
+        if (targetTanggal !== null && d.getDate() !== targetTanggal) return false;
+        if (labelWaktu === "Minggu Ini") {
+          const lastWeek = new Date(now); lastWeek.setDate(now.getDate() - 7);
+          if (d < lastWeek || d > now) return false;
+        }
+        if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
+        return true;
+      } catch (e) {
+        return false; // Jika format tanggal rusak, lewati transaksi ini
       }
-      if (labelWaktu === "Tahun Ini" && d.getFullYear() !== now.getFullYear()) return false;
-
-      return true;
     });
 
     // 7. FILTER KATEGORI
@@ -681,13 +675,15 @@
       labelWaktu += ` (Kategori: ${kategori})`;
     }
 
-    // 8. PENCARIAN BEBAS
+    // 8. PENCARIAN BEBAS (Hanya jika bukan topik standar)
     if (!topik && !isLanjutan) {
       const kataKunci = pertanyaan.replace(/[?.,!]/g, '').split(' ')
-        .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan"].includes(k));
+        .filter(k => k.length > 2 && !["berapa", "total", "saya", "apa", "saja", "yang", "di", "ke", "dari", "untuk", "pada", "kalau", "tadi", "hari", "ini", "bulan", "mau", "tanya"].includes(k));
       
+      // Jika setelah difilter tidak ada kata kunci, paksa topik ke pengeluaran
       if (kataKunci.length === 0) {
         topik = "pengeluaran"; 
+        aiMemory.topik = topik;
       } else {
         const cocok = transaksiRelevan.filter(t => { 
           const note = (t.note || "").toLowerCase(); 
@@ -698,11 +694,9 @@
           aiMemory.dataTerakhir = cocok;
           let total = 0; cocok.forEach(t => total += Number(t.amount) || 0);
           return `Ditemukan ${cocok.length} transaksi untuk "${kataKunci.join(' ')}" (${labelWaktu}):\n\n${formatDaftarTransaksi(cocok)}\n**Total: Rp ${formatRupiah(total)}**`;
+        } else {
+          return `Tidak ada transaksi untuk "${kataKunci.join(' ')}" pada ${labelWaktu} bos.`;
         }
-      }
-      
-      if (!topik) {
-        return `Maaf bos, saya belum paham maksud pertanyaannya. 😅\n\nBos bisa tanya dengan format seperti:\n• "Pengeluaran bulan ini apa saja?"\n• "Berapa saldo saya hari ini?"\n• "Pemasukan tanggal 15"\n• "Belanja makanan bulan lalu"`;
       }
     }
 
