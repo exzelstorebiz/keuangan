@@ -40,6 +40,14 @@
   body.dark-mode .ai-message.bot { background: var(--ai-bg); color: var(--text-main); }
   body.dark-mode .ai-input-area { border-top-color: #4B5563; }
   body.dark-mode .ai-input { background: var(--ai-bg); color: var(--text-main); }
+  body.dark-mode .combo-input { background: var(--ai-bg); color: var(--text-main); border-color: #4B5563; }
+  body.dark-mode .combo-dropdown { background: var(--bg-card); border-color: #4B5563; }
+  body.dark-mode .combo-item { color: var(--text-main); }
+  body.dark-mode .combo-item:hover, body.dark-mode .combo-item.active { background: #4B5563; }
+  body.dark-mode .combo-group-label { color: #9CA3AF; background: var(--bg-card); }
+  body.dark-mode .combo-empty { color: #9CA3AF; }
+  body.dark-mode .combo-invalid { border-color: #F87171 !important; }
+  body.dark-mode .date-picker { background: var(--ai-bg); color: var(--text-main); border-color: #4B5563; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', sans-serif; background: var(--bg-app); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; transition: background 0.3s ease; }
@@ -101,7 +109,7 @@
 
   #transactionList { padding-bottom: 100px; } 
 
-  /* AI CHAT CSS FULL SCREEN */
+  /* ============ AI CHAT CSS FULL SCREEN ============ */
   .ai-chat-box { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); border-radius: 0; box-shadow: none; z-index: 1000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease; }
   .ai-chat-box.active { transform: translateY(0); }
 
@@ -117,19 +125,56 @@
   .ai-message.bot { background: var(--bg-card); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .ai-message.user { background: var(--pink-main); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 
-  .ai-input-area { display: flex; padding: 12px 20px 20px; border-top: 1px solid #E5E7EB; gap: 10px; background: var(--bg-main); }
-  .ai-input { flex: 1; padding: 12px 18px; border-radius: 24px; border: 1px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); }
-  .ai-send { background: var(--pink-main); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3); }
-  .ai-send:active { transform: scale(0.9); }
-
-  /* CSS UNTUK TYPING INDICATOR */
   .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 12px 18px; background: var(--bg-card); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
   .typing-indicator span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; display: inline-block; animation: typing 1.4s infinite ease-in-out both; }
   .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
   .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
   @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
 
-  /* CSS MODAL */
+  /* ============ AI INPUT AREA BARU (COMBOBOX) ============ */
+  .ai-input-area { display: flex; flex-direction: column; padding: 12px 16px 16px; border-top: 1px solid #E5E7EB; gap: 10px; background: var(--bg-main); }
+
+  .ai-input-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+
+  /* Combobox wrapper */
+  .combo-wrap { position: relative; width: 100%; }
+  .combo-input { width: 100%; padding: 12px 40px 12px 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); font-weight: 500; transition: 0.2s; cursor: pointer; }
+  .combo-input:focus { border-color: var(--pink-main); background: var(--bg-card); }
+  .combo-input::placeholder { color: var(--text-muted); font-weight: 400; }
+  .combo-input:read-only { cursor: pointer; }
+
+  .combo-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-muted); pointer-events: none; transition: transform 0.2s; }
+  .combo-wrap.open .combo-arrow { transform: translateY(-50%) rotate(180deg); }
+
+  .combo-clear { position: absolute; right: 38px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 4px; display: none; }
+  .combo-wrap.has-value .combo-clear { display: block; }
+  .combo-clear:hover { color: var(--red); }
+
+  /* Dropdown saran */
+  .combo-dropdown { position: absolute; bottom: calc(100% + 6px); left: 0; width: 100%; max-height: 260px; overflow-y: auto; background: var(--bg-card); border: 1px solid #E5E7EB; border-radius: 12px; box-shadow: 0 -8px 25px rgba(0,0,0,0.15); z-index: 50; display: none; padding: 6px 0; }
+  .combo-wrap.open .combo-dropdown { display: block; }
+
+  .combo-group-label { font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 8px 14px 4px; background: var(--bg-card); text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; }
+  .combo-item { padding: 10px 14px; font-size: 14px; color: var(--text-main); cursor: pointer; font-weight: 500; transition: background 0.15s; border: none; background: none; text-align: left; width: 100%; display: block; }
+  .combo-item:hover, .combo-item.active { background: var(--pink-light); }
+  .combo-item mark { background: var(--gold-light); color: var(--text-main); border-radius: 3px; padding: 0 2px; font-weight: 700; }
+  .combo-empty { padding: 16px 14px; text-align: center; font-size: 13px; color: var(--text-muted); font-style: italic; }
+
+  /* Invalid state */
+  .combo-invalid { border-color: var(--red) !important; background: #FEF2F2 !important; }
+
+  /* Date picker & baris barang */
+  .date-picker { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); font-weight: 500; }
+  .date-picker:focus { border-color: var(--pink-main); background: var(--bg-card); }
+
+  .extra-row { display: none; flex-direction: column; gap: 10px; }
+  .extra-row.show { display: flex; }
+
+  .btn-tanya { background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%); color: white; border: none; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-tanya:active { transform: scale(0.97); }
+  .btn-tanya:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+  /* ============ MODAL ============ */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
   .modal-overlay.show { opacity: 1; visibility: visible; }
   .modal-box { background: var(--bg-card); width: 85%; max-width: 320px; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -205,7 +250,9 @@
   <button class="fab" onclick="window.location.href='form.html'">+</button>
 </div>
 
-<!-- KOTAK CHAT AI (FULL SCREEN) -->
+<!-- ============================================== -->
+<!-- KOTAK CHAT AI (FULL SCREEN) — VERSI COMBOBOX   -->
+<!-- ============================================== -->
 <div class="ai-chat-box" id="aiChatBox">
   <div class="ai-header">
     <div class="ai-title">
@@ -213,17 +260,68 @@
     </div>
     <button class="ai-close" onclick="tutupAIChat()">✖</button>
   </div>
+
   <div class="ai-messages" id="aiMessages">
-    <!-- Pesan pembuka diubah agar lebih natural -->
-    <div class="ai-message bot">Halo! Aku di sini buat bantu kamu memantau keuangan keluarga. Mau tanya apa hari ini? Misalnya: "Pengeluaran bulan ini berapa aja?" atau "Sisa saldo kita berapa?"</div>
+    <div class="ai-message bot">Halo bos! 👋 Aku di sini buat bantu pantau keuangan keluarga. Pilih pertanyaan di bawah ya, atau ketik untuk cari pertanyaan yang kamu mau. 😄</div>
   </div>
+
+  <!-- AREA INPUT BARU: COMBOBOX -->
   <div class="ai-input-area">
-    <input type="text" id="aiInput" class="ai-input" placeholder="Ketik pertanyaan..." onkeypress="handleAIEnter(event)">
-    <button class="ai-send" onclick="kirimPesanAI()">➤</button>
+
+    <!-- 1. Combobox Pertanyaan Utama -->
+    <div>
+      <div class="ai-input-label">📊 Pertanyaan</div>
+      <div class="combo-wrap" id="comboPertanyaanWrap">
+        <input type="text" id="comboPertanyaanInput" class="combo-input"
+               placeholder="Ketik atau pilih pertanyaan..."
+               autocomplete="off">
+        <button class="combo-clear" id="comboPertanyaanClear" title="Hapus">✖</button>
+        <span class="combo-arrow">▼</span>
+        <div class="combo-dropdown" id="comboPertanyaanDropdown"></div>
+      </div>
+    </div>
+
+    <!-- 2. Date Picker (muncul jika pilih "Tanggal tertentu") -->
+    <div class="extra-row" id="rowTanggal">
+      <div class="ai-input-label">📅 Pilih Tanggal</div>
+      <input type="date" id="inputTanggal" class="date-picker">
+    </div>
+
+    <!-- 3. Baris Barang + Periode (muncul jika pilih "Cari pembelian barang") -->
+    <div class="extra-row" id="rowBarang">
+      <div>
+        <div class="ai-input-label">🔍 Barang</div>
+        <div class="combo-wrap" id="comboBarangWrap">
+          <input type="text" id="comboBarangInput" class="combo-input"
+                 placeholder="Ketik atau pilih kategori barang..."
+                 autocomplete="off">
+          <button class="combo-clear" id="comboBarangClear" title="Hapus">✖</button>
+          <span class="combo-arrow">▼</span>
+          <div class="combo-dropdown" id="comboBarangDropdown"></div>
+        </div>
+      </div>
+      <div>
+        <div class="ai-input-label">📅 Periode</div>
+        <div class="combo-wrap" id="comboPeriodeWrap">
+          <input type="text" id="comboPeriodeInput" class="combo-input"
+                 placeholder="Ketik atau pilih periode..."
+                 autocomplete="off">
+          <button class="combo-clear" id="comboPeriodeClear" title="Hapus">✖</button>
+          <span class="combo-arrow">▼</span>
+          <div class="combo-dropdown" id="comboPeriodeDropdown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Tombol Tanya -->
+    <button class="btn-tanya" id="btnTanya" onclick="kirimPertanyaan()">
+      🚀 Tanya AI
+    </button>
+
   </div>
 </div>
 
-<!-- MODAL HAPUS -->
+<!-- ================= MODAL HAPUS ================= -->
 <div class="modal-overlay" id="deleteModal">
   <div class="modal-box">
     <div class="modal-icon">🗑️</div>
@@ -235,7 +333,8 @@
     </div>
   </div>
 </div>
-<!-- MODAL DETAIL KETERANGAN -->
+
+<!-- ============ MODAL DETAIL KETERANGAN ============ -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal-box">
     <div class="modal-icon" style="background: #FDF2F8; color: var(--pink-main);">📝</div>
@@ -265,35 +364,200 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const totalBalanceEl = document.getElementById('totalBalance');
+  // =====================================================
+  // 📌 DOM REFERENCES
+  // =====================================================
+  const totalBalanceEl    = document.getElementById('totalBalance');
   const transactionListEl = document.getElementById('transactionList');
-  const dailyExpenseEl = document.getElementById('dailyExpense');
-  const deleteModal = document.getElementById('deleteModal');
-  const deleteModalText = document.getElementById('deleteModalText');
-  const detailModal = document.getElementById('detailModal');
-  const detailModalText = document.getElementById('detailModalText');
+  const dailyExpenseEl    = document.getElementById('dailyExpense');
+  const deleteModal       = document.getElementById('deleteModal');
+  const deleteModalText   = document.getElementById('deleteModalText');
+  const detailModal       = document.getElementById('detailModal');
+  const detailModalText   = document.getElementById('detailModalText');
 
-  const aiChatBox = document.getElementById('aiChatBox');
-  const aiMessages = document.getElementById('aiMessages');
-  const aiInput = document.getElementById('aiInput');
+  const aiChatBox   = document.getElementById('aiChatBox');
+  const aiMessages  = document.getElementById('aiMessages');
 
+  const rowTanggal  = document.getElementById('rowTanggal');
+  const rowBarang   = document.getElementById('rowBarang');
+  const inputTanggal = document.getElementById('inputTanggal');
+
+  // =====================================================
+  // 📊 DATA OPSI (dari Bagian 1 — tempel di sini)
+  // =====================================================
+  const OPSI_PERTANYAAN = [
+    { label: "Berapa sisa saldo kita?", key: "saldo", kategori: "💰 Saldo & Ringkasan",
+      sinonim: ["saldo", "sisa uang", "berapa uang", "total saldo"] },
+    { label: "Total pemasukan dan pengeluaran keseluruhan", key: "total_keseluruhan", kategori: "💰 Saldo & Ringkasan",
+      sinonim: ["total semua", "keseluruhan", "total pemasukan pengeluaran"] },
+    { label: "Pengeluaran hari ini apa saja?", key: "pengeluaran_hari_ini", kategori: "📅 Pengeluaran",
+      sinonim: ["keluar hari ini", "belanja hari ini", "pengeluaran today"] },
+    { label: "Pengeluaran kemarin apa saja?", key: "pengeluaran_kemarin", kategori: "📅 Pengeluaran",
+      sinonim: ["keluar kemarin", "belanja kemarin", "pengeluaran yesterday"] },
+    { label: "Pengeluaran minggu ini berapa?", key: "pengeluaran_minggu_ini", kategori: "📅 Pengeluaran",
+      sinonim: ["keluar minggu ini", "minggu ini", "weekly"] },
+    { label: "Pengeluaran bulan ini berapa?", key: "pengeluaran_bulan_ini", kategori: "📅 Pengeluaran",
+      sinonim: ["keluar bulan ini", "bulan ini", "monthly"] },
+    { label: "Pengeluaran bulan lalu berapa?", key: "pengeluaran_bulan_lalu", kategori: "📅 Pengeluaran",
+      sinonim: ["keluar bulan lalu", "bulan kemarin", "last month"] },
+    { label: "Pengeluaran terbesar bulan ini apa?", key: "pengeluaran_terbesar_bulan_ini", kategori: "📅 Pengeluaran",
+      sinonim: ["terbesar bulan ini", "paling mahal", "pengeluaran terbesar"] },
+    { label: "Pengeluaran tanggal tertentu...", key: "pengeluaran_tanggal", kategori: "📅 Pengeluaran",
+      butuhTanggal: true, sinonim: ["tanggal", "tgl tertentu", "pilih tanggal"] },
+    { label: "Pemasukan hari ini apa saja?", key: "pemasukan_hari_ini", kategori: "📈 Pemasukan",
+      sinonim: ["masuk hari ini", "income hari ini"] },
+    { label: "Pemasukan minggu ini berapa?", key: "pemasukan_minggu_ini", kategori: "📈 Pemasukan",
+      sinonim: ["masuk minggu ini"] },
+    { label: "Pemasukan bulan ini berapa?", key: "pemasukan_bulan_ini", kategori: "📈 Pemasukan",
+      sinonim: ["masuk bulan ini"] },
+    { label: "Pemasukan bulan lalu berapa?", key: "pemasukan_bulan_lalu", kategori: "📈 Pemasukan",
+      sinonim: ["masuk bulan lalu"] },
+    { label: "Pemasukan terbesar bulan ini apa?", key: "pemasukan_terbesar_bulan_ini", kategori: "📈 Pemasukan",
+      sinonim: ["pemasukan terbesar", "income terbesar"] },
+    { label: "Pemasukan tanggal tertentu...", key: "pemasukan_tanggal", kategori: "📈 Pemasukan",
+      butuhTanggal: true, sinonim: ["masuk tanggal", "income tanggal"] },
+    { label: "5 transaksi terakhir apa saja?", key: "5_transaksi_terakhir", kategori: "📋 Daftar Transaksi",
+      sinonim: ["5 terakhir", "lima transaksi", "transaksi terakhir"] },
+    { label: "10 transaksi terakhir apa saja?", key: "10_transaksi_terakhir", kategori: "📋 Daftar Transaksi",
+      sinonim: ["10 terakhir", "sepuluh transaksi"] },
+    { label: "Cari pembelian barang tertentu...", key: "cari_barang", kategori: "🔍 Cari Pembelian",
+      butuhBarang: true, sinonim: ["cari barang", "beli gas", "pembelian", "cari pembelian"] }
+  ];
+
+  const OPSI_BARANG = [
+    { label: "⛽ Gas / LPG", key: "gas",
+      keywords: ["gas", "lpg", "elpiji", "tabung", "melon", "bright gas"],
+      sinonim: ["elpiji", "tabung gas", "lpg", "gas melon"] },
+    { label: "🛢️ Oli / Pelumas", key: "oli",
+      keywords: ["oli", "pelumas", "mesran", "shell", "yamalube", "enduro"],
+      sinonim: ["pelumas", "oli mesin", "oli motor"] },
+    { label: "⛽ Bensin / BBM", key: "bensin",
+      keywords: ["bensin", "bbm", "pertalite", "pertamax", "solar", "premium", "shell", "spbu"],
+      sinonim: ["bbm", "bahan bakar", "pertalite", "pertamax", "solar"] },
+    { label: "🍚 Beras / Sembako", key: "beras",
+      keywords: ["beras", "sembako", "gula", "minyak goreng", "tepung", "garam"],
+      sinonim: ["sembako", "beras", "gula", "minyak"] },
+    { label: "🥚 Telur / Daging / Ikan", key: "telur_daging_ikan",
+      keywords: ["telur", "daging", "ikan", "ayam", "sapi", "udang", "protein"],
+      sinonim: ["telur", "daging", "ikan", "ayam"] },
+    { label: "🥬 Sayur / Buah", key: "sayur_buah",
+      keywords: ["sayur", "buah", "bayam", "kangkung", "wortel", "tomat", "apel", "jeruk", "pisang"],
+      sinonim: ["sayur", "buah", "sayuran", "buah-buahan"] },
+    { label: "🧴 Sabun / Shampo / Perlengkapan Mandi", key: "sabun",
+      keywords: ["sabun", "shampo", "sampo", "pasta gigi", "odol", "sikat gigi", "mandi", "body wash"],
+      sinonim: ["sabun", "shampo", "sampo", "perlengkapan mandi"] },
+    { label: "🧻 Tisu / Perlengkapan Rumah", key: "tisu_rumah",
+      keywords: ["tisu", "sapu", "pel", "deterjen", "pembersih", "sunlight", "rinso", "pewangi"],
+      sinonim: ["tisu", "perlengkapan rumah", "deterjen", "pembersih"] },
+    { label: "💊 Obat / Kesehatan", key: "obat",
+      keywords: ["obat", "vitamin", "paracetamol", "periksa", "dokter", "klinik", "apotek", "kesehatan"],
+      sinonim: ["obat", "kesehatan", "vitamin", "dokter", "apotek"] },
+    { label: "🍼 Susu / Perlengkapan Bayi", key: "susu_bayi",
+      keywords: ["susu", "bayi", "dot", "pampers", "popok", "diaper", "mpasi"],
+      sinonim: ["susu", "bayi", "popok", "pampers", "mpasi"] },
+    { label: "📱 Pulsa / Paket Data", key: "pulsa",
+      keywords: ["pulsa", "paket data", "kuota", "internet", "telkomsel", "indosat", "xl", "tri", "smartfren"],
+      sinonim: ["pulsa", "paket data", "kuota", "internet"] },
+    { label: "⚡ Listrik / Air", key: "listrik_air",
+      keywords: ["listrik", "air", "pdam", "token", "pln", "tagihan listrik", "tagihan air"],
+      sinonim: ["listrik", "air", "pln", "pdam", "token listrik"] },
+    { label: "🏠 Sewa / Cicilan", key: "sewa_cicilan",
+      keywords: ["sewa", "cicilan", "kredit", "kontrakan", "rumah", "kos", "angsuran"],
+      sinonim: ["sewa", "cicilan", "kredit", "kontrakan", "angsuran"] },
+    { label: "🚗 Transportasi", key: "transportasi",
+      keywords: ["transportasi", "ojek", "grab", "gojek", "taksi", "bus", "kereta", "parkir", "tol"],
+      sinonim: ["transportasi", "ojek", "grab", "gojek", "parkir", "tol"] },
+    { label: "🛵 Servis Kendaraan", key: "servis_kendaraan",
+      keywords: ["servis", "service", "bengkel", "tune up", "ganti oli", "sparepart", "spare part", "ban", "rem", "motor", "mobil"],
+      sinonim: ["servis", "bengkel", "service motor", "service mobil", "sparepart"] },
+    { label: "💧 Air Minum Galon", key: "air_galon",
+      keywords: ["galon", "air minum", "aqua", "le minerale", "cleo", "club", "amidis", "isi ulang galon"],
+      sinonim: ["galon", "air galon", "air minum", "aqua", "isi galon"] },
+    { label: "🎓 Pendidikan / Sekolah", key: "pendidikan",
+      keywords: ["sekolah", "pendidikan", "buku", "seragam", "spp", "kursus", "les", "uang sekolah"],
+      sinonim: ["sekolah", "pendidikan", "spp", "buku", "kursus", "les"] },
+    { label: "👕 Pakaian", key: "pakaian",
+      keywords: ["pakaian", "baju", "celana", "kemeja", "kaos", "sepatu", "sandal", "jaket"],
+      sinonim: ["pakaian", "baju", "celana", "sepatu", "sandal"] },
+    { label: "🎉 Hiburan / Jalan-jalan", key: "hiburan",
+      keywords: ["hiburan", "jalan", "liburan", "nonton", "bioskop", "wisata", "rekreasi", "game"],
+      sinonim: ["hiburan", "liburan", "nonton", "jalan-jalan", "rekreasi"] },
+    { label: "🛒 Belanja Bulanan", key: "belanja_bulanan",
+      keywords: ["belanja bulanan", "belanja", "grocery", "indomaret", "alfamart", "supermarket", "hypermart"],
+      sinonim: ["belanja bulanan", "belanja", "grocery", "supermarket"] },
+    { label: "🚬 Rokok", key: "rokok",
+      keywords: ["rokok", "sampoerna", "gudang garam", "djarum", "marlboro", "kretek"],
+      sinonim: ["rokok", "kretek"] },
+    { label: "🎁 Hadiah / Sumbangan", key: "hadiah",
+      keywords: ["hadiah", "sumbangan", "donasi", "kado", "amplop", "sedekah", "zakat"],
+      sinonim: ["hadiah", "sumbangan", "donasi", "kado", "sedekah", "zakat"] },
+    { label: "📋 Semua pengeluaran di periode ini", key: "semua_pengeluaran",
+      keywords: [],
+      sinonim: ["semua pengeluaran", "semua belanja", "all expense"] }
+  ];
+
+  const OPSI_PERIODE = [
+    { label: "Hari ini",    key: "today",     sinonim: ["hari ini", "today"] },
+    { label: "Kemarin",     key: "yesterday", sinonim: ["kemarin", "yesterday"] },
+    { label: "Minggu ini",  key: "thisWeek",  sinonim: ["minggu ini", "weekly"] },
+    { label: "Bulan ini",   key: "thisMonth", sinonim: ["bulan ini", "monthly"] },
+    { label: "Bulan lalu",  key: "lastMonth", sinonim: ["bulan lalu", "bulan kemarin"] },
+    { label: "Semua waktu", key: "all",       sinonim: ["semua", "all", "semua waktu"] }
+  ];
+
+  const PEMBUKA = [
+    "Oke bos! ", "Siap bos! ", "Beres, sudah aku cek ya bos! ",
+    "Ini dia laporannya bos: ", "Sudah aku hitung nih bos: ",
+    "Nih bos, hasilnya: ", "Langsung aja ya bos: ", "Siap laporan bos! "
+  ];
+  const PENUTUP = [
+    " 💪", " Tetap hemat ya bos! 😄", " Semoga membantu! 👍",
+    " Kalau ada yang mau ditanya lagi, bilang aja ya! 🙌",
+    " Jangan lupa dicatat terus ya bos! 📝", ""
+  ];
+  function acak(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  // =====================================================
+  // 🧠 STATE
+  // =====================================================
   let idToDelete = null;
-  let allTransactions = []; 
+  let allTransactions = [];
   let myChart = null;
-  let observer = null; 
+  let observer = null;
+
+  let pilihanPertanyaan = null;
+  let pilihanBarang = null;
+  let pilihanPeriode = null;
 
   // =====================================================
-  // 🔑 LETAKKAN API KEY GEMINI ANDA DI BAWAH INI
+  // 🛠️ HELPER UMUM
   // =====================================================
-  const GEMINI_API_KEY = window.GEMINI_API_KEY;
-  
-  // State untuk menyimpan riwayat chat agar AI ingat konteks
-  let chatHistory = [];
+  function formatRupiah(angka) { return new Intl.NumberFormat('id-ID').format(angka); }
 
-  // --- FUNGSI PENDUKUNG UI & DATA ---
+  function formatTanggal(timestamp) {
+    try {
+      if (!timestamp) return "Baru saja";
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const today = new Date();
+      const isToday = date.toDateString() === today.toDateString();
+      const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+      if (isToday) return `Hari ini, ${time}`;
+      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+      return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}, ${time}`;
+    } catch (e) { return "Waktu tidak valid"; }
+  }
+
+  function formatTanggalPendek(dateObj) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+    return `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+  }
+
+  // =====================================================
+  // 🎨 TEMA
+  // =====================================================
   function applyTheme() {
     const isDark = localStorage.getItem('darkMode') === 'true';
-    if (isDark) { document.body.classList.add('dark-mode'); document.getElementById('themeToggleBtn').innerText = '☀️'; } 
+    if (isDark) { document.body.classList.add('dark-mode'); document.getElementById('themeToggleBtn').innerText = '☀️'; }
     else { document.body.classList.remove('dark-mode'); document.getElementById('themeToggleBtn').innerText = '🌙'; }
   }
 
@@ -307,32 +571,20 @@
       myChart.options.scales.y.ticks.color = textColor;
       myChart.update();
     }
-  }
+  };
 
   applyTheme();
 
+  // =====================================================
+  // 🔥 FIREBASE AUTH + CHART + TRANSAKSI
+  // =====================================================
   onAuthStateChanged(auth, (user) => {
     if (user) {
       transactionListEl.innerHTML = '<div class="empty-state">Memuat data...</div>';
-      initChart(); 
+      initChart();
       loadTransactions(user.uid);
     } else { window.location.href = 'login.html'; }
   });
-
-  function formatRupiah(angka) { return new Intl.NumberFormat('id-ID').format(angka); }
-
-  function formatTanggal(timestamp) {
-    try {
-      if (!timestamp) return "Baru saja";
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      const today = new Date();
-      const isToday = date.toDateString() === today.toDateString();
-      const time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
-      if (isToday) return `Hari ini, ${time}`;
-      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-      return `${date.getDate()} ${months[date.getMonth()]}, ${time}`;
-    } catch (e) { return "Waktu tidak valid"; }
-  }
 
   function initChart() {
     const ctx = document.getElementById('keuanganChart').getContext('2d');
@@ -362,17 +614,17 @@
     dailyExpenseEl.innerText = `Rp ${formatRupiah(totalHariIni)}`;
   }
 
-  window.bukaDetailModal = function(keterangan) { detailModalText.innerText = keterangan; detailModal.classList.add('show'); }
-  window.tutupDetailModal = function() { detailModal.classList.remove('show'); }
-  window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); }
-  window.eksporPDF = function() { setTimeout(() => { window.print(); }, 500); }
+  window.bukaDetailModal = function(keterangan) { detailModalText.innerText = keterangan; detailModal.classList.add('show'); };
+  window.tutupDetailModal = function() { detailModal.classList.remove('show'); };
+  window.gantiFilter = function(filterValue) { renderTransaksi(filterValue); };
+  window.eksporPDF = function() { setTimeout(() => { window.print(); }, 500); };
 
   function renderTransaksi(filterType) {
     let filteredData = allTransactions;
     const now = new Date();
 
-    if (filterType === 'thisMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear(); }); } 
-    else if (filterType === 'lastMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1; const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(); return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear; }); } 
+    if (filterType === 'thisMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear(); }); }
+    else if (filterType === 'lastMonth') { filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1; const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(); return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear; }); }
     else if (filterType === 'thisWeek') { const lastWeek = new Date(now.setDate(now.getDate() - 7)); filteredData = allTransactions.filter(item => { if (!item.createdAt) return false; const date = item.createdAt.toDate(); return date >= lastWeek; }); }
 
     let totalIncome = 0; let totalExpense = 0; let html = '';
@@ -425,143 +677,555 @@
     idToDelete = docId;
     deleteModalText.innerHTML = `Yakin ingin menghapus transaksi <b>"${keterangan}"</b>?<br><br>Tindakan ini tidak bisa dibatalkan.`;
     deleteModal.classList.add('show');
-  }
-  window.tutupModal = function() { deleteModal.classList.remove('show'); idToDelete = null; }
+  };
+  window.tutupModal = function() { deleteModal.classList.remove('show'); idToDelete = null; };
   window.konfirmasiHapus = async function() {
     if (!idToDelete) return;
     try { await deleteDoc(doc(db, "pembukuan", idToDelete)); tutupModal(); } catch (error) { console.error("Gagal menghapus: ", error); alert("Gagal menghapus transaksi."); }
-  }
+  };
 
   function loadTransactions(userId) {
     const q = query(collection(db, "pembukuan"), where("userId", "==", userId), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
-      allTransactions = []; 
+      allTransactions = [];
       snapshot.forEach((docSnap) => { const data = docSnap.data(); data.id = docSnap.id; allTransactions.push(data); });
       renderTransaksi(document.getElementById('filterWaktu').value);
-      hitungPengeluaranHariIni(); 
+      hitungPengeluaranHariIni();
     }, (error) => { console.error("Firestore Error: ", error); });
   }
 
   // =====================================================
-  // LOGIKA AI CHATBOT (INTEGRASI GEMINI API)
+  // 🔽 LOGIKA COMBOBOX AUTOCOMPLETE (REUSABLE)
   // =====================================================
-  window.bukaAIChat = function() { aiChatBox.classList.add('active'); aiMessages.scrollTop = aiMessages.scrollHeight; }
-  window.tutupAIChat = function() { aiChatBox.classList.remove('active'); }
-  window.handleAIEnter = function(e) { if (e.key === 'Enter') kirimPesanAI(); }
+  /**
+   * Membuat combobox autocomplete.
+   * @param {Object} cfg
+   *   - wrapId, inputId, clearId, dropdownId
+   *   - daftarOpsi: array of { label, key, kategori?, sinonim? }
+   *   - placeholder
+   *   - groupByKategori: bool (untuk pertanyaan)
+   *   - onSelect: function(opsi)
+   *   - onClear: function()
+   */
+  function buatCombobox(cfg) {
+    const wrap     = document.getElementById(cfg.wrapId);
+    const input    = document.getElementById(cfg.inputId);
+    const clearBtn = document.getElementById(cfg.clearId);
+    const dropdown = document.getElementById(cfg.dropdownId);
 
-  window.kirimPesanAI = async function() {
-    const pesan = aiInput.value.trim();
-    if (pesan === '') return;
-    
-    // Tampilkan pesan user & indikator mengetik
-    tambahPesanKeChat(pesan, 'user');
-    aiInput.value = '';
-    tampilkanTypingIndicator();
+    let aktifIndex = -1;
+    let hasilFilter = [];
 
-    try {
-      // 1. Siapkan data keuangan untuk konteks AI
-      // Kita batasi 30 transaksi terbaru agar tidak memakan banyak token
-      const dataKontekstual = allTransactions.slice(0, 30).map(t => ({
-        tipe: t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
-        keterangan: t.note,
-        jumlah: t.amount,
-        tanggal: t.createdAt ? t.createdAt.toDate().toLocaleDateString('id-ID') : "Tidak ada tanggal"
-      }));
-
-      // Hitung total keseluruhan untuk mempermudah AI
-      const totalMasuk = allTransactions.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount),0);
-      const totalKeluar = allTransactions.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount),0);
-
-      // 2. Susun System Prompt (Instruksi Kepribadian AI)
-      const systemPrompt = `
-        Kamu adalah asisten keuangan keluarga yang santai, ramah, dan pintar. 
-        Jangan pernah bersikap seperti robot atau mesin. Gunakan bahasa sehari-hari (aku/kamu atau gue/lo sesuai selera user, tapi default-nya pakai "aku" dan "kamu").
-        
-        Berikut adalah RINGKASAN KEUANGAN KELUARGA SAAT INI:
-        - Total Saldo Bersih: Rp ${totalMasuk - totalKeluar}
-        - Total Pemasukan Keseluruhan: Rp ${totalMasuk}
-        - Total Pengeluaran Keseluruhan: Rp ${totalKeluar}
-        
-        Berikut adalah 30 TRANSAKSI TERBARU mereka:
-        ${JSON.stringify(dataKontekstual)}
-
-        TUGAS KAMU:
-        Jawablah pertanyaan user berdasarkan data di atas. 
-        - Jika user tanya "bulan ini", "minggu ini", atau tanggal spesifik, tolong hitung manual dari list 30 transaksi terbaru di atas.
-        - Jika user tanya di luar 30 transaksi tersebut atau butuh totalan lama, jawab dengan jujur bahwa kamu hanya bisa melihat 30 transaksi terbaru, namun kamu ingat total keseluruhan saldo mereka.
-        - Format angka pakai Rupiah (Rp) dan berikan spasi ribuan yang rapi.
-        - Berikan jawaban yang memotivasi, empati, dan gunakan emoji yang relevan.
-
-        Pertanyaan User: "${pesan}"
-      `;
-
-      // 3. Kirim ke API Gemini
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: systemPrompt }] }]
-        })
-      });
-
-      const data = await response.json();
-
-      // Hapus indikator mengetik sebelum menampilkan jawaban
-      hapusTypingIndicator();
-
-      // 4. Tampilkan Jawaban AI
-      if (data.candidates && data.candidates.length > 0) {
-        const balasanAI = data.candidates[0].content.parts[0].text;
-        tambahPesanKeChat(balasanAI, 'bot');
+    function renderDropdown(keyword) {
+      const kw = (keyword || '').toLowerCase().trim();
+      let hasil;
+      if (!kw) {
+        hasil = cfg.daftarOpsi.slice();
       } else {
-        tambahPesanKeChat("Aduh, aku lagi pusing mikirnya. Coba tanya lagi sebentar lagi ya.", 'bot');
+        hasil = cfg.daftarOpsi.filter(o => {
+          if (o.label.toLowerCase().includes(kw)) return true;
+          if (o.sinonim && o.sinonim.some(s => s.toLowerCase().includes(kw))) return true;
+          return false;
+        });
+      }
+      hasilFilter = hasil;
+      aktifIndex = -1;
+
+      if (hasil.length === 0) {
+        dropdown.innerHTML = `<div class="combo-empty">Tidak ada yang cocok 😅 coba kata lain ya bos</div>`;
+        return;
       }
 
-    } catch (error) {
-      hapusTypingIndicator();
-      console.error("Error API Gemini:", error);
-      tambahPesanKeChat("Yah, koneksi internetnya putus atau API Key-nya bermasalah nih. Coba cek lagi ya.", 'bot');
+      let html = '';
+      let lastKategori = null;
+      hasil.forEach((o, idx) => {
+        if (cfg.groupByKategori && o.kategori && o.kategori !== lastKategori) {
+          html += `<div class="combo-group-label">${o.kategori}</div>`;
+          lastKategori = o.kategori;
+        }
+        const labelHtml = kw
+          ? o.label.replace(new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark>$1</mark>')
+          : o.label;
+        html += `<button type="button" class="combo-item" data-idx="${idx}">${labelHtml}</button>`;
+      });
+      dropdown.innerHTML = html;
+
+      dropdown.querySelectorAll('.combo-item').forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const idx = parseInt(btn.dataset.idx);
+          pilihOpsi(hasilFilter[idx]);
+        });
+      });
     }
+
+    function pilihOpsi(opsi) {
+      input.value = opsi.label;
+      input.classList.remove('combo-invalid');
+      wrap.classList.add('has-value');
+      wrap.classList.remove('open');
+      aktifIndex = -1;
+      if (cfg.onSelect) cfg.onSelect(opsi);
+    }
+
+    function bukaDropdown() {
+      wrap.classList.add('open');
+      renderDropdown(input.value === (pilihanPertanyaan && pilihanPertanyaan.label) ? '' : input.value);
+    }
+
+    function tutupDropdown() { wrap.classList.remove('open'); aktifIndex = -1; }
+
+    function sorot(idx) {
+      const items = dropdown.querySelectorAll('.combo-item');
+      items.forEach(i => i.classList.remove('active'));
+      if (idx >= 0 && idx < items.length) {
+        items[idx].classList.add('active');
+        items[idx].scrollIntoView({ block: 'nearest' });
+        aktifIndex = idx;
+      } else {
+        aktifIndex = -1;
+      }
+    }
+
+    // Event listener
+    input.addEventListener('focus', bukaDropdown);
+    input.addEventListener('click', bukaDropdown);
+    input.addEventListener('input', () => {
+      wrap.classList.remove('has-value');
+      input.classList.remove('combo-invalid');
+      wrap.classList.add('open');
+      renderDropdown(input.value);
+      if (cfg.onClear) cfg.onClear();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (!wrap.classList.contains('open')) bukaDropdown(); sorot(Math.min(aktifIndex + 1, hasilFilter.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); sorot(Math.max(aktifIndex - 1, 0)); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (aktifIndex >= 0 && hasilFilter[aktifIndex]) pilihOpsi(hasilFilter[aktifIndex]);
+        else if (hasilFilter.length === 1) pilihOpsi(hasilFilter[0]);
+      } else if (e.key === 'Escape') { tutupDropdown(); input.blur(); }
+    });
+    clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      input.value = '';
+      wrap.classList.remove('has-value');
+      input.classList.remove('combo-invalid');
+      if (cfg.onClear) cfg.onClear();
+      if (cfg.onSelect) cfg.onSelect(null);
+      input.focus();
+    });
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) tutupDropdown();
+    });
+
+    // Nilai awal
+    if (cfg.nilaiAwal) {
+      input.value = cfg.nilaiAwal.label;
+      wrap.classList.add('has-value');
+    }
+
+    return { input, wrap, pilihOpsi };
   }
 
+  // Variabel untuk menyimpan instance combobox (dibuat setelah DOM siap)
+  let comboPertanyaan, comboBarang, comboPeriode;
+  // =====================================================
+// 🤖 MESIN JAWABAN AI LOKAL (RULE-BASED)
+// =====================================================
+
+// ----- Filter periode -----
+function filterPeriode(transaksi, periodeKey) {
+  const now = new Date();
+  return transaksi.filter(t => {
+    if (!t.createdAt) return false;
+    const d = t.createdAt.toDate();
+    switch (periodeKey) {
+      case 'today':
+        return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      case 'yesterday': {
+        const y = new Date(now); y.setDate(y.getDate() - 1);
+        return d.getDate() === y.getDate() && d.getMonth() === y.getMonth() && d.getFullYear() === y.getFullYear();
+      }
+      case 'thisWeek': {
+        const start = new Date(now); start.setDate(start.getDate() - 7); start.setHours(0,0,0,0);
+        return d >= start;
+      }
+      case 'thisMonth':
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      case 'lastMonth': {
+        const lm = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+        const ly = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+        return d.getMonth() === lm && d.getFullYear() === ly;
+      }
+      case 'all':
+      default:
+        return true;
+    }
+  });
+}
+
+// ----- Filter tanggal spesifik (YYYY-MM-DD) -----
+function filterTanggal(transaksi, yyyymmdd) {
+  if (!yyyymmdd) return [];
+  const [y, m, d] = yyyymmdd.split('-').map(Number);
+  return transaksi.filter(t => {
+    if (!t.createdAt) return false;
+    const dt = t.createdAt.toDate();
+    return dt.getDate() === d && dt.getMonth() === (m - 1) && dt.getFullYear() === y;
+  });
+}
+
+// ----- Format daftar transaksi jadi bullet list -----
+function formatListTransaksi(list, maksimal = 20) {
+  if (list.length === 0) return '';
+  const tampil = list.slice(0, maksimal);
+  let html = '<br><br>';
+  tampil.forEach(t => {
+    const d = t.createdAt ? t.createdAt.toDate() : new Date();
+    const tgl = formatTanggalPendek(d);
+    const jumlah = `Rp ${formatRupiah(Number(t.amount))}`;
+    html += `• <b>${tgl}</b> — ${t.note || 'Tanpa keterangan'} — <b>${jumlah}</b><br>`;
+  });
+  if (list.length > maksimal) {
+    html += `<i>...dan ${list.length - maksimal} transaksi lainnya</i>`;
+  }
+  return html;
+}
+
+// ----- Hitung total dari list -----
+function totalDari(list) {
+  return list.reduce((s, t) => s + (Number(t.amount) || 0), 0);
+}
+
+// ----- Label periode untuk kalimat jawaban -----
+function labelPeriode(key) {
+  const map = {
+    today: 'hari ini', yesterday: 'kemarin',
+    thisWeek: 'minggu ini', thisMonth: 'bulan ini',
+    lastMonth: 'bulan lalu', all: 'semua waktu'
+  };
+  return map[key] || key;
+}
+
+// =====================================================
+// 📤 FUNGSI UTAMA: jawabPertanyaan()
+// =====================================================
+function jawabPertanyaan() {
+  if (!pilihanPertanyaan) return "Pilih pertanyaan dulu ya bos 🙏";
+
+  const key = pilihanPertanyaan.key;
+
+  try {
+    switch (key) {
+      case 'saldo':                          return jawabSaldo();
+      case 'total_keseluruhan':              return jawabTotalKeseluruhan();
+
+      case 'pengeluaran_hari_ini':           return jawabPeriode('expense', 'today', 'Pengeluaran');
+      case 'pengeluaran_kemarin':            return jawabPeriode('expense', 'yesterday', 'Pengeluaran');
+      case 'pengeluaran_minggu_ini':         return jawabPeriode('expense', 'thisWeek', 'Pengeluaran');
+      case 'pengeluaran_bulan_ini':          return jawabPeriode('expense', 'thisMonth', 'Pengeluaran');
+      case 'pengeluaran_bulan_lalu':         return jawabPeriode('expense', 'lastMonth', 'Pengeluaran');
+      case 'pengeluaran_terbesar_bulan_ini': return jawabTerbesar('expense', 'thisMonth', 'Pengeluaran');
+      case 'pengeluaran_tanggal':            return jawabTanggal('expense', 'Pengeluaran');
+
+      case 'pemasukan_hari_ini':             return jawabPeriode('income', 'today', 'Pemasukan');
+      case 'pemasukan_minggu_ini':           return jawabPeriode('income', 'thisWeek', 'Pemasukan');
+      case 'pemasukan_bulan_ini':            return jawabPeriode('income', 'thisMonth', 'Pemasukan');
+      case 'pemasukan_bulan_lalu':           return jawabPeriode('income', 'lastMonth', 'Pemasukan');
+      case 'pemasukan_terbesar_bulan_ini':   return jawabTerbesar('income', 'thisMonth', 'Pemasukan');
+      case 'pemasukan_tanggal':              return jawabTanggal('income', 'Pemasukan');
+
+      case '5_transaksi_terakhir':           return jawabNTransaksi(5);
+      case '10_transaksi_terakhir':          return jawabNTransaksi(10);
+
+      case 'cari_barang':                    return jawabCariBarang();
+
+      default:                               return "Hmm, aku belum bisa jawab itu bos 🤔";
+    }
+  } catch (err) {
+    console.error('Error jawabPertanyaan:', err);
+    return "Aduh bos, ada error pas aku hitung. Coba lagi ya 🙏";
+  }
+}
+
+// =====================================================
+// 💰 SUB-FUNGSI JAWABAN
+// =====================================================
+
+function jawabSaldo() {
+  const income  = totalDari(allTransactions.filter(t => t.type === 'income'));
+  const expense = totalDari(allTransactions.filter(t => t.type === 'expense'));
+  const saldo   = income - expense;
+  const emoji   = saldo >= 0 ? '💰' : '⚠️';
+  const saran   = saldo >= 0
+    ? 'Masih aman nih bos, tapi tetap bijak ya! 😄'
+    : 'Waduh minus bos, perlu dihemat nih! 💪';
+  return `${acak(PEMBUKA)}${emoji} Sisa saldo kita sekarang <b>Rp ${formatRupiah(saldo)}</b>. ${saran}${acak(PENUTUP)}`;
+}
+
+function jawabTotalKeseluruhan() {
+  const income  = totalDari(allTransactions.filter(t => t.type === 'income'));
+  const expense = totalDari(allTransactions.filter(t => t.type === 'expense'));
+  return `${acak(PEMBUKA)}📊 Ini total keseluruhan ya bos:<br><br>`
+    + `💰 Total Pemasukan: <b>Rp ${formatRupiah(income)}</b><br>`
+    + `💸 Total Pengeluaran: <b>Rp ${formatRupiah(expense)}</b><br>`
+    + `✨ Saldo Bersih: <b>Rp ${formatRupiah(income - expense)}</b>`
+    + `${acak(PENUTUP)}`;
+}
+
+function jawabPeriode(tipe, periodeKey, label) {
+  const list = filterPeriode(allTransactions.filter(t => t.type === tipe), periodeKey);
+  const total = totalDari(list);
+  const lblPeriode = labelPeriode(periodeKey);
+  const emoji = tipe === 'expense' ? '💸' : '💰';
+
+  if (list.length === 0) {
+    return `${acak(PEMBUKA)}${emoji} Di <b>${lblPeriode}</b> nggak ada catatan ${label.toLowerCase()} bos. `
+      + `Mungkin belum dicatat, atau memang nggak ada. Kalau ada yang kelupaan, catat dulu ya! 📝`;
+  }
+
+  return `${acak(PEMBUKA)}${emoji} ${label} <b>${lblPeriode}</b> ada <b>${list.length} transaksi</b> `
+    + `dengan total <b>Rp ${formatRupiah(total)}</b>:`
+    + formatListTransaksi(list, 20)
+    + `${acak(PENUTUP)}`;
+}
+
+function jawabTanggal(tipe, label) {
+  const tgl = inputTanggal.value;
+  if (!tgl) return "Pilih tanggal dulu ya bos 📅";
+
+  const list = filterTanggal(allTransactions.filter(t => t.type === tipe), tgl);
+  const [y, m, d] = tgl.split('-').map(Number);
+  const labelTgl = formatTanggalPendek(new Date(y, m - 1, d));
+  const emoji = tipe === 'expense' ? '💸' : '💰';
+
+  if (list.length === 0) {
+    return `${acak(PEMBUKA)}${emoji} Di tanggal <b>${labelTgl}</b> nggak ada catatan ${label.toLowerCase()} bos. `
+      + `Mungkin belum dicatat, atau memang nggak ada. Kalau ada yang kelupaan, catat dulu ya! 📝`;
+  }
+
+  const total = totalDari(list);
+  return `${acak(PEMBUKA)}${emoji} ${label} tanggal <b>${labelTgl}</b> ada <b>${list.length} transaksi</b> `
+    + `dengan total <b>Rp ${formatRupiah(total)}</b>:`
+    + formatListTransaksi(list, 20)
+    + `${acak(PENUTUP)}`;
+}
+
+function jawabTerbesar(tipe, periodeKey, label) {
+  const list = filterPeriode(allTransactions.filter(t => t.type === tipe), periodeKey);
+  const lblPeriode = labelPeriode(periodeKey);
+  const emoji = tipe === 'expense' ? '💸' : '💰';
+
+  if (list.length === 0) {
+    return `${acak(PEMBUKA)}${emoji} Di <b>${lblPeriode}</b> nggak ada catatan ${label.toLowerCase()} bos. 📝`;
+  }
+
+  const terbesar = list.reduce((max, t) => (Number(t.amount) > Number(max.amount) ? t : max), list[0]);
+  const tanggal = terbesar.createdAt ? formatTanggalPendek(terbesar.createdAt.toDate()) : '-';
+  return `${acak(PEMBUKA)}🏆 ${label} terbesar di <b>${lblPeriode}</b>:<br><br>`
+    + `• <b>${terbesar.note || 'Tanpa keterangan'}</b><br>`
+    + `• Tanggal: ${tanggal}<br>`
+    + `• Jumlah: <b>Rp ${formatRupiah(Number(terbesar.amount))}</b>`
+    + `${acak(PENUTUP)}`;
+}
+
+function jawabNTransaksi(n) {
+  if (allTransactions.length === 0) {
+    return `${acak(PEMBUKA)}Belum ada transaksi tercatat bos. Yuk mulai catat! 📝`;
+  }
+  const list = allTransactions.slice(0, n);
+  return `${acak(PEMBUKA)}📋 Ini <b>${list.length} transaksi terakhir</b> bos:`
+    + formatListTransaksi(list, n)
+    + `${acak(PENUTUP)}`;
+}
+
+// =====================================================
+// 🔍 JAWAB CARI BARANG
+// =====================================================
+function jawabCariBarang() {
+  if (!pilihanBarang) return "Pilih kategori barangnya dulu ya bos 🔍";
+  if (!pilihanPeriode) return "Pilih periodenya dulu ya bos 📅";
+
+  const kategori = pilihanBarang;
+  const periodeKey = pilihanPeriode.key;
+  const lblPeriode = labelPeriode(periodeKey);
+
+  // Filter dulu berdasarkan periode
+  let semuaExpense = filterPeriode(allTransactions.filter(t => t.type === 'expense'), periodeKey);
+
+  // Kalau kategori = "semua_pengeluaran", tidak filter by keywords
+  let hasil;
+  if (kategori.key === 'semua_pengeluaran') {
+    hasil = semuaExpense;
+  } else {
+    const kws = kategori.keywords || [];
+    hasil = semuaExpense.filter(t => {
+      const note = (t.note || '').toLowerCase();
+      return kws.some(kw => note.includes(kw.toLowerCase()));
+    });
+  }
+
+  const namaBarang = kategori.label.replace(/^[^\w]+\s*/, ''); // hapus emoji di depan
+  const total = totalDari(hasil);
+
+  if (hasil.length === 0) {
+    return `${acak(PEMBUKA)}🔍 Hmm, di <b>${lblPeriode}</b> nggak ada catatan pembelian `
+      + `<b>${namaBarang}</b> bos. Mungkin belum dicatat atau memang nggak beli. `
+      + `Kalau ada yang kelupaan, catat dulu ya! 📝`;
+  }
+
+  return `${acak(PEMBUKA)}🔍 Sudah aku cari pembelian <b>${namaBarang}</b> di <b>${lblPeriode}</b>. `
+    + `Ketemu <b>${hasil.length} transaksi</b> dengan total <b>Rp ${formatRupiah(total)}</b>:`
+    + formatListTransaksi(hasil, 20)
+    + `${acak(PENUTUP)}`;
+}
+    // =====================================================
+  // 🔗 INISIALISASI COMBOBOX
+  // =====================================================
+  comboPertanyaan = buatCombobox({
+    wrapId: 'comboPertanyaanWrap',
+    inputId: 'comboPertanyaanInput',
+    clearId: 'comboPertanyaanClear',
+    dropdownId: 'comboPertanyaanDropdown',
+    daftarOpsi: OPSI_PERTANYAAN,
+    groupByKategori: true,
+    onSelect: function(opsi) {
+      pilihanPertanyaan = opsi;
+
+      // Reset baris tambahan
+      rowTanggal.classList.remove('show');
+      rowBarang.classList.remove('show');
+      pilihanBarang = null;
+      pilihanPeriode = null;
+      inputTanggal.value = '';
+
+      if (opsi) {
+        if (opsi.butuhTanggal) rowTanggal.classList.add('show');
+        if (opsi.butuhBarang)  rowBarang.classList.add('show');
+      }
+    },
+    onClear: function() {
+      pilihanPertanyaan = null;
+      rowTanggal.classList.remove('show');
+      rowBarang.classList.remove('show');
+      pilihanBarang = null;
+      pilihanPeriode = null;
+      inputTanggal.value = '';
+    }
+  });
+
+  comboBarang = buatCombobox({
+    wrapId: 'comboBarangWrap',
+    inputId: 'comboBarangInput',
+    clearId: 'comboBarangClear',
+    dropdownId: 'comboBarangDropdown',
+    daftarOpsi: OPSI_BARANG,
+    groupByKategori: false,
+    onSelect: function(opsi) { pilihanBarang = opsi; },
+    onClear: function() { pilihanBarang = null; }
+  });
+
+  comboPeriode = buatCombobox({
+    wrapId: 'comboPeriodeWrap',
+    inputId: 'comboPeriodeInput',
+    clearId: 'comboPeriodeClear',
+    dropdownId: 'comboPeriodeDropdown',
+    daftarOpsi: OPSI_PERIODE,
+    groupByKategori: false,
+    nilaiAwal: OPSI_PERIODE.find(p => p.key === 'thisMonth'), // default bulan ini
+    onSelect: function(opsi) { pilihanPeriode = opsi; },
+    onClear: function() { pilihanPeriode = null; }
+  });
+
+  // Set nilai awal periode
+  pilihanPeriode = OPSI_PERIODE.find(p => p.key === 'thisMonth');
+
+  // =====================================================
+  // 🚀 HANDLER KIRIM PERTANYAAN
+  // =====================================================
+  window.bukaAIChat = function() {
+    aiChatBox.classList.add('active');
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  };
+  window.tutupAIChat = function() {
+    aiChatBox.classList.remove('active');
+  };
+
+  window.kirimPertanyaan = function() {
+    // ===== VALIDASI =====
+    if (!pilihanPertanyaan) {
+      comboPertanyaan.input.classList.add('combo-invalid');
+      comboPertanyaan.input.focus();
+      tambahPesanKeChat("Pilih pertanyaan dari daftar dulu ya bos 🙏", 'bot');
+      return;
+    }
+
+    if (pilihanPertanyaan.butuhTanggal && !inputTanggal.value) {
+      inputTanggal.focus();
+      tambahPesanKeChat("Pilih tanggalnya dulu ya bos 📅", 'bot');
+      return;
+    }
+
+    if (pilihanPertanyaan.butuhBarang) {
+      if (!pilihanBarang) {
+        comboBarang.input.classList.add('combo-invalid');
+        comboBarang.input.focus();
+        tambahPesanKeChat("Pilih kategori barangnya dulu ya bos 🔍", 'bot');
+        return;
+      }
+      if (!pilihanPeriode) {
+        comboPeriode.input.classList.add('combo-invalid');
+        comboPeriode.input.focus();
+        tambahPesanKeChat("Pilih periodenya dulu ya bos 📅", 'bot');
+        return;
+      }
+    }
+
+    // ===== TAMPILKAN PESAN USER =====
+    let pesanUser = pilihanPertanyaan.label;
+    if (pilihanPertanyaan.butuhTanggal) {
+      const [y, m, d] = inputTanggal.value.split('-').map(Number);
+      pesanUser = pilihanPertanyaan.label.replace('...', ` ${formatTanggalPendek(new Date(y, m - 1, d))}`);
+    } else if (pilihanPertanyaan.butuhBarang) {
+      const namaBarang = pilihanBarang.label.replace(/^[^\w]+\s*/, '');
+      pesanUser = `Cari pembelian ${namaBarang} — ${pilihanPeriode.label}`;
+    }
+
+    tambahPesanKeChat(pesanUser, 'user');
+    tampilkanTypingIndicator();
+
+    // ===== JAWAB SETELAH DELAY KECIL (efek "berpikir") =====
+    setTimeout(() => {
+      hapusTypingIndicator();
+      const jawaban = jawabPertanyaan();
+      tambahPesanKeChat(jawaban, 'bot');
+
+      // Reset form (kecuali periode tetap)
+      comboPertanyaan.input.value = '';
+      comboPertanyaan.wrap.classList.remove('has-value');
+      pilihanPertanyaan = null;
+      rowTanggal.classList.remove('show');
+      rowBarang.classList.remove('show');
+      pilihanBarang = null;
+      inputTanggal.value = '';
+    }, 500);
+  };
+
+  // =====================================================
+  // 💬 RENDER PESAN KE CHAT
+  // =====================================================
   function tambahPesanKeChat(teks, pengirim) {
     const div = document.createElement('div');
     div.className = `ai-message ${pengirim}`;
-    
+
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
-      // Render bold (**teks**) dan enter (\n)
-      let formattedText = teks.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');                
+      // Render <b>, <br>, <i> dari jawaban (sudah berbentuk HTML)
       const textNode = document.createElement('div');
-      textNode.innerHTML = formattedText;
+      textNode.innerHTML = teks;
       div.appendChild(textNode);
-
-      // Tombol Share WA (hanya muncul kalau ada kata Rp)
-      if (teks.includes("Rp")) {
-        const teksBersih = teks.replace(/\*\*/g, '').replace(/[💰💸📌]/g, '');
-        const encodedText = encodeURIComponent(teksBersih);
-        const waUrl = `https://wa.me/?text=${encodedText}`;
-
-        const linkWA = document.createElement('a');
-        linkWA.href = waUrl;
-        linkWA.target = '_blank'; 
-        linkWA.style.cssText = `
-          display: inline-flex; align-items: center; gap: 8px;
-          margin-top: 12px; padding: 8px 14px; border-radius: 8px; 
-          background: #25D366; color: white; font-weight: 600; font-size: 13px;
-          text-decoration: none; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
-          width: fit-content;
-        `;
-        
-        linkWA.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-          </svg>
-          Kirim ke WhatsApp
-        `;
-        div.appendChild(linkWA);
-      }
     }
 
     aiMessages.appendChild(div);
@@ -582,6 +1246,12 @@
     if (indikator) indikator.remove();
   }
 
+  // =====================================================
+  // ⌨️ ENTER DI DATE PICKER = KIRIM
+  // =====================================================
+  inputTanggal.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); kirimPertanyaan(); }
+  });
 </script>
 </body>
 </html>
