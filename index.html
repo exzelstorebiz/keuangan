@@ -155,16 +155,16 @@
   .combo-wrap.open .combo-dropdown { display: block; }
 
   .combo-group-label { font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 8px 14px 4px; background: var(--bg-card); text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; }
-  .combo-item { padding: 10px 14px; font-size: 17px; color: var(--text-main); cursor: pointer; font-weight: 500; transition: background 0.15s; border: none; background: none; text-align: left; width: 100%; display: block; }
+  .combo-item { padding: 12px 14px; font-size: 17px; color: var(--text-main); cursor: pointer; font-weight: 500; transition: background 0.15s; border: none; background: none; text-align: left; width: 100%; display: block; }
   .combo-item:hover, .combo-item.active { background: var(--pink-light); }
   .combo-item mark { background: var(--gold-light); color: var(--text-main); border-radius: 3px; padding: 0 2px; font-weight: 700; }
-  .combo-empty { padding: 16px 14px; text-align: center; font-size: 13px; color: var(--text-muted); font-style: italic; }
+  .combo-empty { padding: 16px 14px; text-align: center; font-size: 14px; color: var(--text-muted); font-style: italic; }
 
   /* Invalid state */
   .combo-invalid { border-color: var(--red) !important; background: #FEF2F2 !important; }
 
   /* Date picker & baris barang */
-  .date-picker { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 14px; outline: none; background: var(--ai-bg); color: var(--text-main); font-weight: 500; }
+  .date-picker { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid #E5E7EB; font-family: inherit; font-size: 17px; outline: none; background: var(--ai-bg); color: var(--text-main); font-weight: 500; }
   .date-picker:focus { border-color: var(--pink-main); background: var(--bg-card); }
 
   .extra-row { display: none; flex-direction: column; gap: 10px; }
@@ -251,7 +251,7 @@
 </div>
 
 <!-- ============================================== -->
-<!-- KOTAK CHAT AI (FULL SCREEN) — VERSI COMBOBOX   -->
+<!-- KOTAK CHAT AI (FULL SCREEN) - VERSI COMBOBOX   -->
 <!-- ============================================== -->
 <div class="ai-chat-box" id="aiChatBox">
   <div class="ai-header">
@@ -262,7 +262,7 @@
   </div>
 
   <div class="ai-messages" id="aiMessages">
-    <div class="ai-message bot">Halo bos! 👋 Aku di sini buat bantu pantau keuangan keluarga. Pilih pertanyaan di bawah ya, atau ketik untuk cari pertanyaan yang kamu mau. 😄</div>
+    <div class="ai-message bot">Halo bos! 👋 Saya di sini buat bantu pantau keuangan keluarga. Pilih pertanyaan di bawah ya, atau ketik untuk cari pertanyaan yang kamu mau. 😄</div>
   </div>
 
   <!-- AREA INPUT BARU: COMBOBOX -->
@@ -383,13 +383,20 @@
   const inputTanggal = document.getElementById('inputTanggal');
 
   // =====================================================
-  // 📊 DATA OPSI (dari Bagian 1 — tempel di sini)
+  // 📊 DATA OPSI (Untuk Combobox)
   // =====================================================
   const OPSI_PERTANYAAN = [
-    { label: "Berapa sisa saldo kita?", key: "saldo", kategori: "💰 Saldo & Ringkasan",
-      sinonim: ["saldo", "sisa uang", "berapa uang", "total saldo"] },
+    // 💰 Saldo & Ringkasan
+    { label: "Berapa saldo saat ini?", key: "saldo", kategori: "💰 Saldo & Ringkasan",
+      sinonim: ["saldo", "sisa uang", "berapa uang", "total saldo", "saldo saat ini"] },
+    { label: "Berapa saldo bulan kemarin?", key: "saldo_bulan_lalu", kategori: "💰 Saldo & Ringkasan",
+      sinonim: ["saldo bulan lalu", "saldo kemarin", "saldo akhir bulan lalu"] },
+    { label: "Berapa saldo tanggal tertentu...", key: "saldo_tanggal", kategori: "💰 Saldo & Ringkasan",
+      butuhTanggal: true, sinonim: ["saldo tanggal", "saldo tgl tertentu"] },
     { label: "Total pemasukan dan pengeluaran keseluruhan", key: "total_keseluruhan", kategori: "💰 Saldo & Ringkasan",
       sinonim: ["total semua", "keseluruhan", "total pemasukan pengeluaran"] },
+
+    // 📅 Pengeluaran
     { label: "Pengeluaran hari ini apa saja?", key: "pengeluaran_hari_ini", kategori: "📅 Pengeluaran",
       sinonim: ["keluar hari ini", "belanja hari ini", "pengeluaran today"] },
     { label: "Pengeluaran kemarin apa saja?", key: "pengeluaran_kemarin", kategori: "📅 Pengeluaran",
@@ -404,6 +411,8 @@
       sinonim: ["terbesar bulan ini", "paling mahal", "pengeluaran terbesar"] },
     { label: "Pengeluaran tanggal tertentu...", key: "pengeluaran_tanggal", kategori: "📅 Pengeluaran",
       butuhTanggal: true, sinonim: ["tanggal", "tgl tertentu", "pilih tanggal"] },
+
+    // 📈 Pemasukan
     { label: "Pemasukan hari ini apa saja?", key: "pemasukan_hari_ini", kategori: "📈 Pemasukan",
       sinonim: ["masuk hari ini", "income hari ini"] },
     { label: "Pemasukan minggu ini berapa?", key: "pemasukan_minggu_ini", kategori: "📈 Pemasukan",
@@ -416,84 +425,42 @@
       sinonim: ["pemasukan terbesar", "income terbesar"] },
     { label: "Pemasukan tanggal tertentu...", key: "pemasukan_tanggal", kategori: "📈 Pemasukan",
       butuhTanggal: true, sinonim: ["masuk tanggal", "income tanggal"] },
+
+    // 📋 Daftar Transaksi
     { label: "5 transaksi terakhir apa saja?", key: "5_transaksi_terakhir", kategori: "📋 Daftar Transaksi",
       sinonim: ["5 terakhir", "lima transaksi", "transaksi terakhir"] },
     { label: "10 transaksi terakhir apa saja?", key: "10_transaksi_terakhir", kategori: "📋 Daftar Transaksi",
       sinonim: ["10 terakhir", "sepuluh transaksi"] },
+
+    // 🔍 Cari Pembelian Barang
     { label: "Cari pembelian barang tertentu...", key: "cari_barang", kategori: "🔍 Cari Pembelian",
       butuhBarang: true, sinonim: ["cari barang", "beli gas", "pembelian", "cari pembelian"] }
   ];
 
   const OPSI_BARANG = [
-    { label: "⛽ Gas / LPG", key: "gas",
-      keywords: ["gas", "lpg", "elpiji", "tabung", "melon", "bright gas"],
-      sinonim: ["elpiji", "tabung gas", "lpg", "gas melon"] },
-    { label: "🛢️ Oli / Pelumas", key: "oli",
-      keywords: ["oli", "pelumas", "mesran", "shell", "yamalube", "enduro"],
-      sinonim: ["pelumas", "oli mesin", "oli motor"] },
-    { label: "⛽ Bensin / BBM", key: "bensin",
-      keywords: ["bensin", "bbm", "pertalite", "pertamax", "solar", "premium", "shell", "spbu"],
-      sinonim: ["bbm", "bahan bakar", "pertalite", "pertamax", "solar"] },
-    { label: "🍚 Beras / Sembako", key: "beras",
-      keywords: ["beras", "sembako", "gula", "minyak goreng", "tepung", "garam"],
-      sinonim: ["sembako", "beras", "gula", "minyak"] },
-    { label: "🥚 Telur / Daging / Ikan", key: "telur_daging_ikan",
-      keywords: ["telur", "daging", "ikan", "ayam", "sapi", "udang", "protein"],
-      sinonim: ["telur", "daging", "ikan", "ayam"] },
-    { label: "🥬 Sayur / Buah", key: "sayur_buah",
-      keywords: ["sayur", "buah", "bayam", "kangkung", "wortel", "tomat", "apel", "jeruk", "pisang"],
-      sinonim: ["sayur", "buah", "sayuran", "buah-buahan"] },
-    { label: "🧴 Sabun / Shampo / Perlengkapan Mandi", key: "sabun",
-      keywords: ["sabun", "shampo", "sampo", "pasta gigi", "odol", "sikat gigi", "mandi", "body wash"],
-      sinonim: ["sabun", "shampo", "sampo", "perlengkapan mandi"] },
-    { label: "🧻 Tisu / Perlengkapan Rumah", key: "tisu_rumah",
-      keywords: ["tisu", "sapu", "pel", "deterjen", "pembersih", "sunlight", "rinso", "pewangi"],
-      sinonim: ["tisu", "perlengkapan rumah", "deterjen", "pembersih"] },
-    { label: "💊 Obat / Kesehatan", key: "obat",
-      keywords: ["obat", "vitamin", "paracetamol", "periksa", "dokter", "klinik", "apotek", "kesehatan"],
-      sinonim: ["obat", "kesehatan", "vitamin", "dokter", "apotek"] },
-    { label: "🍼 Susu / Perlengkapan Bayi", key: "susu_bayi",
-      keywords: ["susu", "bayi", "dot", "pampers", "popok", "diaper", "mpasi"],
-      sinonim: ["susu", "bayi", "popok", "pampers", "mpasi"] },
-    { label: "📱 Pulsa / Paket Data", key: "pulsa",
-      keywords: ["pulsa", "paket data", "kuota", "internet", "telkomsel", "indosat", "xl", "tri", "smartfren"],
-      sinonim: ["pulsa", "paket data", "kuota", "internet"] },
-    { label: "⚡ Listrik / Air", key: "listrik_air",
-      keywords: ["listrik", "air", "pdam", "token", "pln", "tagihan listrik", "tagihan air"],
-      sinonim: ["listrik", "air", "pln", "pdam", "token listrik"] },
-    { label: "🏠 Sewa / Cicilan", key: "sewa_cicilan",
-      keywords: ["sewa", "cicilan", "kredit", "kontrakan", "rumah", "kos", "angsuran"],
-      sinonim: ["sewa", "cicilan", "kredit", "kontrakan", "angsuran"] },
-    { label: "🚗 Transportasi", key: "transportasi",
-      keywords: ["transportasi", "ojek", "grab", "gojek", "taksi", "bus", "kereta", "parkir", "tol"],
-      sinonim: ["transportasi", "ojek", "grab", "gojek", "parkir", "tol"] },
-    { label: "🛵 Servis Kendaraan", key: "servis_kendaraan",
-      keywords: ["servis", "service", "bengkel", "tune up", "ganti oli", "sparepart", "spare part", "ban", "rem", "motor", "mobil"],
-      sinonim: ["servis", "bengkel", "service motor", "service mobil", "sparepart"] },
-    { label: "💧 Air Minum Galon", key: "air_galon",
-      keywords: ["galon", "air minum", "aqua", "le minerale", "cleo", "club", "amidis", "isi ulang galon"],
-      sinonim: ["galon", "air galon", "air minum", "aqua", "isi galon"] },
-    { label: "🎓 Pendidikan / Sekolah", key: "pendidikan",
-      keywords: ["sekolah", "pendidikan", "buku", "seragam", "spp", "kursus", "les", "uang sekolah"],
-      sinonim: ["sekolah", "pendidikan", "spp", "buku", "kursus", "les"] },
-    { label: "👕 Pakaian", key: "pakaian",
-      keywords: ["pakaian", "baju", "celana", "kemeja", "kaos", "sepatu", "sandal", "jaket"],
-      sinonim: ["pakaian", "baju", "celana", "sepatu", "sandal"] },
-    { label: "🎉 Hiburan / Jalan-jalan", key: "hiburan",
-      keywords: ["hiburan", "jalan", "liburan", "nonton", "bioskop", "wisata", "rekreasi", "game"],
-      sinonim: ["hiburan", "liburan", "nonton", "jalan-jalan", "rekreasi"] },
-    { label: "🛒 Belanja Bulanan", key: "belanja_bulanan",
-      keywords: ["belanja bulanan", "belanja", "grocery", "indomaret", "alfamart", "supermarket", "hypermart"],
-      sinonim: ["belanja bulanan", "belanja", "grocery", "supermarket"] },
-    { label: "🚬 Rokok", key: "rokok",
-      keywords: ["rokok", "sampoerna", "gudang garam", "djarum", "marlboro", "kretek"],
-      sinonim: ["rokok", "kretek"] },
-    { label: "🎁 Hadiah / Sumbangan", key: "hadiah",
-      keywords: ["hadiah", "sumbangan", "donasi", "kado", "amplop", "sedekah", "zakat"],
-      sinonim: ["hadiah", "sumbangan", "donasi", "kado", "sedekah", "zakat"] },
-    { label: "📋 Semua pengeluaran di periode ini", key: "semua_pengeluaran",
-      keywords: [],
-      sinonim: ["semua pengeluaran", "semua belanja", "all expense"] }
+    { label: "⛽ Gas / LPG", key: "gas", keywords: ["gas", "lpg", "elpiji", "tabung", "melon", "bright gas"], sinonim: ["elpiji", "tabung gas", "lpg", "gas melon"] },
+    { label: "🛢️ Oli / Pelumas", key: "oli", keywords: ["oli", "pelumas", "mesran", "shell", "yamalube", "enduro"], sinonim: ["pelumas", "oli mesin", "oli motor"] },
+    { label: "⛽ Bensin / BBM", key: "bensin", keywords: ["bensin", "bbm", "pertalite", "pertamax", "solar", "premium", "shell", "spbu"], sinonim: ["bbm", "bahan bakar", "pertalite", "pertamax", "solar"] },
+    { label: "🍚 Beras / Sembako", key: "beras", keywords: ["beras", "sembako", "gula", "minyak goreng", "tepung", "garam"], sinonim: ["sembako", "beras", "gula", "minyak"] },
+    { label: "🥚 Telur / Daging / Ikan", key: "telur_daging_ikan", keywords: ["telur", "daging", "ikan", "ayam", "sapi", "udang", "protein"], sinonim: ["telur", "daging", "ikan", "ayam"] },
+    { label: "🥬 Sayur / Buah", key: "sayur_buah", keywords: ["sayur", "buah", "bayam", "kangkung", "wortel", "tomat", "apel", "jeruk", "pisang"], sinonim: ["sayur", "buah", "sayuran", "buah-buahan"] },
+    { label: "🧴 Sabun / Shampo / Perlengkapan Mandi", key: "sabun", keywords: ["sabun", "shampo", "sampo", "pasta gigi", "odol", "sikat gigi", "mandi", "body wash"], sinonim: ["sabun", "shampo", "sampo", "perlengkapan mandi"] },
+    { label: "🧻 Tisu / Perlengkapan Rumah", key: "tisu_rumah", keywords: ["tisu", "sapu", "pel", "deterjen", "pembersih", "sunlight", "rinso", "pewangi"], sinonim: ["tisu", "perlengkapan rumah", "deterjen", "pembersih"] },
+    { label: "💊 Obat / Kesehatan", key: "obat", keywords: ["obat", "vitamin", "paracetamol", "periksa", "dokter", "klinik", "apotek", "kesehatan"], sinonim: ["obat", "kesehatan", "vitamin", "dokter", "apotek"] },
+    { label: "🍼 Susu / Perlengkapan Bayi", key: "susu_bayi", keywords: ["susu", "bayi", "dot", "pampers", "popok", "diaper", "mpasi"], sinonim: ["susu", "bayi", "popok", "pampers", "mpasi"] },
+    { label: "📱 Pulsa / Paket Data", key: "pulsa", keywords: ["pulsa", "paket data", "kuota", "internet", "telkomsel", "indosat", "xl", "tri", "smartfren"], sinonim: ["pulsa", "paket data", "kuota", "internet"] },
+    { label: "⚡ Listrik / Air", key: "listrik_air", keywords: ["listrik", "air", "pdam", "token", "pln", "tagihan listrik", "tagihan air"], sinonim: ["listrik", "air", "pln", "pdam", "token listrik"] },
+    { label: "🏠 Sewa / Cicilan", key: "sewa_cicilan", keywords: ["sewa", "cicilan", "kredit", "kontrakan", "rumah", "kos", "angsuran"], sinonim: ["sewa", "cicilan", "kredit", "kontrakan", "angsuran"] },
+    { label: "🚗 Transportasi", key: "transportasi", keywords: ["transportasi", "ojek", "grab", "gojek", "taksi", "bus", "kereta", "parkir", "tol"], sinonim: ["transportasi", "ojek", "grab", "gojek", "parkir", "tol"] },
+    { label: "🛵 Servis Kendaraan", key: "servis_kendaraan", keywords: ["servis", "service", "bengkel", "tune up", "ganti oli", "sparepart", "spare part", "ban", "rem", "motor", "mobil"], sinonim: ["servis", "bengkel", "service motor", "service mobil", "sparepart"] },
+    { label: "💧 Air Minum Galon", key: "air_galon", keywords: ["galon", "air minum", "aqua", "le minerale", "cleo", "club", "amidis", "isi ulang galon"], sinonim: ["galon", "air galon", "air minum", "aqua", "isi galon"] },
+    { label: "🎓 Pendidikan / Sekolah", key: "pendidikan", keywords: ["sekolah", "pendidikan", "buku", "seragam", "spp", "kursus", "les", "uang sekolah"], sinonim: ["sekolah", "pendidikan", "spp", "buku", "kursus", "les"] },
+    { label: "👕 Pakaian", key: "pakaian", keywords: ["pakaian", "baju", "celana", "kemeja", "kaos", "sepatu", "sandal", "jaket"], sinonim: ["pakaian", "baju", "celana", "sepatu", "sandal"] },
+    { label: "🎉 Hiburan / Jalan-jalan", key: "hiburan", keywords: ["hiburan", "jalan", "liburan", "nonton", "bioskop", "wisata", "rekreasi", "game"], sinonim: ["hiburan", "liburan", "nonton", "jalan-jalan", "rekreasi"] },
+    { label: "🛒 Belanja Bulanan", key: "belanja_bulanan", keywords: ["belanja bulanan", "belanja", "grocery", "indomaret", "alfamart", "supermarket", "hypermart"], sinonim: ["belanja bulanan", "belanja", "grocery", "supermarket"] },
+    { label: "🚬 Rokok", key: "rokok", keywords: ["rokok", "sampoerna", "gudang garam", "djarum", "marlboro", "kretek"], sinonim: ["rokok", "kretek"] },
+    { label: "🎁 Hadiah / Sumbangan", key: "hadiah", keywords: ["hadiah", "sumbangan", "donasi", "kado", "amplop", "sedekah", "zakat"], sinonim: ["hadiah", "sumbangan", "donasi", "kado", "sedekah", "zakat"] },
+    { label: "📋 Semua pengeluaran di periode ini", key: "semua_pengeluaran", keywords: [], sinonim: ["semua pengeluaran", "semua belanja", "all expense"] }
   ];
 
   const OPSI_PERIODE = [
@@ -506,8 +473,8 @@
   ];
 
   const PEMBUKA = [
-    "Oke bos! ", "Siap bos! ", "Beres, sudah aku cek ya bos! ",
-    "Ini dia laporannya bos: ", "Sudah aku hitung nih bos: ",
+    "Oke bos! ", "Siap bos! ", "Beres, sudah saya cek ya bos! ",
+    "Ini dia laporannya bos: ", "Sudah saya hitung nih bos: ",
     "Nih bos, hasilnya: ", "Langsung aja ya bos: ", "Siap laporan bos! "
   ];
   const PENUTUP = [
@@ -697,16 +664,6 @@
   // =====================================================
   // 🔽 LOGIKA COMBOBOX AUTOCOMPLETE (REUSABLE)
   // =====================================================
-  /**
-   * Membuat combobox autocomplete.
-   * @param {Object} cfg
-   *   - wrapId, inputId, clearId, dropdownId
-   *   - daftarOpsi: array of { label, key, kategori?, sinonim? }
-   *   - placeholder
-   *   - groupByKategori: bool (untuk pertanyaan)
-   *   - onSelect: function(opsi)
-   *   - onClear: function()
-   */
   function buatCombobox(cfg) {
     const wrap     = document.getElementById(cfg.wrapId);
     const input    = document.getElementById(cfg.inputId);
@@ -828,7 +785,6 @@
     return { input, wrap, pilihOpsi };
   }
 
-  // Variabel untuk menyimpan instance combobox (dibuat setelah DOM siap)
   let comboPertanyaan, comboBarang, comboPeriode;
   // =====================================================
 // 🤖 MESIN JAWABAN AI LOKAL (RULE-BASED)
@@ -919,6 +875,8 @@ function jawabPertanyaan() {
   try {
     switch (key) {
       case 'saldo':                          return jawabSaldo();
+      case 'saldo_bulan_lalu':               return jawabSaldoPeriode('lastMonth');
+      case 'saldo_tanggal':                  return jawabSaldoTanggal();
       case 'total_keseluruhan':              return jawabTotalKeseluruhan();
 
       case 'pengeluaran_hari_ini':           return jawabPeriode('expense', 'today', 'Pengeluaran');
@@ -941,11 +899,11 @@ function jawabPertanyaan() {
 
       case 'cari_barang':                    return jawabCariBarang();
 
-      default:                               return "Hmm, aku belum bisa jawab itu bos 🤔";
+      default:                               return "Hmm, saya belum bisa jawab itu bos 🤔";
     }
   } catch (err) {
     console.error('Error jawabPertanyaan:', err);
-    return "Aduh bos, ada error pas aku hitung. Coba lagi ya 🙏";
+    return "Aduh bos, ada error pas saya hitung. Coba lagi ya 🙏";
   }
 }
 
@@ -961,7 +919,72 @@ function jawabSaldo() {
   const saran   = saldo >= 0
     ? 'Masih aman nih bos, tapi tetap bijak ya! 😄'
     : 'Waduh minus bos, perlu dihemat nih! 💪';
-  return `${acak(PEMBUKA)}${emoji} Sisa saldo kita sekarang <b>Rp ${formatRupiah(saldo)}</b>. ${saran}${acak(PENUTUP)}`;
+  return `${acak(PEMBUKA)}${emoji} Saldo saat ini <b>Rp ${formatRupiah(saldo)}</b>. ${saran}${acak(PENUTUP)}`;
+}
+
+function jawabSaldoPeriode(periodeKey) {
+  const lblPeriode = labelPeriode(periodeKey);
+  let saldoAwal = 0;
+  const now = new Date();
+  
+  allTransactions.forEach(t => {
+    if (!t.createdAt) return;
+    const d = t.createdAt.toDate();
+    let isBefore = false;
+    
+    if (periodeKey === 'lastMonth') {
+      const lm = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      const ly = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+      isBefore = (d.getFullYear() < ly) || (d.getFullYear() === ly && d.getMonth() < lm);
+    }
+    
+    if (isBefore) {
+      saldoAwal += (t.type === 'income' ? Number(t.amount) : -Number(t.amount));
+    }
+  });
+
+  const trxPeriode = filterPeriode(allTransactions, periodeKey);
+  const income = totalDari(trxPeriode.filter(t => t.type === 'income'));
+  const expense = totalDari(trxPeriode.filter(t => t.type === 'expense'));
+  const saldoAkhir = saldoAwal + income - expense;
+
+  return `${acak(PEMBUKA)}💰 Saldo di akhir <b>${lblPeriode}</b> adalah <b>Rp ${formatRupiah(saldoAkhir)}</b>.<br><br>`
+    + `<i>(Rincian: Saldo awal Rp ${formatRupiah(saldoAwal)} + Pemasukan Rp ${formatRupiah(income)} - Pengeluaran Rp ${formatRupiah(expense)})</i>`
+    + `${acak(PENUTUP)}`;
+}
+
+function jawabSaldoTanggal() {
+  const tgl = inputTanggal.value;
+  if (!tgl) return "Pilih tanggal dulu ya bos 📅";
+
+  const [y, m, d] = tgl.split('-').map(Number);
+  const targetDate = new Date(y, m - 1, d);
+  targetDate.setHours(23, 59, 59, 999);
+  const labelTgl = formatTanggalPendek(new Date(y, m - 1, d));
+
+  let saldoAwal = 0;
+  let incomeHariItu = 0;
+  let expenseHariItu = 0;
+
+  allTransactions.forEach(t => {
+    if (!t.createdAt) return;
+    const dt = t.createdAt.toDate();
+    
+    if (dt <= targetDate) {
+      if (dt.getDate() === d && dt.getMonth() === (m-1) && dt.getFullYear() === y) {
+        if (t.type === 'income') incomeHariItu += Number(t.amount);
+        else expenseHariItu += Number(t.amount);
+      } else {
+        saldoAwal += (t.type === 'income' ? Number(t.amount) : -Number(t.amount));
+      }
+    }
+  });
+
+  const saldoAkhir = saldoAwal + incomeHariItu - expenseHariItu;
+
+  return `${acak(PEMBUKA)}💰 Saldo di tanggal <b>${labelTgl}</b> adalah <b>Rp ${formatRupiah(saldoAkhir)}</b>.<br><br>`
+    + `<i>(Rincian: Saldo awal Rp ${formatRupiah(saldoAwal)} + Pemasukan Rp ${formatRupiah(incomeHariItu)} - Pengeluaran Rp ${formatRupiah(expenseHariItu)})</i>`
+    + `${acak(PENUTUP)}`;
 }
 
 function jawabTotalKeseluruhan() {
@@ -1041,7 +1064,7 @@ function jawabNTransaksi(n) {
 }
 
 // =====================================================
-// 🔍 JAWAB CARI BARANG
+// 🔍 JAWAB CARI BARANG (DROPDOWN KATEGORI)
 // =====================================================
 function jawabCariBarang() {
   if (!pilihanBarang) return "Pilih kategori barangnya dulu ya bos 🔍";
@@ -1051,10 +1074,8 @@ function jawabCariBarang() {
   const periodeKey = pilihanPeriode.key;
   const lblPeriode = labelPeriode(periodeKey);
 
-  // Filter dulu berdasarkan periode
   let semuaExpense = filterPeriode(allTransactions.filter(t => t.type === 'expense'), periodeKey);
 
-  // Kalau kategori = "semua_pengeluaran", tidak filter by keywords
   let hasil;
   if (kategori.key === 'semua_pengeluaran') {
     hasil = semuaExpense;
@@ -1066,7 +1087,7 @@ function jawabCariBarang() {
     });
   }
 
-  const namaBarang = kategori.label.replace(/^[^\w]+\s*/, ''); // hapus emoji di depan
+  const namaBarang = kategori.label.replace(/^[^\w]+\s*/, '');
   const total = totalDari(hasil);
 
   if (hasil.length === 0) {
@@ -1075,8 +1096,31 @@ function jawabCariBarang() {
       + `Kalau ada yang kelupaan, catat dulu ya! 📝`;
   }
 
-  return `${acak(PEMBUKA)}🔍 Sudah aku cari pembelian <b>${namaBarang}</b> di <b>${lblPeriode}</b>. `
+  return `${acak(PEMBUKA)}🔍 Sudah saya cari pembelian <b>${namaBarang}</b> di <b>${lblPeriode}</b>. `
     + `Ketemu <b>${hasil.length} transaksi</b> dengan total <b>Rp ${formatRupiah(total)}</b>:`
+    + formatListTransaksi(hasil, 20)
+    + `${acak(PENUTUP)}`;
+}
+
+// =====================================================
+// 🔍 JAWAB CARI BARANG BEBAS (MODE BEBAS)
+// =====================================================
+function jawabCariBarangBebas(keyword) {
+  const kw = keyword.toLowerCase();
+  
+  // Filter hanya pengeluaran dan note mengandung keyword
+  const hasil = allTransactions.filter(t => 
+    t.type === 'expense' && 
+    (t.note || '').toLowerCase().includes(kw)
+  );
+
+  const total = totalDari(hasil);
+
+  if (hasil.length === 0) {
+    return `${acak(PEMBUKA)}🔍 Hmm, saya sudah cari transaksi dengan kata kunci "<b>${keyword}</b>" tapi nggak ketemu bos. Mungkin belum dicatat, atau namanya berbeda. Coba kata kunci lain ya! 📝`;
+  }
+
+  return `${acak(PEMBUKA)}🔍 Ini hasil pencarian untuk "<b>${keyword}</b>". Ketemu <b>${hasil.length} transaksi</b> dengan total <b>Rp ${formatRupiah(total)}</b>:`
     + formatListTransaksi(hasil, 20)
     + `${acak(PENUTUP)}`;
 }
@@ -1142,7 +1186,7 @@ function jawabCariBarang() {
   pilihanPeriode = OPSI_PERIODE.find(p => p.key === 'thisMonth');
 
   // =====================================================
-  // 🚀 HANDLER KIRIM PERTANYAAN
+  // 🚀 HANDLER KIRIM PERTANYAAN (MODE BEBAS)
   // =====================================================
   window.bukaAIChat = function() {
     aiChatBox.classList.add('active');
@@ -1153,21 +1197,34 @@ function jawabCariBarang() {
   };
 
   window.kirimPertanyaan = function() {
-    // ===== VALIDASI =====
-    if (!pilihanPertanyaan) {
+    const inputTeks = comboPertanyaan.input.value.trim();
+    let isModeBebas = false;
+
+    // ===== VALIDASI & DETEKSI MODE BEBAS =====
+    // Jika user mengetik sesuatu tapi tidak memilih dari dropdown
+    if (!pilihanPertanyaan && inputTeks !== '') {
+      isModeBebas = true;
+      // Jika mode bebas tapi periode kosong, set default Semua Waktu
+      if (!pilihanPeriode) {
+        pilihanPeriode = OPSI_PERIODE.find(p => p.key === 'all');
+      }
+    } 
+    // Jika benar-benar kosong
+    else if (!pilihanPertanyaan && inputTeks === '') {
       comboPertanyaan.input.classList.add('combo-invalid');
       comboPertanyaan.input.focus();
-      tambahPesanKeChat("Pilih pertanyaan dari daftar dulu ya bos 🙏", 'bot');
+      tambahPesanKeChat("Pilih pertanyaan dari daftar atau ketik kata kunci dulu ya bos 🙏", 'bot');
       return;
     }
 
-    if (pilihanPertanyaan.butuhTanggal && !inputTanggal.value) {
+    // Validasi khusus jika BUKAN mode bebas (artinya memilih dari dropdown)
+    if (!isModeBebas && pilihanPertanyaan.butuhTanggal && !inputTanggal.value) {
       inputTanggal.focus();
       tambahPesanKeChat("Pilih tanggalnya dulu ya bos 📅", 'bot');
       return;
     }
 
-    if (pilihanPertanyaan.butuhBarang) {
+    if (!isModeBebas && pilihanPertanyaan.butuhBarang) {
       if (!pilihanBarang) {
         comboBarang.input.classList.add('combo-invalid');
         comboBarang.input.focus();
@@ -1182,14 +1239,20 @@ function jawabCariBarang() {
       }
     }
 
-    // ===== TAMPILKAN PESAN USER =====
-    let pesanUser = pilihanPertanyaan.label;
-    if (pilihanPertanyaan.butuhTanggal) {
-      const [y, m, d] = inputTanggal.value.split('-').map(Number);
-      pesanUser = pilihanPertanyaan.label.replace('...', ` ${formatTanggalPendek(new Date(y, m - 1, d))}`);
-    } else if (pilihanPertanyaan.butuhBarang) {
-      const namaBarang = pilihanBarang.label.replace(/^[^\w]+\s*/, '');
-      pesanUser = `Cari pembelian ${namaBarang} — ${pilihanPeriode.label}`;
+    // ===== SUSUN PESAN USER UNTUK DI CHAT =====
+    let pesanUser = "";
+    
+    if (isModeBebas) {
+      pesanUser = `Cari pembelian: ${inputTeks} (${pilihanPeriode.label})`;
+    } else {
+      pesanUser = pilihanPertanyaan.label;
+      if (pilihanPertanyaan.butuhTanggal) {
+        const [y, m, d] = inputTanggal.value.split('-').map(Number);
+        pesanUser = pilihanPertanyaan.label.replace('...', ` ${formatTanggalPendek(new Date(y, m - 1, d))}`);
+      } else if (pilihanPertanyaan.butuhBarang) {
+        const namaBarang = pilihanBarang.label.replace(/^[^\w]+\s*/, '');
+        pesanUser = `Cari pembelian ${namaBarang} — ${pilihanPeriode.label}`;
+      }
     }
 
     tambahPesanKeChat(pesanUser, 'user');
@@ -1198,10 +1261,17 @@ function jawabCariBarang() {
     // ===== JAWAB SETELAH DELAY KECIL (efek "berpikir") =====
     setTimeout(() => {
       hapusTypingIndicator();
-      const jawaban = jawabPertanyaan();
+      
+      let jawaban = "";
+      if (isModeBebas) {
+        jawaban = jawabCariBarangBebas(inputTeks);
+      } else {
+        jawaban = jawabPertanyaan();
+      }
+      
       tambahPesanKeChat(jawaban, 'bot');
 
-      // Reset form (kecuali periode tetap)
+      // Reset form
       comboPertanyaan.input.value = '';
       comboPertanyaan.wrap.classList.remove('has-value');
       pilihanPertanyaan = null;
@@ -1209,6 +1279,11 @@ function jawabCariBarang() {
       rowBarang.classList.remove('show');
       pilihanBarang = null;
       inputTanggal.value = '';
+      
+      // Reset periode ke default Bulan Ini
+      pilihanPeriode = OPSI_PERIODE.find(p => p.key === 'thisMonth'); 
+      comboPeriode.input.value = pilihanPeriode.label;
+      comboPeriode.wrap.classList.add('has-value');
     }, 500);
   };
 
@@ -1222,7 +1297,7 @@ function jawabCariBarang() {
     if (pengirim === 'user') {
       div.innerText = teks;
     } else {
-      // Render <b>, <br>, <i> dari jawaban (sudah berbentuk HTML)
+      // Render tag HTML (<b>, <br>, <i>) dari jawaban
       const textNode = document.createElement('div');
       textNode.innerHTML = teks;
       div.appendChild(textNode);
@@ -1252,6 +1327,7 @@ function jawabCariBarang() {
   inputTanggal.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); kirimPertanyaan(); }
   });
+
 </script>
 </body>
 </html>
